@@ -1,0 +1,232 @@
+.overlay {
+  position: fixed;
+  z-index: 240;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(17, 17, 17, 0.68);
+  animation: fadeIn 180ms ease-out both;
+}
+
+.dialog {
+  width: min(1160px, 100%);
+  max-height: calc(100dvh - 2rem);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 1.25rem;
+  background: #fff;
+  animation: enter 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.header {
+  position: relative;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 68px;
+  padding: 0.75rem 1rem 0.75rem 1.5rem;
+  border-bottom: 1px solid #ececec;
+  background: #fff;
+}
+
+.header h2 {
+  margin: 0;
+  font-family: var(--font-body), sans-serif;
+  font-size: 1.18rem;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+.closeButton {
+  position: relative;
+  z-index: 10;
+  flex: 0 0 auto;
+  width: 48px !important;
+  min-height: 48px !important;
+  background: #f5f5f5 !important;
+  color: #292929;
+  touch-action: manipulation;
+}
+
+.closeButton:hover {
+  background: #ebebeb !important;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(330px, 410px) minmax(0, 1fr);
+  max-height: calc(100dvh - 2rem - 68px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fff;
+}
+
+.visual {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  min-width: 0;
+  min-height: 100%;
+  padding: 1.35rem;
+  border-right: 1px solid #ececec;
+  background: #fff;
+}
+
+.image {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border: 1px solid #eeeeee;
+  border-radius: 1rem;
+  background: #f6f6f6;
+}
+
+.image img {
+  object-fit: cover;
+}
+
+.visualCopy {
+  padding: 1.25rem 0.15rem 0.15rem;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.75rem;
+}
+
+.visualCopy h3 {
+  margin: 0;
+  font-family: var(--font-product-name), var(--font-body), sans-serif;
+  font-size: clamp(1.9rem, 2.7vw, 2.45rem);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: normal;
+}
+
+.visualCopy p {
+  margin: 0.8rem 0 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.93rem;
+  line-height: 1.58;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+  padding-top: 0.95rem;
+  border-top: 1px solid #eeeeee;
+}
+
+.neutralPrice > span:first-of-type {
+  color: var(--color-text);
+}
+
+.prep {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: #f4f4f4;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.content {
+  display: flex;
+  min-width: 0;
+  min-height: 100%;
+  padding: 0 1.5rem 1.5rem;
+  background: #fff;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+}
+
+@keyframes enter {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+}
+
+@media (max-width: 900px) {
+  .dialog { width: min(940px, 100%); }
+  .body { grid-template-columns: minmax(290px, 36%) minmax(0, 1fr); }
+  .visual { padding: 1rem; }
+  .content { padding-inline: 1rem; }
+}
+
+@media (max-width: 760px) {
+  .overlay {
+    align-items: end;
+    padding: 0;
+    background: #fff;
+  }
+
+  .dialog {
+    width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    min-height: calc(62px + env(safe-area-inset-top));
+    padding: max(0.65rem, env(safe-area-inset-top)) 0.75rem 0.65rem 1rem;
+  }
+
+  .header h2 { font-size: 1.05rem; }
+
+  .body {
+    display: block;
+    height: calc(100dvh - 62px - env(safe-area-inset-top));
+    max-height: none;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .visual {
+    position: static;
+    min-height: 0;
+    padding: 0;
+    border-right: 0;
+    border-bottom: 8px solid #f5f5f5;
+  }
+
+  .image {
+    aspect-ratio: 16 / 10;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .visualCopy { padding: 1.1rem 1rem 1.2rem; }
+  .badges { margin-bottom: 0.6rem; }
+  .visualCopy h3 { font-size: 1.75rem; line-height: 1.08; }
+  .visualCopy p { margin: 0.65rem 0 0.85rem; font-size: 0.9rem; line-height: 1.5; }
+  .meta { padding-top: 0.8rem; }
+
+  .content {
+    display: block;
+    min-height: 0;
+    padding: 0 0.9rem 0.9rem;
+  }
+}
+
+@media (max-width: 390px) {
+  .image { aspect-ratio: 1.45 / 1; }
+  .visualCopy h3 { font-size: 1.55rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .dialog { animation: none; }
+}

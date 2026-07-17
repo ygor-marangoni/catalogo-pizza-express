@@ -1,0 +1,37 @@
+.bar { position: fixed; z-index: 150; inset: auto 0 0; border-top: 1px solid var(--color-border); background: #fff; }
+.inner { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; min-height: 74px; }
+.summary { display: flex; align-items: center; gap: 0.9rem; }
+.bagIcon { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-primary); }
+.bagIcon img { width: 22px; height: 22px; object-fit: contain; }
+.bagIcon small { position: absolute; top: -5px; right: -5px; display: grid; place-items: center; min-width: 21px; height: 21px; padding-inline: 0.25rem; border: 2px solid #fff; border-radius: var(--radius-pill); background: #fff; color: var(--color-primary); font-size: 0.68rem; font-weight: 700; }
+.copy { display: grid; gap: 0.1rem; }
+.copy small { color: var(--color-text-muted); font-size: 0.76rem; font-weight: 600; text-transform: uppercase; }
+.copy strong { color: var(--color-text); font-size: 1.15rem; }
+.copy strong em { display: none; color: var(--color-text-muted); font-size: 0.78em; font-style: normal; font-weight: 400; }
+.mobileLabel { display: none; }
+.action { display: inline-flex; align-items: center; justify-content: center; gap: 0.65rem; min-width: 250px; min-height: 50px; padding: 0.65rem 1rem; border: 0; border-radius: var(--radius-md); background: var(--color-primary); color: #fff; cursor: pointer; font-weight: 700; text-transform: uppercase; }
+.action:hover { background: var(--color-primary-hover); }
+.action img { width: 19px; height: 19px; object-fit: contain; }
+.action svg { display: none; }
+
+@media (max-width: 760px) {
+  .bar { right: 0; bottom: 0; left: 0; width: 100%; border: solid #e7e7e7; border-width: 1px 0 0; border-radius: 0; background: #fff; transform: none; }
+  .inner { width: 100%; min-height: 70px; padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom)); }
+  .summary { min-width: 0; flex: 1 1 auto; gap: 0; padding-left: 0.45rem; color: var(--color-text); }
+  .bagIcon { display: none; }
+  .copy { min-width: 0; }
+  .desktopLabel { display: none; }
+  .mobileLabel { display: block; overflow: hidden; color: var(--color-text-muted); text-overflow: ellipsis; white-space: nowrap; font-size: 0.72rem; text-transform: none; }
+  .copy strong { color: var(--color-text); font-size: clamp(1rem, 5vw, 1.25rem); line-height: 1.2; white-space: nowrap; }
+  .copy strong em { display: inline; }
+  .action { flex: 0 0 auto; min-width: 140px; width: 43%; min-height: 52px; height: 52px; padding: 0 0.9rem; border-radius: 0.75rem; background: var(--color-primary); font-size: 0.9rem; }
+  .action:hover { background: var(--color-primary-hover); }
+  .action img, .action span { display: block; }
+  .action svg { display: none; }
+}
+
+@media (max-width: 360px) {
+  .inner { gap: 0.45rem; }
+  .summary { padding-left: 0.25rem; }
+  .action { min-width: 124px; width: 42%; padding-inline: 0.65rem; font-size: 0.8rem; }
+}

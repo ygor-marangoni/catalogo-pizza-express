@@ -1,0 +1,121 @@
+.header { position: fixed; z-index: 100; inset: 0 0 auto; height: var(--header-height); background: #fff; box-shadow: 0 5px 7px -7px rgba(0, 0, 0, 0.14); }
+.header + :global(*) { scroll-margin-top: var(--header-height); }
+:global(#conteudo) { padding-top: var(--header-height); }
+.headerInner { position: relative; display: flex; align-items: center; justify-content: space-between; height: var(--header-height); }
+.brand { position: absolute; z-index: 4; top: 12px; left: 50%; display: grid; place-items: center; width: 108px; height: 108px; border: 5px solid #fff; border-radius: 50%; background: #fff; transform: translateX(-50%); transition: transform var(--transition-fast); }
+.brand:hover { transform: translateX(-50%) translateY(-1px); }
+.brand img { width: 98px; height: 98px; object-fit: contain; }
+.nav { display: flex; align-items: center; gap: 1rem; }
+.utility { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 42px; padding: 0.35rem 1.15rem 0.35rem 0.45rem; border: 1px solid transparent; border-radius: var(--radius-pill); background: #938080; color: white; cursor: pointer; font-family: var(--font-body), sans-serif; font-size: 0.93rem; font-weight: 500; letter-spacing: 0.01em; text-transform: uppercase; transition: background var(--transition-fast), transform var(--transition-fast); }
+.utility svg { width: 31px; height: 31px; padding: 5px; border: 2px solid currentColor; border-radius: 50%; stroke-width: 1.8; }
+.utility:hover { background: #806c6c; transform: translateY(-1px); }
+.coupon { background: var(--color-primary); }
+.coupon:hover { background: var(--color-primary-hover); }
+.rightGroup { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
+.search { width: 198px; }
+.actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.8rem; }
+.actionButton { width: 44px !important; min-height: 44px !important; border: 1px solid rgba(153, 0, 0, 0.15) !important; background: var(--color-primary) !important; color: white; }
+.actionButton:hover:not(:disabled) { background: var(--color-primary-hover) !important; }
+.accountButton:disabled { background: #e56e73 !important; border-color: #e56e73 !important; color: white; opacity: 1 !important; }
+.cartButton { position: relative; }
+.mobileMenuButton { display: none !important; }
+.headerAssetIcon { width: 22px; height: 22px; object-fit: contain; }
+.count { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; display: grid; place-items: center; padding-inline: 0.25rem; border: 2px solid #fff; border-radius: var(--radius-pill); background: #70200f; color: white; font-size: 0.68rem; }
+.footer { --footer-accent: #a9a9a9; margin-top: 5rem; padding: clamp(3.5rem, 6vw, 5.5rem) 0 1.5rem; background: #161616; color: #fff; }
+.footerMain { display: grid; grid-template-columns: minmax(280px, 1.15fr) minmax(190px, 0.62fr) minmax(330px, 1fr); align-items: start; gap: clamp(2.5rem, 5vw, 6rem); }
+.footerBrand { max-width: 470px; }
+.footerBrandLockup { display: flex; align-items: center; gap: 1rem; }
+.footerBrandLockup img { flex: 0 0 auto; width: 88px; height: 88px; object-fit: contain; }
+.footerBrandLockup h2 { margin: 0; font-family: var(--font-display), sans-serif; font-size: 1.55rem; font-weight: 500; letter-spacing: normal; }
+.footerBrandLockup span { display: block; margin-top: 0.2rem; color: var(--footer-accent); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.footerClaim { max-width: 430px; margin: 1.55rem 0 0; font-family: var(--font-display), sans-serif; font-size: clamp(1.8rem, 2.3vw, 2.65rem); font-weight: 500; line-height: 1.12; letter-spacing: normal; }
+.footerDescription { max-width: 430px; margin: 1rem 0 0; color: #aaa; font-size: 0.95rem; line-height: 1.65; }
+.footerNavigation h2, .footerContact > h2, .footerSocialBlock h3 { margin: 0 0 1.25rem; color: var(--footer-accent); font-family: var(--font-body), sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.footerNavigation ul { display: grid; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.footerNavigation a { display: inline-flex; align-items: center; gap: 0.75rem; min-height: 42px; color: #d5d5d5; font-size: 0.95rem; font-weight: 500; transition: color var(--transition-fast); }
+.footerNavigation a svg { color: var(--footer-accent); stroke-width: 1.8; }
+.footerNavigation a:hover { color: #fff; }
+.footerContactList { display: grid; gap: 0.7rem; margin: 0; font-style: normal; }
+.footerContactItem { display: flex; align-items: center; gap: 0.85rem; min-height: 70px; padding: 0.8rem 1rem; border: 1px solid #343434; border-radius: var(--radius-md); background: #1d1d1d; color: #fff; }
+.footerContactIcon { display: grid; flex: 0 0 auto; place-items: center; width: 38px; height: 38px; border-radius: 0.65rem; background: rgba(255, 255, 255, 0.06); color: var(--footer-accent); }
+.footerContactItem > span:last-child { display: grid; gap: 0.18rem; min-width: 0; }
+.footerContactItem small { color: #929292; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+.footerContactItem strong { color: #e4e4e4; font-size: 0.86rem; font-weight: 500; line-height: 1.45; }
+.footerContact a:hover { border-color: #555; background: #222; }
+.footerSocialBlock { margin-top: 1.6rem; }
+.footerSocialBlock h3 { margin-bottom: 0.75rem; }
+.footerSocials { display: flex; gap: 0.65rem; }
+.footerSocials a, .footerSocials button { display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: 1px solid #383838; border-radius: 0.7rem; background: #1d1d1d; color: #fff; transition: border-color var(--transition-fast), background var(--transition-fast); }
+.footerSocials a:hover { border-color: #666; background: #292929; }
+.footerSocials button:disabled { cursor: not-allowed; opacity: 0.42; }
+.footerSocials img { width: 20px; height: 20px; object-fit: contain; }
+.footerBottom { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: clamp(3rem, 5vw, 4.5rem); padding-top: 1.25rem; border-top: 1px solid #333; color: #888; font-size: 0.76rem; }
+.footerBottom a { color: #b6b6b6; font-weight: 600; transition: color var(--transition-fast); }
+.footerBottom a:hover { color: #fff; }
+
+@media (max-width: 920px) {
+  .headerInner { align-items: center; padding-top: 0; }
+  .brand { top: 5px; width: 90px; height: 90px; border-width: 5px; }
+  .brand img { width: 80px; height: 80px; }
+  .nav { display: none; }
+  .mobileMenuButton { display: inline-flex !important; width: 44px !important; min-height: 44px !important; border: 1.5px solid rgba(190, 190, 190, 0.82) !important; background: rgba(255, 255, 255, 0.9) !important; backdrop-filter: blur(8px); }
+  .mobileMenuButton:hover { border-color: #b9b9b9 !important; background: #fff !important; }
+  .rightGroup { width: auto; align-items: flex-start; justify-content: flex-end; }
+  .search, .desktopAccount { display: none !important; }
+  .headerAssetIcon { width: 20px; height: 20px; }
+  .footerMain { grid-template-columns: 1fr 1fr; }
+  .footerBrand { grid-column: 1 / -1; }
+}
+
+@media (max-width: 520px) {
+  .actions { gap: 0.5rem; }
+  .actionButton { width: 44px !important; min-height: 44px !important; }
+  .footerMain { grid-template-columns: 1fr; gap: 2.75rem; }
+  .footerBrand { grid-column: auto; }
+  .footerBrandLockup img { width: 76px; height: 76px; }
+  .footerClaim { font-size: 1.85rem; }
+  .footerBottom { align-items: flex-start; flex-direction: column; }
+}
+
+.mobileMenuOverlay { position: fixed; z-index: 250; inset: 0; background: rgba(0, 0, 0, 0.48); }
+.mobileMenuPanel { display: flex; width: min(88vw, 380px); height: 100dvh; flex-direction: column; overflow: hidden; padding: 1.5rem 1.5rem max(1.25rem, env(safe-area-inset-bottom)); background: #161616; color: #fff; outline: none; animation: mobileMenuEnter var(--transition-default); }
+.mobileMenuPanel:focus { outline: none; }
+.mobileMenuPanel :is(a, button, input):focus-visible { outline: 2px solid rgba(255, 255, 255, 0.72); outline-offset: 3px; }
+.mobileMenuHeader { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+.mobileMenuBrand { display: flex; align-items: center; min-width: 0; gap: 0.7rem; }
+.mobileMenuBrand img { flex: 0 0 auto; width: 56px; height: 56px; object-fit: contain; }
+.mobileMenuBrand p { margin: 0; font-family: var(--font-display), sans-serif; font-size: clamp(1.05rem, 4.8vw, 1.3rem); font-weight: 500; white-space: nowrap; }
+.mobileMenuBrand span { display: block; margin-top: 0.1rem; color: #c8c8c8; font-size: 0.72rem; line-height: 1.25; }
+.mobileMenuClose { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; background: transparent; color: #fff; cursor: pointer; }
+.mobileMenuSearch { position: relative; display: flex; align-items: center; margin-top: 1.5rem; }
+.mobileMenuSearch svg { position: absolute; left: 1rem; color: #68787d; pointer-events: none; }
+.mobileMenuSearch input { width: 100%; min-height: 44px; padding: 0.68rem 1rem 0.68rem 2.8rem; border: 1px solid rgba(255, 255, 255, 0.22); border-radius: var(--radius-pill); background: #fff; color: #171717; font-size: 0.9rem; }
+.mobileMenuSearch input:focus-visible { border-color: transparent; outline: 2px solid var(--color-primary); outline-offset: 0; }
+.mobileMenuNav { display: grid; flex: 1 1 auto; align-content: start; gap: 0.25rem; min-height: 0; margin-top: 1.25rem; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.mobileMenuNav a { display: flex; align-items: center; gap: 0.75rem; min-height: 52px; padding: 0.45rem 0.6rem; border-radius: 0.75rem; font-family: var(--font-body), sans-serif; font-size: clamp(1rem, 4.4vw, 1.1rem); font-weight: 500; line-height: 1.2; }
+.mobileMenuNav a:hover { background: rgba(255, 255, 255, 0.055); color: #fff; }
+.mobileNavIcon, .mobileContextIcon { display: grid; flex: 0 0 auto; place-items: center; width: 34px; height: 34px; border-radius: 0.65rem; background: rgba(255, 255, 255, 0.085); }
+.mobileNavIcon svg, .mobileContextIcon svg { width: 19px; height: 19px; color: #fff; stroke-width: 1.8; }
+.mobileMenuActive { color: #ef4b4b !important; font-weight: 600 !important; }
+.mobileMenuActive:hover { background: transparent !important; color: #ff6565 !important; }
+.mobileMenuActive .mobileNavIcon { background: var(--color-primary); }
+.mobileContextCard { display: grid; flex: 0 0 auto; gap: 0.1rem; margin-top: 1rem; padding: 0.55rem 0.75rem 0.7rem; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1rem; background: #222; }
+.mobileDelivery, .mobileAccount { display: flex; align-items: center; justify-content: flex-start; gap: 0.75rem; width: 100%; min-height: 52px; margin: 0; padding: 0.45rem 0; border: 0; background: transparent; color: #fff; cursor: pointer; text-align: left; }
+.mobileDelivery > span:not(.mobileContextIcon) { display: grid; gap: 0.08rem; }
+.mobileDelivery strong, .mobileAccount strong { font-size: 0.9rem; font-weight: 600; }
+.mobileDelivery small { color: #aaa; font-size: 0.72rem; }
+.mobileAccount { justify-content: flex-start; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.mobileAccount strong { position: relative; top: 2px; }
+.mobileAccountIcon { width: 18px; height: 18px; object-fit: contain; }
+.mobileLocation { display: flex; align-items: flex-start; gap: 0.65rem; width: 100%; margin: 0.35rem 0 0; padding: 0.7rem 0.2rem 0.1rem; border-top: 1px solid rgba(255, 255, 255, 0.08); color: #aaa; font-size: 0.71rem; font-style: normal; line-height: 1.4; text-align: left; cursor: default; }
+.mobileLocation svg { flex: 0 0 auto; margin-top: 0.08rem; color: #aaa; }
+@keyframes mobileMenuEnter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+@media (max-width: 360px) {
+  .mobileMenuPanel { padding-inline: 1rem; }
+  .mobileMenuBrand { gap: 0.55rem; }
+  .mobileMenuBrand img { width: 50px; height: 50px; }
+  .mobileMenuBrand p { font-size: 1rem; }
+  .mobileMenuBrand span { font-size: 0.68rem; }
+  .mobileMenuClose { width: 38px; height: 38px; }
+}

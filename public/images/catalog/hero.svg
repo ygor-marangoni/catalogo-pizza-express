@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720">
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7b4a31"/><stop offset="1" stop-color="#d39b64"/></linearGradient><radialGradient id="pizza"><stop stop-color="#f6ce76"/><stop offset=".82" stop-color="#e9a844"/><stop offset="1" stop-color="#a85a2e"/></radialGradient></defs>
+  <rect width="1600" height="720" fill="url(#bg)"/>
+  <path d="M0 0h620L440 720H0z" fill="#31231e" opacity=".24"/>
+  <circle cx="1160" cy="340" r="325" fill="#3c251b" opacity=".3"/>
+  <circle cx="1160" cy="340" r="284" fill="url(#pizza)" stroke="#f1c078" stroke-width="24"/>
+  <path d="M936 248c72-65 183-99 286-48M1000 487c100 48 211 19 277-54" fill="none" stroke="#f4e4b6" stroke-width="42" stroke-linecap="round" opacity=".76"/>
+  <g fill="#b93627"><circle cx="1044" cy="247" r="34"/><circle cx="1244" cy="224" r="38"/><circle cx="1309" cy="382" r="35"/><circle cx="1100" cy="432" r="39"/><circle cx="1196" cy="350" r="31"/></g>
+  <g fill="#31584a"><ellipse cx="1100" cy="320" rx="14" ry="31" transform="rotate(38 1100 320)"/><ellipse cx="1280" cy="292" rx="14" ry="31" transform="rotate(-44 1280 292)"/><ellipse cx="1190" cy="475" rx="14" ry="31" transform="rotate(61 1190 475)"/></g>
+  <circle cx="1500" cy="90" r="90" fill="#f8eee0" opacity=".45"/><path d="M1480 0l120 130v190l-200-220z" fill="#f7efe7" opacity=".55"/>
+</svg>
