@@ -43,7 +43,7 @@
 .searchCompact .searchInput { height: 44px; min-height: 44px; border-color: #dddddd; background: #fcfcfc; padding-left: 2.55rem; padding-right: 2.35rem; color: #444; font-size: 0.88rem; }
 .searchCompact .searchInput:focus-visible { border-color: transparent; }
 .searchCompact .searchIcon { left: 0.75rem; width: 17px; height: 17px; color: #999; }
-.searchClear { position: absolute; right: 0.3rem; top: 50%; transform: translateY(-50%); width: 36px; min-height: 36px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.searchClear { position: absolute; right: 0.3rem; top: 50%; display: grid; width: 36px; height: 36px; min-height: 0; padding: 0; place-items: center; border: 0; border-radius: 50%; background: transparent; line-height: 0; cursor: pointer; transform: translateY(-50%); }
 .suggestions { position: absolute; z-index: 80; inset: calc(100% + 0.5rem) 0 auto; padding: 0.4rem; margin: 0; list-style: none; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
 .suggestion { display: block; padding: 0.65rem 0.75rem; border-radius: var(--radius-sm); }
 .suggestion:hover { background: var(--color-surface-muted); }
@@ -80,10 +80,11 @@
 .state { display: grid; justify-items: center; gap: 0.75rem; padding: 3rem 1rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
 .state h2, .state p { margin: 0; }
 .state p { color: var(--color-text-muted); max-width: 50ch; }
-.quantity { display: inline-grid; grid-template-columns: 40px minmax(36px, auto) 40px; align-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-pill); overflow: hidden; background: var(--color-surface); }
-.quantity button { width: 40px; height: 40px; border: 0; background: transparent; cursor: pointer; }
+.quantity { display: inline-grid; flex: 0 0 auto; grid-template-columns: 36px minmax(36px, auto) 36px; height: 38px; align-items: stretch; border: 1px solid var(--color-border); border-radius: var(--radius-pill); overflow: hidden; background: var(--color-surface); }
+.quantity button { display: grid; width: 36px; height: 100%; min-height: 0; padding: 0; place-items: center; border: 0; background: transparent; line-height: 0; cursor: pointer; transition: background var(--transition-fast), color var(--transition-fast); }
+.quantity button:hover:not(:disabled) { background: var(--color-surface-muted); color: var(--color-primary); }
 .quantity button:disabled { opacity: 0.35; cursor: not-allowed; }
-.quantity output { text-align: center; font-weight: 700; }
+.quantity output { display: grid; min-width: 36px; height: 100%; place-items: center; text-align: center; font-weight: 700; line-height: 1; }
 .price { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 0.45rem; font-weight: 700; }
 .priceCurrent { color: var(--color-primary-hover); }
 .priceOld { color: var(--color-text-muted); font-size: 0.82em; font-weight: 500; text-decoration: line-through; }

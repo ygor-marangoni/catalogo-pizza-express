@@ -35,6 +35,7 @@ export const store = {
   ],
   deliveryEnabled: true,
   pickupEnabled: true,
+  estimatedTime: "60–70 min",
   minimumOrderInCents: 0,
   theme: {
     primary: "#c90000",

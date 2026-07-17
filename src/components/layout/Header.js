@@ -20,12 +20,9 @@ const Modal = dynamic(() => import("@/components/ui/Modal").then((module) => mod
 const MobileMenu = dynamic(() => import("./MobileMenu").then((module) => module.MobileMenu), { ssr: false });
 
 export function Header({ store, suggestions, categories }) {
-  const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [futureInfo, setFutureInfo] = useState(null);
-  const { itemCount, hydrated } = useCart();
-  const openCart = useCallback(() => setCartOpen(true), []);
-  const closeCart = useCallback(() => setCartOpen(false), []);
+  const { itemCount, hydrated, cartOpen, openCart, closeCart } = useCart();
   const openMenu = useCallback(() => setMenuOpen(true), []);
   const closeMenu = useCallback(() => setMenuOpen(false), []);
   const closeFutureInfo = useCallback(() => setFutureInfo(null), []);

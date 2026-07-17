@@ -103,6 +103,13 @@ export function addOrMergeCartItem(items, incoming) {
   return items.map((item) => item.id === incoming.id ? { ...item, quantity: Math.min(99, item.quantity + incoming.quantity) } : item);
 }
 
+/** @param {Array<object>} items @param {string} itemId @param {object} replacement */
+export function replaceCartItem(items, itemId, replacement) {
+  const remainingItems = items.filter((item) => item.id !== itemId);
+  if (remainingItems.length === items.length) return items;
+  return addOrMergeCartItem(remainingItems, replacement);
+}
+
 /** @param {Array<object>} items @param {string} itemId @param {number} quantity */
 export function updateCartItemQuantity(items, itemId, quantity) {
   if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) throw new Error("Quantidade inválida.");

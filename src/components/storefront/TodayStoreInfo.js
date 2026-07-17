@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock3 } from "lucide-react";
+import { Bike, Clock3, ShoppingBag, Timer } from "lucide-react";
 import { useSyncExternalStore } from "react";
 import styles from "@/app/(storefront)/storefront.module.css";
 
@@ -45,7 +45,7 @@ function getTodayHours(businessHours, timeZone) {
   return `${status}|Hoje: ${schedule.open} - ${schedule.close}`;
 }
 
-export function TodayStoreInfo({ businessHours, timeZone }) {
+export function TodayStoreInfo({ businessHours, timeZone, deliveryEnabled, pickupEnabled, estimatedTime }) {
   const todaySnapshot = useSyncExternalStore(
     subscribeToDayChange,
     () => getTodayHours(businessHours, timeZone),
@@ -67,5 +67,10 @@ export function TodayStoreInfo({ businessHours, timeZone }) {
       <span>{todayHours}</span>
       <strong className={`${styles.heroStatus} ${styles[status]}`}>{visibleStatus}</strong>
     </p>
+    <div className={styles.heroServices} aria-label="Modalidades e tempo estimado">
+      {deliveryEnabled && <span><Bike size={14} aria-hidden="true" />Entrega</span>}
+      {pickupEnabled && <span><ShoppingBag size={14} aria-hidden="true" />Retirada</span>}
+      {estimatedTime && <span><Timer size={14} aria-hidden="true" />Estimativa: {estimatedTime}</span>}
+    </div>
   </div>;
 }

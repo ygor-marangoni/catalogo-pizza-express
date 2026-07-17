@@ -7,6 +7,7 @@ import {
   calculateItemTotal,
   calculateProductUnitPrice,
   calculateVariantPrice,
+  replaceCartItem,
   updateCartItemQuantity,
   validateProductConfiguration,
 } from "@/features/cart/cart-domain";
@@ -72,4 +73,24 @@ describe("domínio do carrinho", () => {
     expect(edited[0].quantity).toBe(3);
     expect(edited.filter((entry) => entry.id !== item.id)).toHaveLength(0);
   });
+
+  it("substitui o item editado sem duplicá-lo", () => {
+    const original = buildCartItem(configurable, { variantId: "medium", addonSelections: { crust: ["traditional"] }, quantity: 1 });
+    const replacement = buildCartItem(configurable, { variantId: "large", addonSelections: { crust: ["catupiry"] }, quantity: 2, note: "bem assada" });
+    const updated = replaceCartItem([original], original.id, replacement);
+
+    expect(updated).toEqual([replacement]);
+    expect(updated).toHaveLength(1);
+  });
+
+  it("mescla a edição quando ela coincide com outra configuração existente", () => {
+    const original = buildCartItem(configurable, { variantId: "medium", addonSelections: { crust: ["traditional"] }, quantity: 1 });
+    const existing = buildCartItem(configurable, { variantId: "large", addonSelections: { crust: ["catupiry"] }, quantity: 2 });
+    const replacement = { ...existing, quantity: 3 };
+    const updated = replaceCartItem([original, existing], original.id, replacement);
+
+    expect(updated).toHaveLength(1);
+    expect(updated[0].quantity).toBe(5);
+  });
+
 });

@@ -16,18 +16,28 @@ import styles from "./cart.module.css";
 export function CartContents({ page = false, onNavigate }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { cart, hydrated, subtotalInCents, updateQuantity, removeItem, clearCart } = useCart();
+  const { cart, hydrated, subtotalInCents, updateQuantity, removeItem, clearCart, startEditing } = useCart();
 
   function editItem(item) {
     const params = new URLSearchParams(window.location.search);
     params.set("produto", item.productSlug);
+    startEditing(item.id);
     onNavigate?.();
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }
 
-  function getItemSummary(item) {
-    if (item.note) return `Obs.: ${item.note}`;
-    return item.variant?.name || null;
+  function getItemConfiguration(item) {
+    const groupedAddons = (item.addons || []).reduce((groups, addon) => {
+      const existing = groups.get(addon.groupName) || [];
+      groups.set(addon.groupName, [...existing, addon.name]);
+      return groups;
+    }, new Map());
+
+    return [
+      ...(item.variant ? [{ label: "Tamanho", value: item.variant.name }] : []),
+      ...[...groupedAddons].map(([label, values]) => ({ label: label.replace(/^Escolha (a|o|as|os)\s+/i, ""), value: values.join(", ") })),
+      ...(item.note ? [{ label: "Observação", value: item.note }] : []),
+    ];
   }
   if (!hydrated) return <div className={styles.skeletons} aria-label="Carregando carrinho"><Skeleton height="90px" /><Skeleton height="90px" /></div>;
   if (!cart.items.length) return <div className={`${styles.empty} ${page ? "" : styles.emptyDrawer}`.trim()}>
@@ -45,18 +55,22 @@ export function CartContents({ page = false, onNavigate }) {
   </div>;
 
   const items = <>
-    <div className={styles.items}>{cart.items.map((item) => <article className={styles.item} key={item.id}>
+    <div className={styles.items}>{cart.items.map((item) => {
+      const configuration = getItemConfiguration(item);
+      return <article className={styles.item} key={item.id}>
       <div className={styles.image}><Image src={item.image} alt="" fill sizes="76px" /></div>
       <div className={styles.details}>
         <div className={styles.itemTitleRow}><h3>{item.name}</h3><div className={styles.itemPrice}><Price className={styles.neutralPrice} value={calculateItemTotal(item)} /></div></div>
-        {getItemSummary(item) && <p>{getItemSummary(item)}</p>}
+        {configuration.length > 0 && <ul className={styles.configuration}>{configuration.map((detail) => <li key={detail.label}><strong>{detail.label}:</strong> <span>{detail.value}</span></li>)}</ul>}
         <button type="button" className={styles.editAction} onClick={() => editItem(item)}><PencilLine size={14} aria-hidden="true" /><span>Editar escolhas</span></button>
       </div>
       <div className={styles.itemActions}>
         <QuantitySelector label={`Quantidade de ${item.name}`} value={item.quantity} onChange={(quantity) => updateQuantity(item.id, quantity)} />
-        <button type="button" className={styles.removeAction} onClick={() => removeItem(item.id)} aria-label={`Remover ${item.name}`}><X size={16} aria-hidden="true" /><span>Remover</span></button>
+        <div className={styles.itemActionButtons}>
+          <button type="button" className={styles.removeAction} onClick={() => removeItem(item.id)} aria-label={`Remover ${item.name}`}><X size={16} aria-hidden="true" /><span>Remover</span></button>
+        </div>
       </div>
-    </article>)}</div>
+    </article>})}</div>
     <div className={styles.clearRow}><button className={styles.clearAction} type="button" onClick={clearCart}><Trash2 size={15} aria-hidden="true" /><span>Limpar carrinho</span></button></div>
   </>;
 

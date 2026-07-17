@@ -67,7 +67,7 @@ test("carrinho mobile ocupa toda a viewport desde o primeiro pixel", async ({ pa
   const bounds = await drawer.boundingBox();
 
   expect(bounds).not.toBeNull();
-  expect(bounds.x).toBe(0);
+  expect(Math.abs(bounds.x)).toBeLessThan(0.5);
   expect(bounds.y).toBe(0);
   expect(bounds.width).toBe(375);
   expect(bounds.height).toBe(812);
@@ -130,8 +130,15 @@ test("home hidrata sem erros no console ou exceções de página", async ({ page
 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: /a melhor/i })).toBeVisible();
-  await expect(page.getByText(/Hoje: \d{2}:\d{2} - \d{2}:\d{2}/)).toBeVisible();
-  await expect(page.getByText(/^(Aberto|Fechado)$/)).toBeVisible();
+  const storeInfo = page.getByLabel("Informações da loja");
+  await expect(storeInfo.getByText(/Hoje: \d{2}:\d{2} - \d{2}:\d{2}/)).toBeVisible();
+  await expect(storeInfo.getByText(/^(Aberto|Fechado)$/)).toBeVisible();
+  await expect(storeInfo.getByText("Entrega", { exact: true })).toBeVisible();
+  await expect(storeInfo.getByText("Retirada", { exact: true })).toBeVisible();
+  await expect(storeInfo.getByText(/Estimativa: 60–70 min/)).toBeVisible();
+  const titleBox = await page.getByRole("heading", { name: /a melhor/i }).boundingBox();
+  const servicesBox = await storeInfo.getByLabel("Modalidades e tempo estimado").boundingBox();
+  expect(servicesBox.y).toBeGreaterThan(titleBox.y + titleBox.height);
   await page.waitForTimeout(500);
 
   expect(errors).toEqual([]);

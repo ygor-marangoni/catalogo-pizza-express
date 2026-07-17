@@ -10,7 +10,7 @@ import { getStartingPrice } from "@/features/catalog/catalog-domain";
 import { ProductConfigurator } from "./ProductConfigurator";
 import styles from "./ProductCustomizationModal.module.css";
 
-export function ProductCustomizationModal({ product, onClose }) {
+export function ProductCustomizationModal({ product, editingItem, onClose, onComplete }) {
   const open = Boolean(product);
   const panelRef = useOverlay(open, onClose);
   if (!product) return null;
@@ -32,7 +32,7 @@ export function ProductCustomizationModal({ product, onClose }) {
             <div className={styles.meta}><Price className={styles.neutralPrice} value={startingPrice} compareAt={product.compareAtPriceInCents} prefix={product.variants?.length ? "a partir de" : undefined} /><span className={styles.prep}><Clock3 size={16} />{product.preparationTime}</span></div>
           </div>
         </div>
-        <div className={styles.content}><ProductConfigurator key={product.id} product={product} inModal /></div>
+        <div className={styles.content}><ProductConfigurator key={editingItem?.id || product.id} product={product} editingItem={editingItem} inModal onComplete={onComplete} /></div>
       </div>
     </section>
   </div>;

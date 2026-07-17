@@ -5,6 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "test": "vitest run",
@@ -12,6 +16,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.1",
     "lucide-react": "^1.24.0",
     "next": "16.2.10",
     "react": "19.2.7",
@@ -25,7 +30,8 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "16.2.10",
     "jsdom": "^29.1.1",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "wrangler": "^4.112.0"
   },
   "overrides": {
     "next": {

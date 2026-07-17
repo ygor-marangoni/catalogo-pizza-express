@@ -4,7 +4,7 @@ Todos os preços são inteiros em centavos.
 
 ## Catálogo local
 
-- Store: identidade, contato, endereço, horários, modalidades e tema.
+- Store: identidade, contato, endereço, horários, modalidades, estimativa operacional e tema.
 - Category: identidade, slug, descrição, imagem, estado e ordem.
 - Product: identidade, textos, categoria, tags, imagens, preços, disponibilidade, destaques, variações e grupos de adicionais.
 - Variant: preço final opcional ou acréscimo em centavos.
@@ -21,6 +21,6 @@ Todos os preços são inteiros em centavos.
 }
 ```
 
-Cada item guarda snapshot de nome, imagem e preço, escolhas normalizadas, quantidade, observação e chave de configuração. A migração descarta estruturas desconhecidas de forma segura.
+Cada item guarda snapshot de nome, imagem e preço, escolhas normalizadas, quantidade, observação e identificador da linha. A migração descarta estruturas desconhecidas de forma segura.
 
 O modelo futuro do Firestore está registrado apenas conceitualmente: `stores/{storeId}` e subcoleções de catálogo, pedidos, clientes e analytics.

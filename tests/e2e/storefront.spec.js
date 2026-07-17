@@ -7,6 +7,7 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
   await page.locator('main a[href="/categoria/salgadas"]').click();
   await expect(page).toHaveURL(/categoria\/salgadas/);
   await expect(page.getByRole("heading", { name: "Salgadas" })).toBeVisible();
+  await expect(page.getByLabel("Informações da loja")).toHaveCount(0);
 
   if (testInfo.project.name === "mobile") {
     await page.getByRole("button", { name: "Abrir menu" }).click();
@@ -19,6 +20,15 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
     await desktopSearch.press("Enter");
   }
   await expect(page).toHaveURL(/busca\?q=Serra%20Dourada/, { timeout: 5000 });
+  await expect(page.getByRole("heading", { level: 1, name: "Busca" })).toBeVisible();
+  await expect(page.getByAltText(/banner oficial da pizza express/i)).toBeVisible();
+  await expect(page.getByText("1 resultado encontrado", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("Informações da loja")).toHaveCount(0);
+  const searchViewport = await page.evaluate(() => ({
+    contentWidth: document.documentElement.scrollWidth,
+    viewportWidth: document.documentElement.clientWidth,
+  }));
+  expect(searchViewport.contentWidth).toBeLessThanOrEqual(searchViewport.viewportWidth);
   await page.getByRole("button", { name: /personalizar serra dourada/i }).click();
   await expect(page).toHaveURL(/produto=serra-dourada/);
   const productDialog = page.getByRole("dialog", { name: /escolha do seu jeito/i });
@@ -30,19 +40,30 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
   await page.getByText("Manjericão fresco", { exact: true }).click();
   await page.getByRole("button", { name: /adicionar/i }).click();
   await expect(page.getByText(/foi adicionado ao carrinho/i)).toBeVisible();
-  await page.getByRole("button", { name: /fechar personalização/i }).click();
   await expect(page).not.toHaveURL(/produto=/);
   await expect(productDialog).not.toBeVisible();
+  await expect(page.getByRole("dialog", { name: "Seu carrinho" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Abrir carrinho com 1 item", exact: true })).toBeVisible();
 
   await page.goto("/carrinho");
   await expect(page.getByRole("heading", { name: "Serra Dourada" })).toBeVisible();
   await expect(page.getByText("Média · 6 fatias", { exact: true })).toBeVisible();
-  await expect(page.getByText("Tradicional", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Tradicional", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /editar escolhas/i }).click();
+  const editDialog = page.getByRole("dialog", { name: /escolha do seu jeito/i });
+  await expect(editDialog.getByRole("radio", { name: /média/i })).toBeChecked();
+  await expect(editDialog.getByRole("radio", { name: /tradicional/i })).toBeChecked();
+  await editDialog.getByLabel("Alguma observação?").fill("bem assada");
+  await editDialog.getByRole("button", { name: /salvar alterações/i }).click();
+  await expect(editDialog).not.toBeVisible();
+  await expect(page.getByText("bem assada", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Serra Dourada" })).toHaveCount(1);
   await page.getByRole("button", { name: /aumentar quantidade/i }).click();
   await expect(page.getByRole("status")).toHaveText("2");
   await page.reload();
   await expect(page.getByRole("status")).toHaveText("2");
+  await expect(page.getByRole("button", { name: /aumentar quantidade/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /duplicar serra dourada/i })).toHaveCount(0);
   await page.getByRole("button", { name: /remover serra dourada/i }).click();
   await expect(page.getByRole("heading", { name: /carrinho está vazio/i })).toBeVisible();
 });

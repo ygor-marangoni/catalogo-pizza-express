@@ -51,10 +51,11 @@
 .requiredBadge { flex: 0 0 auto; padding: 0.28rem 0.55rem; border-radius: var(--radius-pill); background: var(--color-primary); color: #fff; font-size: 0.68rem; font-weight: 600; }
 .optionalBadge { background: #f1f1f1; color: #666; }
 .choices { display: grid; gap: 0.55rem; }
-.choiceRow { display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 0.8rem; padding: 0.65rem 0.75rem; border: 1px solid #ededed; border-radius: 0.75rem; background: #fff; transition: border-color var(--transition-fast), background var(--transition-fast); }
+.choiceRow { display: flex; min-height: 48px; align-items: center; justify-content: space-between; gap: 0.8rem; padding: 0.65rem 0.75rem; border: 1px solid #ededed; border-radius: 0.75rem; background: #fff; cursor: pointer; transition: border-color var(--transition-fast), background var(--transition-fast); }
 .choiceRow:hover { border-color: #d8d8d8; background: #fcfcfc; }
 .choiceRow:has(input:checked) { border-color: rgba(201, 0, 0, 0.38); background: rgba(201, 0, 0, 0.035); }
-.choiceRow label strong { font-weight: 500; }
+.choiceRow:has(input:disabled) { cursor: not-allowed; opacity: 0.55; }
+.choiceRow strong { font-weight: 500; }
 .choicePrice, .choicePrice > small, .choicePrice > span:first-of-type { color: var(--color-text); font-weight: 600; }
 .noteGroup { padding: 1rem; }
 .noteGroup textarea { min-height: 92px; border-color: #dedede; background: #fff; }

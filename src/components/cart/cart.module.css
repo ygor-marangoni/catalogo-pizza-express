@@ -8,13 +8,17 @@
 .itemTitleRow { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
 .details h3 { margin: 0; font-size: 0.98rem; font-weight: 600; }
 .details p { margin: 0.25rem 0 0; color: var(--color-text-muted); font-size: 0.84rem; }
+.configuration { display: grid; gap: 0.18rem; margin: 0.4rem 0 0; padding: 0; color: var(--color-text-muted); font-size: 0.8rem; line-height: 1.35; list-style: none; }
+.configuration strong { color: #555; font-weight: 600; text-transform: capitalize; }
 .itemPrice { flex: 0 0 auto; color: var(--color-primary-hover); font-size: 0.92rem; text-align: right; white-space: nowrap; }
 .neutralPrice > span:first-of-type { color: var(--color-text); }
-.itemActions { grid-column: 2; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding-top: 0.8rem; border-top: 1px solid #eeeeee; }
+.itemActions { grid-column: 2; display: flex; min-height: 51px; align-items: center; justify-content: center; gap: clamp(0.75rem, 4vw, 2.5rem); padding-top: 0.8rem; border-top: 1px solid #eeeeee; }
 .editAction, .clearAction, .removeAction { display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; border: 1px solid transparent; cursor: pointer; transition: border-color var(--transition-fast), background var(--transition-fast), color var(--transition-fast); }
 .editAction { min-height: 32px; margin-top: 0.7rem; padding: 0.35rem 0.55rem; border-color: #e9e9e9; border-radius: 0.55rem; background: #f7f7f7; color: #555; font-size: 0.76rem; font-weight: 600; }
 .editAction:hover { border-color: #d8d8d8; background: #f1f1f1; color: #222; }
-.removeAction { min-height: 36px; padding: 0.4rem 0.65rem; border-color: rgba(180, 35, 24, 0.14); border-radius: var(--radius-pill); background: #fff7f6; color: var(--color-danger); font-size: 0.78rem; font-weight: 600; }
+.itemActionButtons { display: flex; align-items: center; justify-content: center; gap: 0.45rem; }
+.removeAction { height: 38px; min-height: 38px; padding: 0 0.75rem; border-color: rgba(180, 35, 24, 0.14); border-radius: var(--radius-pill); background: #fff7f6; color: var(--color-danger); font-size: 0.78rem; font-weight: 600; line-height: 1; }
+.removeAction svg { display: block; flex: 0 0 auto; }
 .removeAction:hover { border-color: rgba(180, 35, 24, 0.28); background: #ffefed; }
 .clearAction { min-height: 36px; padding: 0.4rem 0.65rem; border-color: #e8e8e8; border-radius: var(--radius-pill); background: #fafafa; color: #686868; font-size: 0.76rem; font-weight: 600; }
 .clearAction:hover { border-color: rgba(180, 35, 24, 0.2); background: #fff7f6; color: var(--color-danger); }
@@ -41,7 +45,7 @@
   .pageSummary { position: static; }
   .item { grid-template-columns: 74px minmax(0, 1fr); padding: 0.85rem; }
   .image { width: 74px; }
-  .itemActions { grid-column: 2; flex-wrap: wrap; }
+  .itemActions { grid-column: 2; }
   .empty { padding: 1rem; }
   .emptyState { min-height: 320px; padding: 2.4rem 1.15rem; border-radius: 1.25rem; }
 }

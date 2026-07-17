@@ -19,7 +19,13 @@ export function StoreHero({ store, headingLevel = 1, titleId = "hero-title", tit
       />
     </picture>
     <div className={`${styles.heroContent} ${categoryHero ? styles.categoryHeroContent : ""}`.trim()}>
-      <TodayStoreInfo businessHours={store.businessHours} timeZone={store.timeZone} />
+      {!categoryHero && <TodayStoreInfo
+        businessHours={store.businessHours}
+        timeZone={store.timeZone}
+        deliveryEnabled={store.deliveryEnabled}
+        pickupEnabled={store.pickupEnabled}
+        estimatedTime={store.estimatedTime}
+      />}
       {categoryHero ? <>
         <span className={styles.categoryHeroEyebrow}>Cardápio Pizza Express</span>
         <Heading id={titleId} className={styles.categoryHeroTitle}>{title}</Heading>

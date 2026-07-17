@@ -26,7 +26,7 @@ Home Pizza Express, categoria, busca, produto configurável em modal, carrinho l
 - Endereço do menu tratado como informação secundária, sem aparência de ação ou link.
 - Sombras removidas de botões, cards, modais e drawers; somente o contêiner fixo do header mantém sombra.
 - Hero oficial reutilizado no topo das páginas de categoria, incluindo Salgadas.
-- Hero informa acima do título o horário do dia e o estado `Aberto`/`Fechado`, calculados no fuso de São Paulo; o endereço oficial foi movido para o menu mobile.
+- Hero informa acima do título o horário do dia, o estado `Aberto`/`Fechado`, entrega, retirada e estimativa operacional, calculando o funcionamento no fuso de São Paulo; o endereço oficial foi movido para o menu mobile.
 - Headline do hero sem elementos inseridos entre as palavras, com scrim reforçado e status de funcionamento destacado em badge para maior contraste.
 - Refinamento posterior restaurou os selos oficiais de pizza e Brasil no headline, clareou o banner e renomeou a seção principal de produtos para `DESTAQUES`.
 - O bloco de entrega, conta e endereço permanece ancorado no rodapé do menu mobile, enquanto a navegação pode rolar em telas mais baixas.
@@ -34,6 +34,8 @@ Home Pizza Express, categoria, busca, produto configurável em modal, carrinho l
 - Categorias móveis exibem parte do próximo card e usam overlay consistente para comunicar a rolagem e preservar legibilidade.
 - Modal sincronizado com `?produto=[slug]`, histórico do navegador e restauração por recarga.
 - Carrinho persistente em `localStorage`, com formato v1 e migração defensiva.
+- Edição do carrinho restaura as escolhas existentes e substitui o item original sem duplicação; adicionar fecha o modal e abre o carrinho automaticamente, enquanto salvar uma edição apenas fecha o modal.
+- Carrinho apresenta tamanho, grupos de escolhas, adicionais e observação completos, além de permitir alterar a quantidade e remover cada item.
 - Barra flutuante responsiva resume quantidade e subtotal e abre a sacola existente, sem enviar pedido ou integrar WhatsApp.
 - Indicador de desenvolvimento do Next.js desativado para não colidir com a barra fixa da sacola; ele já não integra a interface de produção.
 - Estados vazio, indisponível, erro, loading e not-found implementados.
@@ -47,7 +49,7 @@ Home Pizza Express, categoria, busca, produto configurável em modal, carrinho l
 | Verificação | Resultado |
 |---|---|
 | ESLint | Aprovado, zero warnings |
-| Vitest/Testing Library | 5 arquivos, 18 testes aprovados |
+| Vitest/Testing Library | 5 arquivos, 21 testes aprovados |
 | Playwright | 21 aprovados, 5 skips intencionais de cenários exclusivos por perfil |
 | Build Next.js | Aprovado, 8 rotas geradas |
 | npm audit | Zero vulnerabilidades no relatório final |
@@ -98,6 +100,7 @@ Firebase, autenticação, Firestore, Cloudinary, CMS, pedidos reais, clientes, e
 - [x] URL do modal funciona com voltar, avançar e recarregar.
 - [x] Logo, banner e fontes oficiais aplicados.
 - [x] Carrinho, edição, remoção, limpeza e persistência funcionais.
+- [x] Carrinho exibe configuração completa e permite alterar quantidade ou remover itens.
 - [x] Layout responsivo sem Tailwind ou TypeScript.
 - [x] Sem Firebase, CMS, pedidos ou pagamentos reais.
 - [x] Lint, testes e build aprovados.
