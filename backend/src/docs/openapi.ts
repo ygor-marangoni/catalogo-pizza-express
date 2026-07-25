@@ -280,6 +280,21 @@ const options = {
 					},
 				},
 			},
+			"/api/v1/products/search": {
+				get: {
+					tags: ["Produtos"],
+					summary: "Busca produtos no Elasticsearch",
+					parameters: [
+						{ name: "q", in: "query", required: false, description: "Texto buscado no nome e na descrição", schema: { type: "string" }, example: "calabresa" },
+						{ name: "category_id", in: "query", required: false, description: "Filtra pelo identificador da categoria", schema: { type: "integer", minimum: 1 }, example: 1 },
+						{ name: "available", in: "query", required: false, description: "Filtra produtos disponíveis", schema: { type: "boolean" }, example: true },
+					],
+					responses: {
+						200: { description: "Produtos encontrados", content: { "application/json": { schema: { $ref: "#/components/schemas/RespostaApi" } } } },
+						503: { description: "Serviço de busca indisponível", content: { "application/json": { schema: { $ref: "#/components/schemas/ErroApi" } } } },
+					},
+				},
+			},
 			"/api/v1/products": {
 				get: {
 					tags: ["Produtos"],
