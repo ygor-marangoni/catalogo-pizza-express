@@ -1,4 +1,6 @@
 class AuthController {
+	private readonly authService: { login: (email: string, password: string) => Promise<{ id: number; name: string; email: string }> };
+
 	constructor(authService) {
 		this.authService = authService;
 	}
@@ -27,6 +29,11 @@ class AuthController {
 					id: admin.id,
 					name: admin.name,
 					email: admin.email,
+					_links: {
+						self: { href: `/api/v1/auth/admin/${admin.id}` },
+						refresh: { href: "/api/v1/auth/admin/refresh", method: "POST" },
+						logout: { href: "/api/v1/auth/admin/logout", method: "POST" },
+					},
 				},
 				error: null,
 			});

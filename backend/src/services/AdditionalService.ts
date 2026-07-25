@@ -1,4 +1,6 @@
 class AdditionalService {
+	private readonly additionalRepository: any;
+
 	constructor(additionalRepository) {
 		this.additionalRepository = additionalRepository;
 	}

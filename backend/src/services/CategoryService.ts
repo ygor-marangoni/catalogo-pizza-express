@@ -1,9 +1,13 @@
+import type { CategoryInput, CategoryResource, Repository } from "../types/domain";
+
 class CategoryService {
-	constructor(categoryRepository) {
+	private readonly categoryRepository: Repository<CategoryResource, CategoryInput, Partial<CategoryInput>>;
+
+	constructor(categoryRepository: Repository<CategoryResource, CategoryInput, Partial<CategoryInput>>) {
 		this.categoryRepository = categoryRepository;
 	}
 
-	async getAllCategories() {
+	async getAllCategories(): Promise<CategoryResource[]> {
 		try {
 			const categories = await this.categoryRepository.findAll();
 			return categories;
@@ -12,7 +16,7 @@ class CategoryService {
 		}
 	}
 
-	async getCategoryById(id) {
+	async getCategoryById(id: number): Promise<CategoryResource> {
 		try {
 			const category = await this.categoryRepository.findById(id);
 			if (!category) {
@@ -24,7 +28,7 @@ class CategoryService {
 		}
 	}
 
-	async createCategory(categoryData) {
+	async createCategory(categoryData: CategoryInput): Promise<CategoryResource> {
 		try {
 			const category = await this.categoryRepository.create(categoryData);
 			return category;
@@ -33,7 +37,7 @@ class CategoryService {
 		}
 	}
 
-	async updateCategory(id, categoryData) {
+	async updateCategory(id: number, categoryData: Partial<CategoryInput>): Promise<CategoryResource> {
 		try {
 			const category = await this.categoryRepository.update(
 				id,
@@ -45,7 +49,7 @@ class CategoryService {
 		}
 	}
 
-	async deleteCategory(id) {
+	async deleteCategory(id: number): Promise<{ success: true }> {
 		try {
 			await this.categoryRepository.delete(id);
 			return { success: true };
@@ -55,4 +59,4 @@ class CategoryService {
 	}
 }
 
-module.exports = CategoryService;
+export = CategoryService;

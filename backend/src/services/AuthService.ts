@@ -1,11 +1,14 @@
 const bcrypt = require("bcrypt");
+import type { AdminRepository, AdminResource } from "../types/domain";
 
 class AuthService {
-	constructor(adminRepository) {
+	private readonly adminRepository: AdminRepository;
+
+	constructor(adminRepository: AdminRepository) {
 		this.adminRepository = adminRepository;
 	}
 
-	async login(email, password) {
+	async login(email: string, password: string): Promise<AdminResource> {
 		try {
 			const admin = await this.adminRepository.findByEmail(email);
 
@@ -31,7 +34,7 @@ class AuthService {
 		}
 	}
 
-	async hashPassword(password) {
+	async hashPassword(password: string): Promise<string> {
 		try {
 			const salt = await bcrypt.genSalt(10);
 			return await bcrypt.hash(password, salt);
@@ -40,7 +43,7 @@ class AuthService {
 		}
 	}
 
-	async verifyPassword(password, hash) {
+	async verifyPassword(password: string, hash: string): Promise<boolean> {
 		try {
 			return await bcrypt.compare(password, hash);
 		} catch (error) {
@@ -48,7 +51,7 @@ class AuthService {
 		}
 	}
 
-	async getAdminById(id) {
+	async getAdminById(id: number): Promise<AdminResource> {
 		try {
 			const admin = await this.adminRepository.findById(id);
 			if (!admin) {

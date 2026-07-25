@@ -1,15 +1,23 @@
-class EdgeController {
-	constructor(edgeService) {
-		this.edgeService = edgeService;
+class SizeController {
+	private readonly sizeService: {
+		getAllSizes: () => Promise<unknown[]>;
+		getSizeById: (id: string) => Promise<unknown>;
+		createSize: (data: unknown) => Promise<unknown>;
+		updateSize: (id: string, data: unknown) => Promise<unknown>;
+		deleteSize: (id: string) => Promise<unknown>;
+	};
+
+	constructor(sizeService) {
+		this.sizeService = sizeService;
 	}
 
 	async findAll(req, res, next) {
 		try {
-			const edges = await this.edgeService.getAllEdges();
+			const sizes = await this.sizeService.getAllSizes();
 
 			res.json({
 				success: true,
-				data: edges,
+				data: sizes,
 				error: null,
 			});
 		} catch (error) {
@@ -20,11 +28,11 @@ class EdgeController {
 	async findById(req, res, next) {
 		try {
 			const { id } = req.params;
-			const edge = await this.edgeService.getEdgeById(id);
+			const size = await this.sizeService.getSizeById(id);
 
 			res.json({
 				success: true,
-				data: edge,
+				data: size,
 				error: null,
 			});
 		} catch (error) {
@@ -34,12 +42,12 @@ class EdgeController {
 
 	async create(req, res, next) {
 		try {
-			const edgeData = req.body;
-			const edge = await this.edgeService.createEdge(edgeData);
+			const sizeData = req.body;
+			const size = await this.sizeService.createSize(sizeData);
 
 			res.status(201).json({
 				success: true,
-				data: edge,
+				data: size,
 				error: null,
 			});
 		} catch (error) {
@@ -50,12 +58,12 @@ class EdgeController {
 	async update(req, res, next) {
 		try {
 			const { id } = req.params;
-			const edgeData = req.body;
-			const edge = await this.edgeService.updateEdge(id, edgeData);
+			const sizeData = req.body;
+			const size = await this.sizeService.updateSize(id, sizeData);
 
 			res.json({
 				success: true,
-				data: edge,
+				data: size,
 				error: null,
 			});
 		} catch (error) {
@@ -66,7 +74,7 @@ class EdgeController {
 	async delete(req, res, next) {
 		try {
 			const { id } = req.params;
-			await this.edgeService.deleteEdge(id);
+			await this.sizeService.deleteSize(id);
 
 			res.json({
 				success: true,
@@ -79,4 +87,4 @@ class EdgeController {
 	}
 }
 
-module.exports = EdgeController;
+module.exports = SizeController;
