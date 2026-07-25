@@ -2,6 +2,8 @@ const fs = require("fs");
 const path = require("path");
 
 class Logger {
+	private readonly logsDir: string;
+
 	constructor(logsDir = "src/logs") {
 		this.logsDir = logsDir;
 		this.ensureLogsDir();

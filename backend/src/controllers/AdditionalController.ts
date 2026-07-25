@@ -1,4 +1,12 @@
 class AdditionalController {
+	private readonly additionalService: {
+		getAllAdditionals: () => Promise<unknown[]>;
+		getAdditionalById: (id: string) => Promise<unknown>;
+		createAdditional: (data: unknown) => Promise<unknown>;
+		updateAdditional: (id: string, data: unknown) => Promise<unknown>;
+		deleteAdditional: (id: string) => Promise<unknown>;
+	};
+
 	constructor(additionalService) {
 		this.additionalService = additionalService;
 	}

@@ -1,15 +1,23 @@
-class CategoryController {
-	constructor(categoryService) {
-		this.categoryService = categoryService;
+class EdgeController {
+	private readonly edgeService: {
+		getAllEdges: () => Promise<unknown[]>;
+		getEdgeById: (id: string) => Promise<unknown>;
+		createEdge: (data: unknown) => Promise<unknown>;
+		updateEdge: (id: string, data: unknown) => Promise<unknown>;
+		deleteEdge: (id: string) => Promise<unknown>;
+	};
+
+	constructor(edgeService) {
+		this.edgeService = edgeService;
 	}
 
 	async findAll(req, res, next) {
 		try {
-			const categories = await this.categoryService.getAllCategories();
+			const edges = await this.edgeService.getAllEdges();
 
 			res.json({
 				success: true,
-				data: categories,
+				data: edges,
 				error: null,
 			});
 		} catch (error) {
@@ -20,11 +28,11 @@ class CategoryController {
 	async findById(req, res, next) {
 		try {
 			const { id } = req.params;
-			const category = await this.categoryService.getCategoryById(id);
+			const edge = await this.edgeService.getEdgeById(id);
 
 			res.json({
 				success: true,
-				data: category,
+				data: edge,
 				error: null,
 			});
 		} catch (error) {
@@ -34,13 +42,12 @@ class CategoryController {
 
 	async create(req, res, next) {
 		try {
-			const categoryData = req.body;
-			const category =
-				await this.categoryService.createCategory(categoryData);
+			const edgeData = req.body;
+			const edge = await this.edgeService.createEdge(edgeData);
 
 			res.status(201).json({
 				success: true,
-				data: category,
+				data: edge,
 				error: null,
 			});
 		} catch (error) {
@@ -51,15 +58,12 @@ class CategoryController {
 	async update(req, res, next) {
 		try {
 			const { id } = req.params;
-			const categoryData = req.body;
-			const category = await this.categoryService.updateCategory(
-				id,
-				categoryData,
-			);
+			const edgeData = req.body;
+			const edge = await this.edgeService.updateEdge(id, edgeData);
 
 			res.json({
 				success: true,
-				data: category,
+				data: edge,
 				error: null,
 			});
 		} catch (error) {
@@ -70,7 +74,7 @@ class CategoryController {
 	async delete(req, res, next) {
 		try {
 			const { id } = req.params;
-			await this.categoryService.deleteCategory(id);
+			await this.edgeService.deleteEdge(id);
 
 			res.json({
 				success: true,
@@ -83,4 +87,4 @@ class CategoryController {
 	}
 }
 
-module.exports = CategoryController;
+module.exports = EdgeController;

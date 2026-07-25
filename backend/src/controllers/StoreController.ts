@@ -1,4 +1,11 @@
 class StoreController {
+	private readonly storeService: {
+		getStoreInfo: () => Promise<Record<string, unknown>>;
+		updateStoreInfo: (data: Record<string, unknown>) => Promise<Record<string, unknown>>;
+		isStoreOpen: () => Promise<boolean>;
+		setStoreStatus: (isOpen: boolean) => Promise<Record<string, unknown>>;
+	};
+
 	constructor(storeService) {
 		this.storeService = storeService;
 	}
@@ -9,7 +16,14 @@ class StoreController {
 
 			res.json({
 				success: true,
-				data: store,
+				data: {
+					...store,
+					_links: {
+						self: { href: "/api/v1/store" },
+						update: { href: "/api/v1/store", method: "PUT" },
+						status: { href: "/api/v1/store/status" },
+					},
+				},
 				error: null,
 			});
 		} catch (error) {
@@ -24,7 +38,14 @@ class StoreController {
 
 			res.json({
 				success: true,
-				data: store,
+				data: {
+					...store,
+					_links: {
+						self: { href: "/api/v1/store" },
+						update: { href: "/api/v1/store", method: "PUT" },
+						status: { href: "/api/v1/store/status" },
+					},
+				},
 				error: null,
 			});
 		} catch (error) {
@@ -38,7 +59,14 @@ class StoreController {
 
 			res.json({
 				success: true,
-				data: { is_open: isOpen },
+				data: {
+					is_open: isOpen,
+					_links: {
+						self: { href: "/api/v1/store/status" },
+						update: { href: "/api/v1/store/status", method: "PUT" },
+						store: { href: "/api/v1/store" },
+					},
+				},
 				error: null,
 			});
 		} catch (error) {
@@ -66,7 +94,14 @@ class StoreController {
 
 			res.json({
 				success: true,
-				data: store,
+				data: {
+					...store,
+					_links: {
+						self: { href: "/api/v1/store/status" },
+						update: { href: "/api/v1/store/status", method: "PUT" },
+						store: { href: "/api/v1/store" },
+					},
+				},
 				error: null,
 			});
 		} catch (error) {

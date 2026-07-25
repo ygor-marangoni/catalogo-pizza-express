@@ -1,4 +1,6 @@
 class SizeService {
+	private readonly sizeRepository: any;
+
 	constructor(sizeRepository) {
 		this.sizeRepository = sizeRepository;
 	}

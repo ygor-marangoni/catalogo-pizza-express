@@ -1,4 +1,6 @@
 class EdgeService {
+	private readonly edgeRepository: any;
+
 	constructor(edgeRepository) {
 		this.edgeRepository = edgeRepository;
 	}

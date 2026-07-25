@@ -1,9 +1,13 @@
+import type { ProductInput, ProductResource, Repository } from "../types/domain";
+
 class ProductService {
-	constructor(productRepository) {
+	private readonly productRepository: Repository<ProductResource, ProductInput, Partial<ProductInput>>;
+
+	constructor(productRepository: Repository<ProductResource, ProductInput, Partial<ProductInput>>) {
 		this.productRepository = productRepository;
 	}
 
-	async getAllProducts(filters = {}) {
+	async getAllProducts(filters: Record<string, unknown> = {}): Promise<ProductResource[]> {
 		try {
 			const products = await this.productRepository.findAll(filters);
 			return products;
@@ -12,7 +16,7 @@ class ProductService {
 		}
 	}
 
-	async getProductById(id) {
+	async getProductById(id: number): Promise<ProductResource> {
 		try {
 			const product = await this.productRepository.findById(id);
 			if (!product) {
@@ -24,7 +28,7 @@ class ProductService {
 		}
 	}
 
-	async createProduct(productData) {
+	async createProduct(productData: ProductInput): Promise<ProductResource> {
 		try {
 			const product = await this.productRepository.create(productData);
 			return product;
@@ -33,7 +37,7 @@ class ProductService {
 		}
 	}
 
-	async updateProduct(id, productData) {
+	async updateProduct(id: number, productData: Partial<ProductInput>): Promise<ProductResource> {
 		try {
 			const product = await this.productRepository.update(
 				id,
@@ -45,7 +49,7 @@ class ProductService {
 		}
 	}
 
-	async deleteProduct(id) {
+	async deleteProduct(id: number): Promise<{ success: true }> {
 		try {
 			await this.productRepository.delete(id);
 			return { success: true };
@@ -55,4 +59,4 @@ class ProductService {
 	}
 }
 
-module.exports = ProductService;
+export = ProductService;
