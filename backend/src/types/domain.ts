@@ -108,7 +108,11 @@ export interface StoreInput {
 	min_order_value?: number;
 }
 
-export interface Repository<T, CreateInput = Partial<T>, UpdateInput = Partial<T>> {
+export interface Repository<
+	T,
+	CreateInput = Partial<T>,
+	UpdateInput = Partial<T>,
+> {
 	findAll(filters?: Record<string, unknown>): Promise<T[]>;
 	findById(id: number): Promise<T | null>;
 	create(data: CreateInput): Promise<T>;

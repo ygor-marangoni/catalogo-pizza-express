@@ -18,7 +18,7 @@ class EdgeService {
 		try {
 			const edge = await this.edgeRepository.findById(id);
 			if (!edge) {
-				throw new Error("EDGE_NOT_FOUND");
+				throw new Error(ErrorCode.EDGE_NOT_FOUND);
 			}
 			return edge;
 		} catch (error) {
@@ -55,3 +55,4 @@ class EdgeService {
 }
 
 module.exports = EdgeService;
+import { ErrorCode } from "../enums";

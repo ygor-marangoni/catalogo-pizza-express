@@ -1,3 +1,4 @@
+import { ErrorCode } from "../enums";
 import type { ProductInput, ProductResource, Repository } from "../types/domain";
 
 class ProductService {
@@ -20,7 +21,7 @@ class ProductService {
 		try {
 			const product = await this.productRepository.findById(id);
 			if (!product) {
-				throw new Error("PRODUCT_NOT_FOUND");
+				throw new Error(ErrorCode.PRODUCT_NOT_FOUND);
 			}
 			return product;
 		} catch (error) {

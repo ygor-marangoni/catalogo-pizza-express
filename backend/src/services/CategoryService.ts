@@ -1,3 +1,4 @@
+import { ErrorCode } from "../enums";
 import type { CategoryInput, CategoryResource, Repository } from "../types/domain";
 
 class CategoryService {
@@ -20,7 +21,7 @@ class CategoryService {
 		try {
 			const category = await this.categoryRepository.findById(id);
 			if (!category) {
-				throw new Error("CATEGORY_NOT_FOUND");
+				throw new Error(ErrorCode.CATEGORY_NOT_FOUND);
 			}
 			return category;
 		} catch (error) {

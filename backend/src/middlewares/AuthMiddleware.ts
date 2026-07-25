@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+import { ErrorCode } from "../enums";
 
 class AuthMiddleware {
 	static verifyToken(req, res, next) {
@@ -10,7 +11,7 @@ class AuthMiddleware {
 					success: false,
 					data: null,
 					error: {
-						code: "UNAUTHORIZED",
+						code: ErrorCode.UNAUTHORIZED,
 						message: "Token não fornecido",
 						field: null,
 					},
@@ -28,7 +29,7 @@ class AuthMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "INVALID_TOKEN",
+					code: ErrorCode.INVALID_TOKEN,
 					message: "Token inválido ou expirado",
 					field: null,
 				},

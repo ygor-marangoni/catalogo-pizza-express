@@ -1,181 +1,127 @@
-# Pizza Express - Backend
+# Pizza Express — Backend
 
-API REST em Node.js + Express para gerenciar o cardápio e painel administrativo da Pizza Express.
+API REST em Node.js, Express e TypeScript para o catálogo e o painel administrativo da Pizza Express.
 
-## 📋 Estrutura do Projeto
+## Estrutura do projeto
 
-```
+```text
 src/
-├── config/          # Configurações (DB, ambiente)
+├── config/          # Configurações de banco e ambiente
 ├── controllers/     # Controladores HTTP
-├── middlewares/     # Middlewares customizados
-├── models/          # Modelos de dados
-├── routes/          # Definição de rotas
-├── services/        # Lógica de negócio
-├── utils/           # Funções utilitárias
+├── docs/            # Especificação OpenAPI/Swagger
+├── entities/        # Entidades do domínio
+├── enums/           # Enums compartilhados da aplicação
 ├── errors/          # Erros customizados
-└── logs/            # Arquivos de log
+├── middlewares/     # Autenticação, validação e tratamento de erros
+├── routes/          # Definição das rotas
+├── services/        # Lógica de negócio
+├── types/           # Tipos e contratos do domínio
+└── utils/           # Funções utilitárias
 ```
 
-## 🚀 Instalação
-
-1. **Clonar o repositório**
-
-```bash
-git clone <url-do-repositorio>
-cd backend
-```
-
-2. **Instalar dependências**
+## Instalação
 
 ```bash
 npm install
 ```
 
-3. **Configurar variáveis de ambiente**
+Copie `.env.example` para `.env` e configure as variáveis necessárias, principalmente `PORT`, `CORS_ORIGIN`, `JWT_SECRET` e as configurações do Elasticsearch quando a busca de produtos for utilizada.
+
+## Scripts
 
 ```bash
-cp .env.example .env
-# Editar .env com suas configurações
+npm run dev      # Executa em desenvolvimento com ts-node
+npm run build    # Compila TypeScript para dist/
+npm start        # Executa a versão compilada
+npm test         # Ainda não implementado
 ```
 
-4. **Executar migrações do banco**
+Não existem scripts de migração ou seed configurados neste backend atualmente.
 
-```bash
-npm run migrate
+## Enums
+
+Os enums ficam em `src/enums` e são exportados por `src/enums/index.ts`:
+
+- `StoreStatus`: `OPEN`, `CLOSED` e `PAUSED`.
+- `ErrorCode`: códigos padronizados de autenticação, validação, busca e recursos não encontrados.
+
+Os códigos de erro são utilizados pelos controllers, services, rotas e middlewares.
+
+## Autenticação
+
+A autenticação usa JWT e senhas protegidas com bcrypt. As rotas protegidas devem enviar:
+
+```http
+Authorization: Bearer <token>
 ```
 
-5. **Executar seeds**
-
-```bash
-npm run seed
-```
-
-## 📦 Dependências
-
-- **Express 5.2.1** - Framework web
-- **dotenv** - Gerenciamento de variáveis de ambiente
-- **bcrypt** - Hash de senhas
-- **jsonwebtoken** - Tokens JWT
-- **pg** - Driver PostgreSQL
-- **knex** - Query builder (para migrações)
-- **cloudinary** - Gerenciamento de imagens
-
-## 🔧 Scripts
-
-```bash
-# Iniciar servidor em desenvolvimento
-npm run dev
-
-# Iniciar servidor em produção
-npm start
-
-# Executar migrações
-npm run migrate
-
-# Executar seeds
-npm run seed
-
-# Rodar testes
-npm test
-```
-
-## 🔐 Autenticação
-
-- JWT (JSON Web Tokens)
-- Refresh token em cookie `httpOnly`
-- Senhas com hash bcrypt
-
-## 📝 API Endpoints
+## Endpoints principais
 
 ### Autenticação
 
-- `POST /api/v1/auth/admin/login` - Login
-- `POST /api/v1/auth/admin/refresh` - Renovar sessão
-- `POST /api/v1/auth/admin/logout` - Logout
-
-### Produtos
-
-- `GET /api/v1/products` - Listar produtos
-- `GET /api/v1/products/:id` - Buscar produto
-- `POST /api/v1/products` - Criar produto
-- `PUT /api/v1/products/:id` - Atualizar produto
-- `DELETE /api/v1/products/:id` - Deletar produto
+- `POST /api/v1/auth/admin/login`
+- `POST /api/v1/auth/admin/refresh`
+- `POST /api/v1/auth/admin/logout`
 
 ### Categorias
 
-- `GET /api/v1/categories` - Listar categorias
-- `GET /api/v1/categories/:id` - Buscar categoria
-- `POST /api/v1/categories` - Criar categoria
-- `PUT /api/v1/categories/:id` - Atualizar categoria
-- `DELETE /api/v1/categories/:id` - Deletar categoria
+- `GET /api/v1/categories`
+- `GET /api/v1/categories/:id`
+- `POST /api/v1/categories`
+- `PUT /api/v1/categories/:id`
+- `DELETE /api/v1/categories/:id`
+
+### Produtos
+
+- `GET /api/v1/products/search?q=calabresa`
+- `GET /api/v1/products`
+- `GET /api/v1/products/:id`
+- `POST /api/v1/products`
+- `PUT /api/v1/products/:id`
+- `DELETE /api/v1/products/:id`
 
 ### Loja
 
-- `GET /api/v1/store` - Informações da loja
-- `PUT /api/v1/store` - Atualizar informações
-- `GET /api/v1/store/status` - Status da loja
-- `PUT /api/v1/store/status` - Atualizar status
+- `GET /api/v1/store`
+- `PUT /api/v1/store`
+- `GET /api/v1/store/status`
+- `PUT /api/v1/store/status`
 
-## 📄 Resposta Padrão
+O status atual preserva o campo booleano `is_open` e também expõe `status` como `OPEN` ou `CLOSED`. O valor `PAUSED` já está definido no enum, mas ainda não é aceito pelo endpoint atual, que recebe `is_open: boolean`.
 
-### Sucesso
+## Resposta padrão
 
-```json
-{
-	"success": true,
-	"data": {},
-	"error": null
-}
-```
-
-### Erro
+Sucesso:
 
 ```json
 {
-	"success": false,
-	"data": null,
-	"error": {
-		"code": "ERROR_CODE",
-		"message": "Descrição do erro",
-		"field": null
-	}
+  "success": true,
+  "data": {},
+  "error": null
 }
 ```
 
-## 🔄 Exclusão Lógica
+Erro:
 
-Todos os dados utilizam exclusão lógica. Não são removidos do banco, apenas marcados como deletados.
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Descrição do erro",
+    "field": null
+  }
+}
+```
 
-## 💰 Valores Monetários
+## Documentação da API
 
-Todos os valores são armazenados em **centavos** para evitar problemas com ponto flutuante.
+Com o servidor em execução:
 
-## 📚 Documentação
-
-A documentação da API é gerada automaticamente com Swagger/OpenAPI.
-Acesse: `http://localhost:3000/api-docs`
-
-## 🐛 Troubleshooting
-
-### Conexão com banco de dados
-
-- Verificar se PostgreSQL está rodando
-- Validar variáveis de ambiente em `.env`
-- Confirmar permissões do usuário do banco
-
-### JWT Secret não configurado
-
-- Definir `JWT_SECRET` no `.env`
-- Usar valor seguro em produção
-
-## 👨‍💻 Autor
-
-Pizza Express Team
-
-## 📄 Licença
-
-ISC
+- Swagger UI: `http://localhost:3000/api-docs`
+- OpenAPI JSON: `http://localhost:3000/api-docs/openapi.json`
+- Health check: `http://localhost:3000/health`
 
 ## Docker
 
@@ -185,21 +131,8 @@ Para executar o backend e o Elasticsearch:
 docker compose up --build
 ```
 
-Endpoints disponíveis:
-
-- `http://localhost:3000/health`
-- `http://localhost:3000/api-docs`
-- `http://localhost:3000/api-docs/openapi.json`
-- `http://localhost:3000/api/v1/products/search?q=calabresa`
-
 Para encerrar os serviços:
 
 ```bash
 docker compose down
-```
-
-Os dados do Elasticsearch ficam no volume `elasticsearch_data`. Para removê-lo junto com os serviços:
-
-```bash
-docker compose down -v
 ```

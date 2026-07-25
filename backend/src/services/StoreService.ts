@@ -11,7 +11,7 @@ class StoreService {
 		try {
 			const store = await this.storeRepository.find();
 			if (!store) {
-				throw new Error("STORE_INFO_NOT_FOUND");
+				throw new Error(ErrorCode.STORE_INFO_NOT_FOUND);
 			}
 			return store;
 		} catch (error) {
@@ -34,7 +34,7 @@ class StoreService {
 		try {
 			const store = await this.storeRepository.find();
 			if (!store) {
-				throw new Error("STORE_INFO_NOT_FOUND");
+				throw new Error(ErrorCode.STORE_INFO_NOT_FOUND);
 			}
 			return store.is_open;
 		} catch (error) {
@@ -57,3 +57,4 @@ class StoreService {
 }
 
 module.exports = StoreService;
+import { ErrorCode } from "../enums";

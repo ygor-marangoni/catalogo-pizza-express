@@ -1,5 +1,12 @@
+import { ErrorCode } from "../enums";
+
 class AuthController {
-	private readonly authService: { login: (email: string, password: string) => Promise<{ id: number; name: string; email: string }> };
+	private readonly authService: {
+		login: (
+			email: string,
+			password: string,
+		) => Promise<{ id: number; name: string; email: string }>;
+	};
 
 	constructor(authService) {
 		this.authService = authService;
@@ -14,7 +21,7 @@ class AuthController {
 					success: false,
 					data: null,
 					error: {
-						code: "INVALID_INPUT",
+						code: ErrorCode.INVALID_INPUT,
 						message: "Email e senha são obrigatórios",
 						field: null,
 					},
@@ -31,8 +38,14 @@ class AuthController {
 					email: admin.email,
 					_links: {
 						self: { href: `/api/v1/auth/admin/${admin.id}` },
-						refresh: { href: "/api/v1/auth/admin/refresh", method: "POST" },
-						logout: { href: "/api/v1/auth/admin/logout", method: "POST" },
+						refresh: {
+							href: "/api/v1/auth/admin/refresh",
+							method: "POST",
+						},
+						logout: {
+							href: "/api/v1/auth/admin/logout",
+							method: "POST",
+						},
 					},
 				},
 				error: null,

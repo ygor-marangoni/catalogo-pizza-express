@@ -18,7 +18,7 @@ class SizeService {
 		try {
 			const size = await this.sizeRepository.findById(id);
 			if (!size) {
-				throw new Error("SIZE_NOT_FOUND");
+				throw new Error(ErrorCode.SIZE_NOT_FOUND);
 			}
 			return size;
 		} catch (error) {
@@ -55,3 +55,4 @@ class SizeService {
 }
 
 module.exports = SizeService;
+import { ErrorCode } from "../enums";

@@ -34,7 +34,7 @@ const options = {
 				},
 			},
 			schemas: {
-			RespostaApi: {
+				RespostaApi: {
 					type: "object",
 					properties: {
 						success: { type: "boolean", example: true },
@@ -42,7 +42,7 @@ const options = {
 						error: { nullable: true },
 					},
 				},
-			ErroApi: {
+				ErroApi: {
 					type: "object",
 					properties: {
 						success: { type: "boolean", example: false },
@@ -50,7 +50,7 @@ const options = {
 						error: { $ref: "#/components/schemas/Erro" },
 					},
 				},
-			Erro: {
+				Erro: {
 					type: "object",
 					properties: {
 						code: { type: "string", example: "VALIDATION_ERROR" },
@@ -62,7 +62,7 @@ const options = {
 						},
 					},
 				},
-			Categoria: {
+				Categoria: {
 					type: "object",
 					properties: {
 						id: { type: "integer", example: 1 },
@@ -74,7 +74,7 @@ const options = {
 						active: { type: "boolean", example: true },
 					},
 				},
-			EntradaCategoria: {
+				EntradaCategoria: {
 					type: "object",
 					required: ["name"],
 					properties: {
@@ -89,7 +89,7 @@ const options = {
 						},
 					},
 				},
-			Produto: {
+				Produto: {
 					type: "object",
 					properties: {
 						id: { type: "integer", example: 1 },
@@ -108,7 +108,7 @@ const options = {
 						active: { type: "boolean", example: true },
 					},
 				},
-			EntradaProduto: {
+				EntradaProduto: {
 					type: "object",
 					required: ["name", "category_id", "base_price"],
 					properties: {
@@ -130,7 +130,7 @@ const options = {
 						},
 					},
 				},
-			Loja: {
+				Loja: {
 					type: "object",
 					properties: {
 						name: { type: "string", example: "Pizza Express" },
@@ -142,12 +142,12 @@ const options = {
 						is_open: { type: "boolean", example: true },
 					},
 				},
-			EntradaStatusLoja: {
+				EntradaStatusLoja: {
 					type: "object",
 					required: ["is_open"],
 					properties: { is_open: { type: "boolean", example: true } },
 				},
-			EntradaLogin: {
+				EntradaLogin: {
 					type: "object",
 					required: ["email", "password"],
 					properties: {
@@ -163,7 +163,7 @@ const options = {
 						},
 					},
 				},
-			Administrador: {
+				Administrador: {
 					type: "object",
 					properties: {
 						id: { type: "integer", example: 1 },
@@ -285,13 +285,53 @@ const options = {
 					tags: ["Produtos"],
 					summary: "Busca produtos no Elasticsearch",
 					parameters: [
-						{ name: "q", in: "query", required: false, description: "Texto buscado no nome e na descrição", schema: { type: "string" }, example: "calabresa" },
-						{ name: "category_id", in: "query", required: false, description: "Filtra pelo identificador da categoria", schema: { type: "integer", minimum: 1 }, example: 1 },
-						{ name: "available", in: "query", required: false, description: "Filtra produtos disponíveis", schema: { type: "boolean" }, example: true },
+						{
+							name: "q",
+							in: "query",
+							required: false,
+							description: "Texto buscado no nome e na descrição",
+							schema: { type: "string" },
+							example: "calabresa",
+						},
+						{
+							name: "category_id",
+							in: "query",
+							required: false,
+							description:
+								"Filtra pelo identificador da categoria",
+							schema: { type: "integer", minimum: 1 },
+							example: 1,
+						},
+						{
+							name: "available",
+							in: "query",
+							required: false,
+							description: "Filtra produtos disponíveis",
+							schema: { type: "boolean" },
+							example: true,
+						},
 					],
 					responses: {
-						200: { description: "Produtos encontrados", content: { "application/json": { schema: { $ref: "#/components/schemas/RespostaApi" } } } },
-						503: { description: "Serviço de busca indisponível", content: { "application/json": { schema: { $ref: "#/components/schemas/ErroApi" } } } },
+						200: {
+							description: "Produtos encontrados",
+							content: {
+								"application/json": {
+									schema: {
+										$ref: "#/components/schemas/RespostaApi",
+									},
+								},
+							},
+						},
+						503: {
+							description: "Serviço de busca indisponível",
+							content: {
+								"application/json": {
+									schema: {
+										$ref: "#/components/schemas/ErroApi",
+									},
+								},
+							},
+						},
 					},
 				},
 			},

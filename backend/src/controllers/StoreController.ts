@@ -1,3 +1,5 @@
+import { ErrorCode, StoreStatus } from "../enums";
+
 class StoreController {
 	private readonly storeService: {
 		getStoreInfo: () => Promise<Record<string, unknown>>;
@@ -61,6 +63,7 @@ class StoreController {
 				success: true,
 				data: {
 					is_open: isOpen,
+					status: isOpen ? StoreStatus.OPEN : StoreStatus.CLOSED,
 					_links: {
 						self: { href: "/api/v1/store/status" },
 						update: { href: "/api/v1/store/status", method: "PUT" },
@@ -83,7 +86,7 @@ class StoreController {
 					success: false,
 					data: null,
 					error: {
-						code: "INVALID_INPUT",
+						code: ErrorCode.INVALID_INPUT,
 						message: "is_open deve ser um booleano",
 						field: "is_open",
 					},

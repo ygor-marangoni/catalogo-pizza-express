@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+import { ErrorCode } from "../enums";
 
 const ProductController = require('../controllers/ProductController');
 const ProductSearchService = require('../services/ProductSearchService');
@@ -26,7 +27,7 @@ router.get("/search", async (req, res, next) => {
 		});
 	} catch (error) {
 		const serviceError = error as Error & { code?: string; statusCode?: number };
-		serviceError.code = "PRODUCT_SEARCH_UNAVAILABLE";
+		serviceError.code = ErrorCode.PRODUCT_SEARCH_UNAVAILABLE;
 		serviceError.statusCode = 503;
 		next(serviceError);
 	}

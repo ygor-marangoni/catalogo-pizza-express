@@ -1,3 +1,5 @@
+import { ErrorCode } from "../enums";
+
 class ValidationMiddleware {
 	static validateProductCreate(req, res, next) {
 		const { name, description, category_id, base_price } = req.body;
@@ -7,7 +9,7 @@ class ValidationMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message:
 						"Campos obrigatórios: name, category_id, base_price",
 					field: null,
@@ -20,7 +22,7 @@ class ValidationMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message: "base_price deve ser um número positivo",
 					field: "base_price",
 				},
@@ -38,7 +40,7 @@ class ValidationMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message: "Campo obrigatório: name",
 					field: "name",
 				},
@@ -56,7 +58,7 @@ class ValidationMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message: "Campos obrigatórios: name, code",
 					field: null,
 				},
@@ -74,7 +76,7 @@ class ValidationMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message: "Campo obrigatório: name",
 					field: "name",
 				},
@@ -92,7 +94,7 @@ class ValidationMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message: "Campos obrigatórios: name, price",
 					field: null,
 				},
@@ -104,7 +106,7 @@ class ValidationMiddleware {
 				success: false,
 				data: null,
 				error: {
-					code: "VALIDATION_ERROR",
+					code: ErrorCode.VALIDATION_ERROR,
 					message: "price deve ser um número positivo",
 					field: "price",
 				},

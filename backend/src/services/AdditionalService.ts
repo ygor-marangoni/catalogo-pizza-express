@@ -18,7 +18,7 @@ class AdditionalService {
 		try {
 			const additional = await this.additionalRepository.findById(id);
 			if (!additional) {
-				throw new Error("ADDITIONAL_NOT_FOUND");
+				throw new Error(ErrorCode.ADDITIONAL_NOT_FOUND);
 			}
 			return additional;
 		} catch (error) {
@@ -59,3 +59,4 @@ class AdditionalService {
 }
 
 module.exports = AdditionalService;
+import { ErrorCode } from "../enums";

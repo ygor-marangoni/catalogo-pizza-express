@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+import { ErrorCode } from "../enums";
 import type { AdminRepository, AdminResource } from "../types/domain";
 
 class AuthService {
@@ -13,7 +14,7 @@ class AuthService {
 			const admin = await this.adminRepository.findByEmail(email);
 
 			if (!admin) {
-				throw new Error("INVALID_CREDENTIALS");
+				throw new Error(ErrorCode.INVALID_CREDENTIALS);
 			}
 
 			const passwordMatch = await bcrypt.compare(
@@ -22,7 +23,7 @@ class AuthService {
 			);
 
 			if (!passwordMatch) {
-				throw new Error("INVALID_CREDENTIALS");
+				throw new Error(ErrorCode.INVALID_CREDENTIALS);
 			}
 
 			// Atualizar último login
@@ -55,7 +56,7 @@ class AuthService {
 		try {
 			const admin = await this.adminRepository.findById(id);
 			if (!admin) {
-				throw new Error("ADMIN_NOT_FOUND");
+				throw new Error(ErrorCode.ADMIN_NOT_FOUND);
 			}
 			return admin;
 		} catch (error) {
