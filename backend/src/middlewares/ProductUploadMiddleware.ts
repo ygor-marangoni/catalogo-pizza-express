@@ -11,6 +11,11 @@ export const productImageUpload = multer({
 
 export function normalizeProductMultipart(req, _res, next): void {
 	if (!req.is("multipart/form-data")) return next();
+	if (req.body.image === "") delete req.body.image;
+	if (typeof req.body.image === "string") {
+		req.body.image_url = req.body.image;
+		delete req.body.image;
+	}
 	for (const field of ["category_id", "base_price"])
 		if (req.body[field] !== undefined) req.body[field] = Number(req.body[field]);
 	for (const field of ["available", "highlighted"]) {

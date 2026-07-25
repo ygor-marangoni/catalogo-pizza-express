@@ -15,8 +15,8 @@ export function validate(schema: z.ZodType, source: "body" | "params" | "query" 
 						? `O campo ${field} não atende ao tamanho ou valor mínimo exigido`
 						: issue.code === "invalid_format"
 							? `O campo ${field} está em formato inválido`
-							: issue.code === "unrecognized_keys"
-								? "A requisição contém campos não permitidos"
+					: issue.code === "unrecognized_keys"
+						? `A requisição contém campos não permitidos: ${issue.keys.join(", ")}`
 								: issue.message;
 			return res.status(400).json({
 				success: false,
