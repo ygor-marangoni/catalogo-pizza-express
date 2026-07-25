@@ -1,7 +1,38 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
+const { Client } = require("@elastic/elasticsearch");
 const { AppDataSource } = require("../dist/src/config/ormConfig");
 const mockData = require("../seeds/mockData");
+
+async function indexProducts(products) {
+	const client = new Client({ node: process.env.ELASTICSEARCH_URL || "http://localhost:9200" });
+	const index = process.env.ELASTICSEARCH_PRODUCTS_INDEX || "pizza-products";
+	try {
+		if (!(await client.indices.exists({ index }))) {
+			await client.indices.create({
+				index,
+				mappings: {
+					properties: {
+						id: { type: "integer" },
+						name: { type: "text", fields: { keyword: { type: "keyword" } } },
+						description: { type: "text" },
+						category_id: { type: "integer" },
+						base_price: { type: "integer" },
+						available: { type: "boolean" },
+						highlighted: { type: "boolean" },
+					},
+				},
+			});
+		}
+		for (const product of products)
+			await client.index({ index, id: String(product.id), document: product });
+		await client.indices.refresh({ index });
+	} catch (error) {
+		console.warn(`Não foi possível indexar os produtos no Elasticsearch: ${error.message}`);
+	} finally {
+		await client.close();
+	}
+}
 
 async function run() {
 	await AppDataSource.initialize();
@@ -91,6 +122,10 @@ async function run() {
 		const productRows = await queryRunner.query("SELECT id, name, base_price FROM products WHERE name = ANY($1)", [
 			mockData.products.map((product) => product.name),
 		]);
+		const indexedProducts = await queryRunner.query(
+			"SELECT id, name, description, category_id, base_price, image_url, available, highlighted, created_at, updated_at FROM products WHERE deleted_at IS NULL",
+		);
+		await indexProducts(indexedProducts);
 		for (const [customerIndex, customer] of customerRows.entries()) {
 			const selectedProducts = productRows.slice(customerIndex % 5, (customerIndex % 5) + 3);
 			for (const [productIndex, product] of selectedProducts.entries()) {
