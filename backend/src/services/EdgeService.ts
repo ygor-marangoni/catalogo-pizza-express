@@ -1,3 +1,5 @@
+import { ErrorCode } from "../entities/enums";
+
 class EdgeService {
 	private readonly edgeRepository: any;
 
@@ -55,4 +57,3 @@ class EdgeService {
 }
 
 module.exports = EdgeService;
-import { ErrorCode } from "../entities/enums";

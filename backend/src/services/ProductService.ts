@@ -4,9 +4,11 @@ import type { ProductResDTO, Repository } from "../dtos/res";
 
 class ProductService {
 	private readonly productRepository: Repository<ProductResDTO, CreateProductReqDTO, UpdateProductReqDTO>;
+	private readonly categoryRepository: any;
 
-	constructor(productRepository: Repository<ProductResDTO, CreateProductReqDTO, UpdateProductReqDTO>) {
+	constructor(productRepository: Repository<ProductResDTO, CreateProductReqDTO, UpdateProductReqDTO>, categoryRepository?: any) {
 		this.productRepository = productRepository;
+		this.categoryRepository = categoryRepository;
 	}
 
 	async getAllProducts(filters: Record<string, unknown> = {}): Promise<ProductResDTO[]> {
@@ -32,6 +34,7 @@ class ProductService {
 
 	async createProduct(productData: CreateProductReqDTO): Promise<ProductResDTO> {
 		try {
+			await this.ensureCategory(productData.category_id);
 			const product = await this.productRepository.create(productData);
 			return product;
 		} catch (error) {
@@ -41,6 +44,7 @@ class ProductService {
 
 	async updateProduct(id: number, productData: UpdateProductReqDTO): Promise<ProductResDTO> {
 		try {
+			if (productData.category_id !== undefined) await this.ensureCategory(productData.category_id);
 			const product = await this.productRepository.update(id, productData);
 			return product;
 		} catch (error) {
@@ -55,6 +59,11 @@ class ProductService {
 		} catch (error) {
 			throw new Error(`Erro ao deletar produto: ${error.message}`);
 		}
+	}
+
+	private async ensureCategory(categoryId: number): Promise<void> {
+		if (this.categoryRepository && !(await this.categoryRepository.findById(categoryId)))
+			throw new Error(ErrorCode.CATEGORY_NOT_FOUND);
 	}
 }
 

@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 import { ErrorCode } from "../entities/enums";
+import { getErrorMessage } from "../exceptions/ErrorMessages";
 
 class AuthMiddleware {
-	// Restringe o acesso conforme o perfil presente no JWT.
 	static requireRole(...roles) {
 		return (req, res, next) =>
 			roles.includes(req.user?.role)
@@ -10,57 +10,36 @@ class AuthMiddleware {
 				: res.status(403).json({
 						success: false,
 						data: null,
-						error: {
-							code: "FORBIDDEN",
-							message: "Perfil sem permissão para este recurso",
-							field: null,
-						},
+						error: { code: ErrorCode.FORBIDDEN, message: getErrorMessage(ErrorCode.FORBIDDEN), field: null },
 					});
 	}
-	// Valida o token de acesso enviado no cabeçalho Authorization.
+
 	static verifyToken(req, res, next) {
 		try {
 			const token = req.headers.authorization?.split(" ")[1];
-
-			if (!token) {
+			if (!token)
 				return res.status(401).json({
 					success: false,
 					data: null,
-					error: {
-						code: ErrorCode.UNAUTHORIZED,
-						message: "Token não fornecido",
-						field: null,
-					},
+					error: { code: ErrorCode.UNAUTHORIZED, message: getErrorMessage(ErrorCode.UNAUTHORIZED), field: null },
 				});
-			}
-
-			const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
-			req.user = decoded;
+			req.user = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
 			next();
-		} catch (error) {
+		} catch {
 			return res.status(401).json({
 				success: false,
 				data: null,
-				error: {
-					code: ErrorCode.INVALID_TOKEN,
-					message: "Token inválido ou expirado",
-					field: null,
-				},
+				error: { code: ErrorCode.INVALID_TOKEN, message: getErrorMessage(ErrorCode.INVALID_TOKEN), field: null },
 			});
 		}
 	}
 
-	// Gera tokens de acesso e renovação com o perfil do usuário.
 	static generateToken(id, role = "ADMIN") {
-		return jwt.sign({ id, role }, process.env.JWT_SECRET || "your-secret-key", {
-			expiresIn: "24h",
-		});
+		return jwt.sign({ id, role }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "24h" });
 	}
 
 	static generateRefreshToken(id, role = "ADMIN") {
-		return jwt.sign({ id, role, type: "refresh" }, process.env.JWT_SECRET || "your-secret-key", {
-			expiresIn: "7d",
-		});
+		return jwt.sign({ id, role, type: "refresh" }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "7d" });
 	}
 }
 

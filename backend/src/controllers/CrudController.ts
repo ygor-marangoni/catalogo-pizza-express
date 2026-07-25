@@ -1,4 +1,5 @@
 const Logger = require("../utils/Logger");
+import { ErrorCode } from "../entities/enums";
 
 export function createCrudController(service: any, resource: string) {
 	const singular =
@@ -45,9 +46,10 @@ export function createCrudController(service: any, resource: string) {
 		},
 		findById: async (req, res, next) => {
 			try {
+				const id = parseId(req.params.id);
 				res.json({
 					success: true,
-					data: await service[`get${singular}ById`](Number(req.params.id)),
+					data: await service[`get${singular}ById`](id),
 					error: null,
 				});
 			} catch (error) {
@@ -80,6 +82,7 @@ export function createCrudController(service: any, resource: string) {
 		},
 		update: async (req, res, next) => {
 			try {
+				const id = parseId(req.params.id);
 				const validationError = req.body.name === undefined ? null : validate(req.body);
 				if (validationError)
 					return res.status(400).json({
@@ -91,7 +94,7 @@ export function createCrudController(service: any, resource: string) {
 							field: null,
 						},
 					});
-				const record = await service[`update${singular}`](Number(req.params.id), req.body);
+				const record = await service[`update${singular}`](id, req.body);
 				Logger.info("Recurso atualizado", {
 					resource,
 					id: record.id,
@@ -104,10 +107,11 @@ export function createCrudController(service: any, resource: string) {
 		},
 		delete: async (req, res, next) => {
 			try {
-				await service[`delete${singular}`](Number(req.params.id));
+				const id = parseId(req.params.id);
+				await service[`delete${singular}`](id);
 				Logger.info("Recurso excluído", {
 					resource,
-					id: Number(req.params.id),
+					id,
 					adminId: req.user?.id,
 				});
 				res.json({ success: true, data: null, error: null });
@@ -116,4 +120,11 @@ export function createCrudController(service: any, resource: string) {
 			}
 		},
 	};
+}
+
+function parseId(value: string): number {
+	const id = Number(value);
+	if (!Number.isInteger(id) || id <= 0)
+		throw Object.assign(new Error("Identificador inválido"), { code: ErrorCode.INVALID_ID, statusCode: 400 });
+	return id;
 }

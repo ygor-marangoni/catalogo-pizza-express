@@ -1,3 +1,5 @@
+import { ErrorCode } from "../entities/enums";
+
 class SizeService {
 	private readonly sizeRepository: any;
 
@@ -55,4 +57,3 @@ class SizeService {
 }
 
 module.exports = SizeService;
-import { ErrorCode } from "../entities/enums";

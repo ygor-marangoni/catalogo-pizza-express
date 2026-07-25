@@ -35,6 +35,7 @@ export class InMemoryRepository<T extends Resource> implements Repository<T, Par
 	}
 
 	async create(data: Partial<T>): Promise<T> {
+		this.ensureUnique(data);
 		const now = new Date();
 		const record = {
 			...data,
@@ -49,7 +50,8 @@ export class InMemoryRepository<T extends Resource> implements Repository<T, Par
 
 	async update(id: number, data: Partial<T>): Promise<T> {
 		const current = await this.findById(id);
-		if (!current) throw new Error("RESOURCE_NOT_FOUND");
+		if (!current) throw Object.assign(new Error("Registro não encontrado"), { code: "RESOURCE_NOT_FOUND", statusCode: 404 });
+		this.ensureUnique(data, id);
 		const record = { ...current, ...data, id, updated_at: new Date() } as T;
 		this.records.set(id, record);
 		return record;
@@ -57,11 +59,22 @@ export class InMemoryRepository<T extends Resource> implements Repository<T, Par
 
 	async delete(id: number): Promise<void> {
 		const current = await this.findById(id);
-		if (!current) throw new Error("RESOURCE_NOT_FOUND");
+		if (!current) throw Object.assign(new Error("Registro não encontrado"), { code: "RESOURCE_NOT_FOUND", statusCode: 404 });
 		this.records.set(id, {
 			...current,
 			deleted_at: new Date(),
 			updated_at: new Date(),
 		});
+	}
+
+	private ensureUnique(data: Partial<T>, ignoredId?: number): void {
+		for (const field of ["name", "code"]) {
+			const value = data[field];
+			if (typeof value !== "string" || !value.trim()) continue;
+			const duplicate = [...this.records.values()].find(
+				(record) => record.id !== ignoredId && !record.deleted_at && String(record[field]).trim().toLowerCase() === value.trim().toLowerCase(),
+			);
+			if (duplicate) throw Object.assign(new Error("Registro duplicado"), { code: "DUPLICATE_RESOURCE", statusCode: 409 });
+		}
 	}
 }

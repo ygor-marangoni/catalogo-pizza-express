@@ -1,3 +1,5 @@
+import { ErrorCode } from "../entities/enums";
+
 class AdditionalService {
 	private readonly additionalRepository: any;
 
@@ -55,4 +57,3 @@ class AdditionalService {
 }
 
 module.exports = AdditionalService;
-import { ErrorCode } from "../entities/enums";

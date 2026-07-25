@@ -47,7 +47,7 @@ export const repositories = useDatabase
 export const services = {
 	auth: new AuthService(repositories.admin, repositories.user),
 	category: new CategoryService(repositories.category),
-	product: new ProductService(repositories.product),
+	product: new ProductService(repositories.product, repositories.category),
 	additional: new AdditionalService(repositories.additional),
 	edge: new EdgeService(repositories.edge),
 	size: new SizeService(repositories.size),
