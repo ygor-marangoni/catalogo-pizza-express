@@ -1,35 +1,50 @@
 {
-  "name": "backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/server.js",
-  "scripts": {
-    "build": "tsc",
-    "dev": "ts-node server.ts",
-    "start": "node dist/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "dependencies": {
-    "@elastic/elasticsearch": "^9.4.2",
-    "bcrypt": "^6.0.0",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3",
-    "swagger-jsdoc": "^6.3.0",
-    "swagger-ui-express": "^5.0.1"
-  },
-  "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^26.1.1",
-    "@types/swagger-jsdoc": "^6.0.4",
-    "@types/swagger-ui-express": "^4.1.8",
-    "ts-node": "^10.9.2",
-    "typescript": "^7.0.2"
-  }
+	"name": "backend",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/server.js",
+	"scripts": {
+		"build": "tsc",
+		"dev": "ts-node server.ts",
+		"migrate": "npm run build && node scripts/migrate.js",
+		"seed": "npm run build && node scripts/seed.js",
+		"start": "node dist/server.js",
+		"test": "npm run build && vitest run",
+		"test:unit": "npm run build && vitest run tests/unit",
+		"test:integration": "npm run build && vitest run tests/integration",
+		"test:contract": "vitest run tests/contract",
+		"format": "prettier --write ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "commonjs",
+	"dependencies": {
+		"@elastic/elasticsearch": "^9.4.2",
+		"bcrypt": "^6.0.0",
+		"cloudinary": "^2.10.0",
+		"dotenv": "^17.4.2",
+		"express": "^5.2.1",
+		"express-rate-limit": "^8.3.0",
+		"jsonwebtoken": "^9.0.3",
+		"pg": "^8.22.0",
+		"reflect-metadata": "^0.2.2",
+		"swagger-jsdoc": "^6.3.0",
+		"swagger-ui-express": "^5.0.1",
+		"typeorm": "^1.1.0",
+		"zod": "^4.4.3"
+	},
+	"devDependencies": {
+		"@types/bcrypt": "^6.0.0",
+		"@types/express": "^5.0.6",
+		"@types/jsonwebtoken": "^9.0.10",
+		"@types/node": "^26.1.1",
+		"@types/pg": "^8.20.0",
+		"@types/swagger-jsdoc": "^6.0.4",
+		"@types/swagger-ui-express": "^4.1.8",
+		"prettier": "^3.9.6",
+		"ts-node": "^10.9.2",
+		"typescript": "^7.0.2",
+		"vitest": "^4.1.10"
+	}
 }
