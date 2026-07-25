@@ -128,6 +128,13 @@ const options = {
 							description: "Valor em centavos.",
 							example: 3990,
 						},
+						image: {
+							type: "string",
+							format: "binary",
+							description: "Arquivo de imagem do produto.",
+						},
+						available: { type: "boolean", example: true },
+						highlighted: { type: "boolean", example: false },
 					},
 				},
 				Loja: {
@@ -438,7 +445,7 @@ const options = {
 					requestBody: {
 						required: true,
 						content: {
-							"application/json": {
+							"multipart/form-data": {
 								schema: {
 									$ref: "#/components/schemas/EntradaProduto",
 								},
@@ -469,7 +476,7 @@ const options = {
 					requestBody: {
 						required: true,
 						content: {
-							"application/json": {
+							"multipart/form-data": {
 								schema: {
 									$ref: "#/components/schemas/EntradaProduto",
 								},

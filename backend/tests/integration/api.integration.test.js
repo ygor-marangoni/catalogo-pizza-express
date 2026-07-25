@@ -1,5 +1,5 @@
 const assert = require("node:assert/strict");
-const { startServer, stopServer, request, jsonOptions } = require("../support/http");
+const { startServer, stopServer, request, jsonOptions, multipartOptions } = require("../support/http");
 const { registerCustomer, login, loginAdmin } = require("../support/auth");
 
 test("cobre os endpoints públicos, de autenticação, catálogo e loja", { concurrency: false }, async () => {
@@ -74,27 +74,22 @@ test("cobre o CRUD administrativo de categorias, produtos e complementos", { con
 		const product = await request(
 			baseUrl,
 			"/api/v1/products",
-			headers("POST", { name: "Margherita", category_id: categoryId, base_price: 2500, available: true }),
+			multipartOptions(
+				"POST",
+				{ name: "Margherita", category_id: categoryId, base_price: 2500, available: true },
+				admin.token,
+				{ name: "pizza.png", type: "image/png", content: "imagem de teste" },
+			),
 		);
 		assert.equal(product.response.status, 201);
 		const productId = product.body.data.id;
+		assert.match(product.body.data.image_url, /^data:image\/png;base64,/);
 		assert.equal((await request(baseUrl, `/api/v1/products/${productId}`)).response.status, 200);
 		assert.equal(
 			(await request(baseUrl, `/api/v1/products/${productId}`, headers("PUT", { name: "Margherita Especial" })))
 				.response.status,
 			200,
 		);
-		assert.equal(
-			(
-				await request(
-					baseUrl,
-					`/api/v1/products/${productId}/image`,
-					headers("POST", { image_url: "https://example.com/pizza.png" }),
-				)
-			).response.status,
-			200,
-		);
-
 		for (const resource of [
 			["additionals", { name: "Azeitona", price: 300 }],
 			["edges", { name: "Catupiry", additional_price: 500 }],
