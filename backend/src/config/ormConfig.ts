@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
 	password: process.env.DATABASE_URL ? undefined : process.env.DB_PASSWORD || "password",
 	database: process.env.DATABASE_URL ? undefined : process.env.DB_NAME || "db_pizza_express_dev",
 	entities: ormEntities,
-	migrations: ["dist/src/entities/migrations/*.js"],
+	migrations: ["dist/src/migrations/*.js"],
 	synchronize: false,
 	logging: process.env.NODE_ENV === "development" && process.env.TYPEORM_LOGGING === "true",
 });
