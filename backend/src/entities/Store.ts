@@ -11,10 +11,10 @@ export class Store {
 	@Column({ type: "text", nullable: true })
 	description: string | null;
 
-	@Column({ length: 40, nullable: true })
+	@Column({ type: "varchar", length: 40, nullable: true })
 	phone: string | null;
 
-	@Column({ nullable: true })
+	@Column({ type: "varchar", nullable: true })
 	email: string | null;
 
 	@Column({ type: "text", nullable: true })
