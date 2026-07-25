@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { AppDataSource } from "../config/ormConfig";
 
 export class TypeOrmRepository<T extends { id: number; deleted_at?: Date | null }> {
@@ -15,7 +15,7 @@ export class TypeOrmRepository<T extends { id: number; deleted_at?: Date | null 
 
 	async findAll(filters: Record<string, unknown> = {}): Promise<T[]> {
 		const where = {
-			deleted_at: null,
+			deleted_at: IsNull(),
 			...Object.fromEntries(
 				Object.entries(filters).filter(
 					([key, value]) =>
@@ -30,7 +30,7 @@ export class TypeOrmRepository<T extends { id: number; deleted_at?: Date | null 
 
 	async findById(id: number): Promise<T | null> {
 		return this.repository.findOne({
-			where: { id, deleted_at: null } as any,
+			where: { id, deleted_at: IsNull() } as any,
 		});
 	}
 
