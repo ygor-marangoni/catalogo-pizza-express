@@ -39,11 +39,4 @@ export class TypeOrmUserRepository implements UserRepository {
 		if (data.email) user.email = data.email.toLowerCase();
 		return this.repository.save(user as User) as Promise<UserResDTO>;
 	}
-
-	async updateLastLogin(id: number): Promise<void> {
-		await this.repository.update(id, {
-			last_login: new Date(),
-			updated_at: new Date(),
-		});
-	}
 }

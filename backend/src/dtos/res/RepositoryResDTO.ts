@@ -21,7 +21,6 @@ export interface StoreRepository {
 export interface AdminRepository {
 	findByEmail(email: string): Promise<AdminResDTO | null>;
 	findById(id: number): Promise<AdminResDTO | null>;
-	updateLastLogin(id: number): Promise<void>;
 }
 
 export interface UserRepository {
@@ -29,5 +28,4 @@ export interface UserRepository {
 	findById(id: number): Promise<UserResDTO | null>;
 	create(data: RegisterUserReqDTO, passwordHash: string): Promise<UserResDTO>;
 	update(id: number, data: UpdateUserReqDTO, passwordHash?: string): Promise<UserResDTO>;
-	updateLastLogin(id: number): Promise<void>;
 }

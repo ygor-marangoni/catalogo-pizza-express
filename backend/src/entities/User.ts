@@ -15,6 +15,4 @@ export class User extends BaseEntity {
 	@Column({ type: "text" })
 	password_hash: string;
 
-	@Column({ type: "timestamptz", nullable: true })
-	last_login: Date | null;
 }

@@ -6,7 +6,6 @@ class AdminModel implements AdminResDTO {
 		public name: string,
 		public email: string,
 		public password_hash: string,
-		public last_login: NullableDate,
 		public created_at: NullableDate,
 		public updated_at: NullableDate,
 		public deleted_at: NullableDate,
