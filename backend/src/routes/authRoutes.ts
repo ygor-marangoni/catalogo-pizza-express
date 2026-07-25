@@ -1,21 +1,15 @@
-const express = require("express");
+import express from "express";
+import { services } from "../config/containerConfig";
+const AuthController = require("../controllers/AuthController");
+import { validate } from "../middlewares/ZodValidationMiddleware";
+import { loginSchema, registerUserSchema } from "../validations/schemas";
+
 const router = express.Router();
+const controller = new AuthController(services.auth);
 
-const AuthController = require('../controllers/AuthController');
-
-router.post("/admin/login", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Login administrador" });
-});
-
-router.post("/admin/refresh", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Refresh token" });
-});
-
-router.post("/admin/logout", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Logout administrador" });
-});
+// Mantém login e renovação unificados para ADMIN e CUSTOMER.
+router.post("/login", validate(loginSchema), controller.login.bind(controller));
+router.post("/refresh", controller.refresh.bind(controller));
+router.post("/user/register", validate(registerUserSchema), controller.registerUser.bind(controller));
 
 module.exports = router;

@@ -28,8 +28,7 @@ class AdditionalService {
 
 	async createAdditional(additionalData) {
 		try {
-			const additional =
-				await this.additionalRepository.create(additionalData);
+			const additional = await this.additionalRepository.create(additionalData);
 			return additional;
 		} catch (error) {
 			throw new Error(`Erro ao criar adicional: ${error.message}`);
@@ -38,10 +37,7 @@ class AdditionalService {
 
 	async updateAdditional(id, additionalData) {
 		try {
-			const additional = await this.additionalRepository.update(
-				id,
-				additionalData,
-			);
+			const additional = await this.additionalRepository.update(id, additionalData);
 			return additional;
 		} catch (error) {
 			throw new Error(`Erro ao atualizar adicional: ${error.message}`);
@@ -59,4 +55,4 @@ class AdditionalService {
 }
 
 module.exports = AdditionalService;
-import { ErrorCode } from "../enums";
+import { ErrorCode } from "../entities/enums";

@@ -1,6 +1,6 @@
 const Hateoas = require("../utils/Hateoas");
 import type { NextFunction, Request, Response } from "express";
-import type { ProductInput } from "../types/domain";
+import type { CreateProductReqDTO, UpdateProductReqDTO } from "../dtos/req";
 import ProductService = require("../services/ProductService");
 
 class ProductController {
@@ -40,11 +40,14 @@ class ProductController {
 		}
 	}
 
-	async create(req: Request<Record<string, never>, unknown, ProductInput>, res: Response, next: NextFunction): Promise<void> {
+	async create(
+		req: Request<Record<string, never>, unknown, CreateProductReqDTO>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
 		try {
 			const productData = req.body;
-			const product =
-				await this.productService.createProduct(productData);
+			const product = await this.productService.createProduct(productData);
 
 			res.status(201).json({
 				success: true,
@@ -56,14 +59,15 @@ class ProductController {
 		}
 	}
 
-	async update(req: Request<{ id: string }, unknown, Partial<ProductInput>>, res: Response, next: NextFunction): Promise<void> {
+	async update(
+		req: Request<{ id: string }, unknown, UpdateProductReqDTO>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
 		try {
 			const id = Number(req.params.id);
 			const productData = req.body;
-			const product = await this.productService.updateProduct(
-				id,
-				productData,
-			);
+			const product = await this.productService.updateProduct(id, productData);
 
 			res.json({
 				success: true,

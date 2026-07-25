@@ -1,31 +1,17 @@
-const express = require("express");
+import express from "express";
+const AuthMiddleware = require("../middlewares/AuthMiddleware");
+import { services } from "../config/containerConfig";
+import { createCrudController } from "../controllers/CrudController";
+import { validate } from "../middlewares/ZodValidationMiddleware";
+import { categoryCreateSchema, categoryUpdateSchema } from "../validations/schemas";
+
 const router = express.Router();
-
-const CategoryController = require('../controllers/CategoryController');
-
-router.get("/", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Listar categorias" });
-});
-
-router.get("/:id", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Buscar categoria" });
-});
-
-router.post("/", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Criar categoria" });
-});
-
-router.put("/:id", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Atualizar categoria" });
-});
-
-router.delete("/:id", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Deletar categoria" });
-});
-
+const controller = createCrudController(services.category, "Categories");
+const protect = AuthMiddleware.verifyToken.bind(AuthMiddleware);
+const adminOnly = AuthMiddleware.requireRole("ADMIN");
+router.get("/", controller.findAll);
+router.get("/:id", controller.findById);
+router.post("/", protect, adminOnly, validate(categoryCreateSchema), controller.create);
+router.put("/:id", protect, adminOnly, validate(categoryUpdateSchema), controller.update);
+router.delete("/:id", protect, adminOnly, controller.delete);
 module.exports = router;

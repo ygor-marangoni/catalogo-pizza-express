@@ -1,0 +1,23 @@
+export { Additional } from "./Additional";
+export { Admin } from "./Admin";
+export { BaseEntity } from "./BaseEntity";
+export { Category } from "./Category";
+export { Edge } from "./Edge";
+export { Product } from "./Product";
+export { Size } from "./Size";
+export { Store } from "./Store";
+export { User } from "./User";
+export { Order } from "./Order";
+export { Favorite } from "./Favorite";
+import { Additional } from "./Additional";
+import { Admin } from "./Admin";
+import { User } from "./User";
+import { Order } from "./Order";
+import { Favorite } from "./Favorite";
+import { Category } from "./Category";
+import { Edge } from "./Edge";
+import { Product } from "./Product";
+import { Size } from "./Size";
+import { Store } from "./Store";
+
+export const ormEntities = [Admin, User, Order, Favorite, Category, Product, Additional, Edge, Size, Store];

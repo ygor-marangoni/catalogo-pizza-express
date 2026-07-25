@@ -13,8 +13,7 @@ class AdditionalController {
 
 	async findAll(req, res, next) {
 		try {
-			const additionals =
-				await this.additionalService.getAllAdditionals();
+			const additionals = await this.additionalService.getAllAdditionals();
 
 			res.json({
 				success: true,
@@ -29,8 +28,7 @@ class AdditionalController {
 	async findById(req, res, next) {
 		try {
 			const { id } = req.params;
-			const additional =
-				await this.additionalService.getAdditionalById(id);
+			const additional = await this.additionalService.getAdditionalById(id);
 
 			res.json({
 				success: true,
@@ -45,8 +43,7 @@ class AdditionalController {
 	async create(req, res, next) {
 		try {
 			const additionalData = req.body;
-			const additional =
-				await this.additionalService.createAdditional(additionalData);
+			const additional = await this.additionalService.createAdditional(additionalData);
 
 			res.status(201).json({
 				success: true,
@@ -62,10 +59,7 @@ class AdditionalController {
 		try {
 			const { id } = req.params;
 			const additionalData = req.body;
-			const additional = await this.additionalService.updateAdditional(
-				id,
-				additionalData,
-			);
+			const additional = await this.additionalService.updateAdditional(id, additionalData);
 
 			res.json({
 				success: true,

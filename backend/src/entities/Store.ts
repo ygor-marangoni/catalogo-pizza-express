@@ -1,20 +1,40 @@
-import type { NullableDate, StoreResource } from "../types/domain";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
-class Store implements StoreResource {
-	constructor(
-		public id: number,
-		public name: string,
-		public description: string | null,
-		public phone: string | null,
-		public email: string | null,
-		public address: string | null,
-		public opening_hours: string | null,
-		public is_open: boolean,
-		public delivery_fee: number,
-		public min_order_value: number,
-		public created_at: NullableDate,
-		public updated_at: NullableDate,
-	) {}
+@Entity("stores")
+export class Store {
+	@PrimaryColumn()
+	id: number;
+
+	@Column({ length: 160 })
+	name: string;
+
+	@Column({ type: "text", nullable: true })
+	description: string | null;
+
+	@Column({ length: 40, nullable: true })
+	phone: string | null;
+
+	@Column({ nullable: true })
+	email: string | null;
+
+	@Column({ type: "text", nullable: true })
+	address: string | null;
+
+	@Column({ type: "text", nullable: true })
+	opening_hours: string | null;
+
+	@Column({ default: true })
+	is_open: boolean;
+
+	@Column({ type: "integer", default: 0 })
+	delivery_fee: number;
+
+	@Column({ type: "integer", default: 0 })
+	min_order_value: number;
+
+	@Column({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
+	created_at: Date;
+
+	@Column({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
+	updated_at: Date;
 }
-
-module.exports = Store;

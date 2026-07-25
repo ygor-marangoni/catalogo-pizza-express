@@ -1,14 +1,15 @@
-import { ErrorCode } from "../enums";
-import type { CategoryInput, CategoryResource, Repository } from "../types/domain";
+import { ErrorCode } from "../entities/enums";
+import type { CreateCategoryReqDTO, UpdateCategoryReqDTO } from "../dtos/req";
+import type { CategoryResDTO, Repository } from "../dtos/res";
 
 class CategoryService {
-	private readonly categoryRepository: Repository<CategoryResource, CategoryInput, Partial<CategoryInput>>;
+	private readonly categoryRepository: Repository<CategoryResDTO, CreateCategoryReqDTO, UpdateCategoryReqDTO>;
 
-	constructor(categoryRepository: Repository<CategoryResource, CategoryInput, Partial<CategoryInput>>) {
+	constructor(categoryRepository: Repository<CategoryResDTO, CreateCategoryReqDTO, UpdateCategoryReqDTO>) {
 		this.categoryRepository = categoryRepository;
 	}
 
-	async getAllCategories(): Promise<CategoryResource[]> {
+	async getAllCategories(): Promise<CategoryResDTO[]> {
 		try {
 			const categories = await this.categoryRepository.findAll();
 			return categories;
@@ -17,7 +18,7 @@ class CategoryService {
 		}
 	}
 
-	async getCategoryById(id: number): Promise<CategoryResource> {
+	async getCategoryById(id: number): Promise<CategoryResDTO> {
 		try {
 			const category = await this.categoryRepository.findById(id);
 			if (!category) {
@@ -29,7 +30,7 @@ class CategoryService {
 		}
 	}
 
-	async createCategory(categoryData: CategoryInput): Promise<CategoryResource> {
+	async createCategory(categoryData: CreateCategoryReqDTO): Promise<CategoryResDTO> {
 		try {
 			const category = await this.categoryRepository.create(categoryData);
 			return category;
@@ -38,12 +39,9 @@ class CategoryService {
 		}
 	}
 
-	async updateCategory(id: number, categoryData: Partial<CategoryInput>): Promise<CategoryResource> {
+	async updateCategory(id: number, categoryData: UpdateCategoryReqDTO): Promise<CategoryResDTO> {
 		try {
-			const category = await this.categoryRepository.update(
-				id,
-				categoryData,
-			);
+			const category = await this.categoryRepository.update(id, categoryData);
 			return category;
 		} catch (error) {
 			throw new Error(`Erro ao atualizar categoria: ${error.message}`);

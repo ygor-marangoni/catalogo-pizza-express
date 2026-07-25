@@ -1,10 +1,21 @@
-import { ErrorCode } from "../enums";
+import { ErrorCode } from "../entities/enums";
 
 class ErrorHandler {
 	static handle(error, req, res, next) {
 		const statusCode = error.statusCode || 500;
 		const errorCode = error.code || ErrorCode.INTERNAL_ERROR;
 		const message = error.message || "Erro interno do servidor";
+		const knownStatus =
+			{
+				[ErrorCode.EMAIL_ALREADY_EXISTS]: 409,
+				[ErrorCode.USER_NOT_FOUND]: 404,
+				[ErrorCode.ORDER_NOT_FOUND]: 404,
+				[ErrorCode.FAVORITE_NOT_FOUND]: 404,
+				[ErrorCode.FAVORITE_ALREADY_EXISTS]: 409,
+				[ErrorCode.PRODUCT_UNAVAILABLE]: 409,
+				[ErrorCode.FORBIDDEN]: 403,
+				[ErrorCode.VALIDATION_ERROR]: 400,
+			}[errorCode] || statusCode;
 
 		console.error(`[${new Date().toISOString()}] ${errorCode}: ${message}`);
 
@@ -46,7 +57,7 @@ class ErrorHandler {
 		}
 
 		// Erro genérico
-		return res.status(statusCode).json({
+		return res.status(knownStatus).json({
 			success: false,
 			data: null,
 			error: {

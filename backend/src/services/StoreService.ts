@@ -1,4 +1,5 @@
-import type { StoreInput, StoreRepository, StoreResource } from "../types/domain";
+import type { UpdateStoreReqDTO } from "../dtos/req";
+import type { StoreRepository, StoreResDTO } from "../dtos/res";
 
 class StoreService {
 	private readonly storeRepository: StoreRepository;
@@ -7,7 +8,7 @@ class StoreService {
 		this.storeRepository = storeRepository;
 	}
 
-	async getStoreInfo(): Promise<StoreResource> {
+	async getStoreInfo(): Promise<StoreResDTO> {
 		try {
 			const store = await this.storeRepository.find();
 			if (!store) {
@@ -19,14 +20,12 @@ class StoreService {
 		}
 	}
 
-	async updateStoreInfo(storeData: StoreInput): Promise<StoreResource> {
+	async updateStoreInfo(storeData: UpdateStoreReqDTO): Promise<StoreResDTO> {
 		try {
 			const store = await this.storeRepository.update(storeData);
 			return store;
 		} catch (error) {
-			throw new Error(
-				`Erro ao atualizar informações da loja: ${error.message}`,
-			);
+			throw new Error(`Erro ao atualizar informações da loja: ${error.message}`);
 		}
 	}
 
@@ -38,23 +37,19 @@ class StoreService {
 			}
 			return store.is_open;
 		} catch (error) {
-			throw new Error(
-				`Erro ao verificar status da loja: ${error.message}`,
-			);
+			throw new Error(`Erro ao verificar status da loja: ${error.message}`);
 		}
 	}
 
-	async setStoreStatus(isOpen: boolean): Promise<StoreResource> {
+	async setStoreStatus(isOpen: boolean): Promise<StoreResDTO> {
 		try {
 			const store = await this.storeRepository.updateStatus(isOpen);
 			return store;
 		} catch (error) {
-			throw new Error(
-				`Erro ao atualizar status da loja: ${error.message}`,
-			);
+			throw new Error(`Erro ao atualizar status da loja: ${error.message}`);
 		}
 	}
 }
 
 module.exports = StoreService;
-import { ErrorCode } from "../enums";
+import { ErrorCode } from "../entities/enums";

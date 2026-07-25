@@ -1,16 +1,20 @@
-import type { NullableDate, SizeResource } from "../types/domain";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
 
-class Size implements SizeResource {
-	constructor(
-		public id: number,
-		public name: string,
-		public code: string,
-		public description: string | null,
-		public additional_price: number,
-		public created_at: NullableDate,
-		public updated_at: NullableDate,
-		public deleted_at: NullableDate,
-	) {}
+@Entity("sizes")
+export class Size extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column({ length: 80 })
+	name: string;
+
+	@Column({ length: 40, unique: true })
+	code: string;
+
+	@Column({ type: "text", nullable: true })
+	description: string | null;
+
+	@Column({ type: "integer", default: 0 })
+	additional_price: number;
 }
-
-module.exports = Size;

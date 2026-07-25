@@ -55,4 +55,4 @@ class EdgeService {
 }
 
 module.exports = EdgeService;
-import { ErrorCode } from "../enums";
+import { ErrorCode } from "../entities/enums";

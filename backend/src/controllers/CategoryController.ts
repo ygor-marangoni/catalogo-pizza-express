@@ -1,6 +1,6 @@
 const Hateoas = require("../utils/Hateoas");
 import type { NextFunction, Request, Response } from "express";
-import type { CategoryInput } from "../types/domain";
+import type { CreateCategoryReqDTO, UpdateCategoryReqDTO } from "../dtos/req";
 import CategoryService = require("../services/CategoryService");
 
 class CategoryController {
@@ -39,11 +39,14 @@ class CategoryController {
 		}
 	}
 
-	async create(req: Request<Record<string, never>, unknown, CategoryInput>, res: Response, next: NextFunction): Promise<void> {
+	async create(
+		req: Request<Record<string, never>, unknown, CreateCategoryReqDTO>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
 		try {
 			const categoryData = req.body;
-			const category =
-				await this.categoryService.createCategory(categoryData);
+			const category = await this.categoryService.createCategory(categoryData);
 
 			res.status(201).json({
 				success: true,
@@ -55,14 +58,15 @@ class CategoryController {
 		}
 	}
 
-	async update(req: Request<{ id: string }, unknown, Partial<CategoryInput>>, res: Response, next: NextFunction): Promise<void> {
+	async update(
+		req: Request<{ id: string }, unknown, UpdateCategoryReqDTO>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
 		try {
 			const id = Number(req.params.id);
 			const categoryData = req.body;
-			const category = await this.categoryService.updateCategory(
-				id,
-				categoryData,
-			);
+			const category = await this.categoryService.updateCategory(id, categoryData);
 
 			res.json({
 				success: true,

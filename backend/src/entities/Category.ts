@@ -1,15 +1,17 @@
-import type { CategoryResource, NullableDate } from "../types/domain";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
 
-class Category implements CategoryResource {
-	constructor(
-		public id: number,
-		public name: string,
-		public description: string | null,
-		public icon_url: string | null,
-		public created_at: NullableDate,
-		public updated_at: NullableDate,
-		public deleted_at: NullableDate,
-	) {}
+@Entity("categories")
+export class Category extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column({ length: 120 })
+	name: string;
+
+	@Column({ type: "text", nullable: true })
+	description: string | null;
+
+	@Column({ type: "text", nullable: true })
+	icon_url: string | null;
 }
-
-module.exports = Category;

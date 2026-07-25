@@ -1,19 +1,29 @@
-import type { NullableDate, ProductResource } from "../types/domain";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
 
-class Product implements ProductResource {
-	constructor(
-		public id: number,
-		public name: string,
-		public description: string | null,
-		public category_id: number,
-		public base_price: number,
-		public image_url: string | null,
-		public available: boolean,
-		public highlighted: boolean,
-		public created_at: NullableDate,
-		public updated_at: NullableDate,
-		public deleted_at: NullableDate,
-	) {}
+@Entity("products")
+export class Product extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column({ length: 160 })
+	name: string;
+
+	@Column({ type: "text", nullable: true })
+	description: string | null;
+
+	@Column()
+	category_id: number;
+
+	@Column({ type: "integer" })
+	base_price: number;
+
+	@Column({ type: "text", nullable: true })
+	image_url: string | null;
+
+	@Column({ default: true })
+	available: boolean;
+
+	@Column({ default: false })
+	highlighted: boolean;
 }
-
-module.exports = Product;

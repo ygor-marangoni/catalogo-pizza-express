@@ -7,7 +7,7 @@ const options = {
 			title: "Pizza Express API",
 			version: "1.0.0",
 			description:
-				"API REST para consulta do cardápio e gerenciamento do painel administrativo da Pizza Express.",
+				"API REST para consulta do cardápio e gerenciamento do painel administrativo da Pizza Express.\n\n[Acessar JSON puro do OpenAPI](/api-docs/openapi.json)",
 			contact: { name: "Pizza Express Team" },
 		},
 		servers: [
@@ -214,6 +214,96 @@ const options = {
 			},
 		},
 		paths: {
+			"/api/v1/auth/user/register": {
+				post: {
+					tags: ["Autenticação"],
+					summary: "Cadastra um usuário comum",
+					responses: {
+						201: { description: "Usuário cadastrado" },
+						400: { $ref: "#/components/responses/BadRequest" },
+					},
+				},
+			},
+			"/api/v1/auth/login": {
+				post: {
+					tags: ["Autenticação"],
+					summary: "Autentica um usuário comum",
+					responses: {
+						200: { description: "Usuário autenticado" },
+						401: { $ref: "#/components/responses/Unauthorized" },
+					},
+				},
+			},
+			"/api/v1/users/me": {
+				get: {
+					tags: ["Usuários"],
+					summary: "Consulta o próprio perfil",
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: "Perfil do usuário" },
+						403: { description: "Perfil inválido" },
+					},
+				},
+				put: {
+					tags: ["Usuários"],
+					summary: "Atualiza o próprio perfil",
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: "Perfil atualizado" },
+						403: { description: "Perfil inválido" },
+					},
+				},
+			},
+			"/api/v1/users/me/favorites": {
+				get: {
+					tags: ["Usuários"],
+					summary: "Lista os próprios favoritos",
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: "Favoritos do usuário" } },
+				},
+				post: {
+					tags: ["Usuários"],
+					summary: "Adiciona um favorito",
+					security: [{ bearerAuth: [] }],
+					responses: { 201: { description: "Favorito criado" } },
+				},
+			},
+			"/api/v1/users/me/orders": {
+				get: {
+					tags: ["Usuários"],
+					summary: "Lista os próprios pedidos",
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: "Pedidos do usuário" } },
+				},
+				post: {
+					tags: ["Usuários"],
+					summary: "Cria um pedido para o usuário autenticado",
+					security: [{ bearerAuth: [] }],
+					responses: { 201: { description: "Pedido criado" } },
+				},
+			},
+			"/api/v1/admin/orders": {
+				get: {
+					tags: ["Usuários"],
+					summary: "Lista todos os pedidos para o administrador",
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: "Pedidos listados" },
+						403: { description: "Acesso restrito ao administrador" },
+					},
+				},
+			},
+			"/api/v1/admin/orders/{id}/status": {
+				patch: {
+					tags: ["Usuários"],
+					summary: "Atualiza o status de um pedido",
+					security: [{ bearerAuth: [] }],
+					responses: {
+						200: { description: "Status atualizado" },
+						403: { description: "Acesso restrito ao administrador" },
+					},
+				},
+			},
 			"/": {
 				get: {
 					tags: ["Health"],
@@ -269,17 +359,6 @@ const options = {
 					},
 				},
 			},
-			"/api/v1/auth/admin/logout": {
-				post: {
-					tags: ["Autenticação"],
-					summary: "Encerra a sessão do administrador",
-					security: [{ bearerAuth: [] }],
-					responses: {
-						200: { description: "Logout realizado" },
-						401: { $ref: "#/components/responses/Unauthorized" },
-					},
-				},
-			},
 			"/api/v1/products/search": {
 				get: {
 					tags: ["Produtos"],
@@ -297,8 +376,7 @@ const options = {
 							name: "category_id",
 							in: "query",
 							required: false,
-							description:
-								"Filtra pelo identificador da categoria",
+							description: "Filtra pelo identificador da categoria",
 							schema: { type: "integer", minimum: 1 },
 							example: 1,
 						},
@@ -538,4 +616,10 @@ const options = {
 	},
 };
 
-module.exports = swaggerJsdoc({ definition: options.definition, apis: [] });
+const swaggerDocument = swaggerJsdoc({
+	definition: options.definition,
+	apis: [],
+});
+delete swaggerDocument.paths?.["/api/v1/auth/admin/login"];
+delete swaggerDocument.paths?.["/api/v1/auth/admin/refresh"];
+module.exports = swaggerDocument;

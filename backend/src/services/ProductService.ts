@@ -1,14 +1,15 @@
-import { ErrorCode } from "../enums";
-import type { ProductInput, ProductResource, Repository } from "../types/domain";
+import { ErrorCode } from "../entities/enums";
+import type { CreateProductReqDTO, UpdateProductReqDTO } from "../dtos/req";
+import type { ProductResDTO, Repository } from "../dtos/res";
 
 class ProductService {
-	private readonly productRepository: Repository<ProductResource, ProductInput, Partial<ProductInput>>;
+	private readonly productRepository: Repository<ProductResDTO, CreateProductReqDTO, UpdateProductReqDTO>;
 
-	constructor(productRepository: Repository<ProductResource, ProductInput, Partial<ProductInput>>) {
+	constructor(productRepository: Repository<ProductResDTO, CreateProductReqDTO, UpdateProductReqDTO>) {
 		this.productRepository = productRepository;
 	}
 
-	async getAllProducts(filters: Record<string, unknown> = {}): Promise<ProductResource[]> {
+	async getAllProducts(filters: Record<string, unknown> = {}): Promise<ProductResDTO[]> {
 		try {
 			const products = await this.productRepository.findAll(filters);
 			return products;
@@ -17,7 +18,7 @@ class ProductService {
 		}
 	}
 
-	async getProductById(id: number): Promise<ProductResource> {
+	async getProductById(id: number): Promise<ProductResDTO> {
 		try {
 			const product = await this.productRepository.findById(id);
 			if (!product) {
@@ -29,7 +30,7 @@ class ProductService {
 		}
 	}
 
-	async createProduct(productData: ProductInput): Promise<ProductResource> {
+	async createProduct(productData: CreateProductReqDTO): Promise<ProductResDTO> {
 		try {
 			const product = await this.productRepository.create(productData);
 			return product;
@@ -38,12 +39,9 @@ class ProductService {
 		}
 	}
 
-	async updateProduct(id: number, productData: Partial<ProductInput>): Promise<ProductResource> {
+	async updateProduct(id: number, productData: UpdateProductReqDTO): Promise<ProductResDTO> {
 		try {
-			const product = await this.productRepository.update(
-				id,
-				productData,
-			);
+			const product = await this.productRepository.update(id, productData);
 			return product;
 		} catch (error) {
 			throw new Error(`Erro ao atualizar produto: ${error.message}`);

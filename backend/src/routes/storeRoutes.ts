@@ -1,26 +1,16 @@
-const express = require("express");
+import express from "express";
+const AuthMiddleware = require("../middlewares/AuthMiddleware");
+const StoreController = require("../controllers/StoreController");
+import { services } from "../config/containerConfig";
+import { validate } from "../middlewares/ZodValidationMiddleware";
+import { storeStatusSchema, storeUpdateSchema } from "../validations/schemas";
+
 const router = express.Router();
-
-const StoreController = require('../controllers/StoreController');
-
-router.get("/", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Informações da loja" });
-});
-
-router.put("/", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Atualizar informações da loja" });
-});
-
-router.get("/status", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Status da loja" });
-});
-
-router.put("/status", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Atualizar status da loja" });
-});
-
+const controller = new StoreController(services.store);
+const protect = AuthMiddleware.verifyToken.bind(AuthMiddleware);
+const adminOnly = AuthMiddleware.requireRole("ADMIN");
+router.get("/", controller.getInfo.bind(controller));
+router.put("/", protect, adminOnly, validate(storeUpdateSchema), controller.updateInfo.bind(controller));
+router.get("/status", controller.getStatus.bind(controller));
+router.put("/status", protect, adminOnly, validate(storeStatusSchema), controller.updateStatus.bind(controller));
 module.exports = router;

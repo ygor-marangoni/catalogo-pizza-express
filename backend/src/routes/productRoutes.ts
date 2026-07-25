@@ -1,61 +1,25 @@
-const express = require("express");
+import express from "express";
+const AuthMiddleware = require("../middlewares/AuthMiddleware");
+import { services } from "../config/containerConfig";
+import { createCrudController } from "../controllers/CrudController";
+const ProductSearchController = require("../controllers/ProductSearchController");
+const ProductImageController = require("../controllers/ProductImageController");
+import ProductSearchService = require("../services/ProductSearchService");
+import ImageService = require("../services/ImageService");
+import { validate } from "../middlewares/ZodValidationMiddleware";
+import { productCreateSchema, productUpdateSchema } from "../validations/schemas";
+
 const router = express.Router();
-import { ErrorCode } from "../enums";
-
-const ProductController = require('../controllers/ProductController');
-const ProductSearchService = require('../services/ProductSearchService');
-
-const productSearchService = new ProductSearchService();
-
-router.get("/search", async (req, res, next) => {
-	try {
-		const query = typeof req.query.q === "string" ? req.query.q : "";
-		const categoryId = typeof req.query.category_id === "string" ? Number(req.query.category_id) : undefined;
-		const available = typeof req.query.available === "string" ? req.query.available === "true" : undefined;
-		const products = await productSearchService.search(query, { category_id: categoryId, available });
-
-		res.json({
-			success: true,
-			data: {
-				items: products,
-				_links: {
-					self: { href: `/api/v1/products/search?q=${encodeURIComponent(query)}` },
-					collection: { href: "/api/v1/products" },
-				},
-			},
-			error: null,
-		});
-	} catch (error) {
-		const serviceError = error as Error & { code?: string; statusCode?: number };
-		serviceError.code = ErrorCode.PRODUCT_SEARCH_UNAVAILABLE;
-		serviceError.statusCode = 503;
-		next(serviceError);
-	}
-});
-
-router.get("/", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Listar produtos" });
-});
-
-router.get("/:id", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Buscar produto" });
-});
-
-router.post("/", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Criar produto" });
-});
-
-router.put("/:id", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Atualizar produto" });
-});
-
-router.delete("/:id", (req, res, next) => {
-	// TODO: Implementar
-	res.json({ message: "Deletar produto" });
-});
-
+const controller = createCrudController(services.product, "Products");
+const searchController = new ProductSearchController(new ProductSearchService());
+const imageController = new ProductImageController(services.product, ImageService);
+const protect = AuthMiddleware.verifyToken.bind(AuthMiddleware);
+const adminOnly = AuthMiddleware.requireRole("ADMIN");
+router.get("/search", searchController.search.bind(searchController));
+router.post("/:id/image", protect, adminOnly, imageController.upload.bind(imageController));
+router.get("/", controller.findAll);
+router.get("/:id", controller.findById);
+router.post("/", protect, adminOnly, validate(productCreateSchema), controller.create);
+router.put("/:id", protect, adminOnly, validate(productUpdateSchema), controller.update);
+router.delete("/:id", protect, adminOnly, controller.delete);
 module.exports = router;

@@ -1,22 +1,16 @@
-import { ErrorCode } from "../enums";
+import { ErrorCode } from "../entities/enums";
 
 class AuthController {
-	private readonly authService: {
-		login: (
-			email: string,
-			password: string,
-		) => Promise<{ id: number; name: string; email: string }>;
-	};
+	private readonly authService: any;
 
-	constructor(authService) {
+	constructor(authService: any) {
 		this.authService = authService;
 	}
 
 	async login(req, res, next) {
 		try {
 			const { email, password } = req.body;
-
-			if (!email || !password) {
+			if (!email || !password)
 				return res.status(400).json({
 					success: false,
 					data: null,
@@ -26,27 +20,24 @@ class AuthController {
 						field: null,
 					},
 				});
-			}
-
-			const admin = await this.authService.login(email, password);
-
+			const authenticated = await this.authService.authenticate(email, password);
+			const auth = require("../middlewares/AuthMiddleware");
+			const token = auth.generateToken(authenticated.account.id, authenticated.role);
+			const refreshToken = auth.generateRefreshToken(authenticated.account.id, authenticated.role);
+			res.cookie("refresh_token", refreshToken, {
+				httpOnly: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
+				maxAge: 604800000,
+			});
 			res.json({
 				success: true,
 				data: {
-					id: admin.id,
-					name: admin.name,
-					email: admin.email,
-					_links: {
-						self: { href: `/api/v1/auth/admin/${admin.id}` },
-						refresh: {
-							href: "/api/v1/auth/admin/refresh",
-							method: "POST",
-						},
-						logout: {
-							href: "/api/v1/auth/admin/logout",
-							method: "POST",
-						},
-					},
+					id: authenticated.account.id,
+					name: authenticated.account.name,
+					email: authenticated.account.email,
+					token,
+					role: authenticated.role,
 				},
 				error: null,
 			});
@@ -55,13 +46,27 @@ class AuthController {
 		}
 	}
 
-	async refresh(req, res, next) {
+	async registerUser(req, res, next) {
 		try {
-			// TODO: Implementar lógica de refresh token
-
-			res.json({
+			const { name, email, password } = req.body;
+			if (!name || !email || !password)
+				return res.status(400).json({
+					success: false,
+					data: null,
+					error: {
+						code: ErrorCode.INVALID_INPUT,
+						message: "Nome, email e senha são obrigatórios",
+						field: null,
+					},
+				});
+			const user = await this.authService.registerUser({
+				name,
+				email,
+				password,
+			});
+			res.status(201).json({
 				success: true,
-				data: {},
+				data: { id: user.id, name: user.name, email: user.email },
 				error: null,
 			});
 		} catch (error) {
@@ -69,15 +74,58 @@ class AuthController {
 		}
 	}
 
-	async logout(req, res, next) {
+	async refresh(req, res) {
 		try {
-			res.json({
-				success: true,
-				data: null,
-				error: null,
+			const cookie = req.headers.cookie
+				?.split(";")
+				.map((value) => value.trim())
+				.find((value) => value.startsWith("refresh_token="));
+			if (!cookie)
+				return res.status(401).json({
+					success: false,
+					data: null,
+					error: {
+						code: ErrorCode.UNAUTHORIZED,
+						message: "Refresh token não fornecido",
+						field: null,
+					},
+				});
+			const jwt = require("jsonwebtoken");
+			const decoded = jwt.verify(
+				decodeURIComponent(cookie.split("=")[1]),
+				process.env.JWT_SECRET || "your-secret-key",
+			);
+			if (decoded.type !== "refresh")
+				return res.status(401).json({
+					success: false,
+					data: null,
+					error: {
+						code: ErrorCode.INVALID_TOKEN,
+						message: "Refresh token inválido",
+						field: null,
+					},
+				});
+			const auth = require("../middlewares/AuthMiddleware");
+			const role = decoded.role || "ADMIN";
+			const token = auth.generateToken(decoded.id, role);
+			const refreshToken = auth.generateRefreshToken(decoded.id, role);
+			res.cookie("refresh_token", refreshToken, {
+				httpOnly: true,
+				sameSite: "lax",
+				secure: process.env.NODE_ENV === "production",
+				maxAge: 604800000,
 			});
-		} catch (error) {
-			next(error);
+			res.json({ success: true, data: { token, role }, error: null });
+		} catch {
+			res.status(401).json({
+				success: false,
+				data: null,
+				error: {
+					code: ErrorCode.INVALID_TOKEN,
+					message: "Refresh token inválido ou expirado",
+					field: null,
+				},
+			});
 		}
 	}
 }

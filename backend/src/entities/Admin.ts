@@ -1,16 +1,20 @@
-import type { AdminResource, NullableDate } from "../types/domain";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
 
-class Admin implements AdminResource {
-	constructor(
-		public id: number,
-		public name: string,
-		public email: string,
-		public password_hash: string,
-		public last_login: NullableDate,
-		public created_at: NullableDate,
-		public updated_at: NullableDate,
-		public deleted_at: NullableDate,
-	) {}
+@Entity("admins")
+export class Admin extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column({ length: 120 })
+	name: string;
+
+	@Column({ unique: true })
+	email: string;
+
+	@Column({ type: "text" })
+	password_hash: string;
+
+	@Column({ type: "timestamptz", nullable: true })
+	last_login: Date | null;
 }
-
-module.exports = Admin;

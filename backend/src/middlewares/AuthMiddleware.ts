@@ -1,7 +1,23 @@
 const jwt = require("jsonwebtoken");
-import { ErrorCode } from "../enums";
+import { ErrorCode } from "../entities/enums";
 
 class AuthMiddleware {
+	// Restringe o acesso conforme o perfil presente no JWT.
+	static requireRole(...roles) {
+		return (req, res, next) =>
+			roles.includes(req.user?.role)
+				? next()
+				: res.status(403).json({
+						success: false,
+						data: null,
+						error: {
+							code: "FORBIDDEN",
+							message: "Perfil sem permissão para este recurso",
+							field: null,
+						},
+					});
+	}
+	// Valida o token de acesso enviado no cabeçalho Authorization.
 	static verifyToken(req, res, next) {
 		try {
 			const token = req.headers.authorization?.split(" ")[1];
@@ -18,10 +34,7 @@ class AuthMiddleware {
 				});
 			}
 
-			const decoded = jwt.verify(
-				token,
-				process.env.JWT_SECRET || "your-secret-key",
-			);
+			const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
 			req.user = decoded;
 			next();
 		} catch (error) {
@@ -37,12 +50,17 @@ class AuthMiddleware {
 		}
 	}
 
-	static generateToken(adminId) {
-		return jwt.sign(
-			{ id: adminId },
-			process.env.JWT_SECRET || "your-secret-key",
-			{ expiresIn: "24h" },
-		);
+	// Gera tokens de acesso e renovação com o perfil do usuário.
+	static generateToken(id, role = "ADMIN") {
+		return jwt.sign({ id, role }, process.env.JWT_SECRET || "your-secret-key", {
+			expiresIn: "24h",
+		});
+	}
+
+	static generateRefreshToken(id, role = "ADMIN") {
+		return jwt.sign({ id, role, type: "refresh" }, process.env.JWT_SECRET || "your-secret-key", {
+			expiresIn: "7d",
+		});
 	}
 }
 

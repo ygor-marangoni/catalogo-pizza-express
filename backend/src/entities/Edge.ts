@@ -1,15 +1,17 @@
-import type { EdgeResource, NullableDate } from "../types/domain";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity } from "./BaseEntity";
 
-class Edge implements EdgeResource {
-	constructor(
-		public id: number,
-		public name: string,
-		public description: string | null,
-		public additional_price: number,
-		public created_at: NullableDate,
-		public updated_at: NullableDate,
-		public deleted_at: NullableDate,
-	) {}
+@Entity("edges")
+export class Edge extends BaseEntity {
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column({ length: 120 })
+	name: string;
+
+	@Column({ type: "text", nullable: true })
+	description: string | null;
+
+	@Column({ type: "integer", default: 0 })
+	additional_price: number;
 }
-
-module.exports = Edge;

@@ -1,4 +1,4 @@
-import { ErrorCode, StoreStatus } from "../enums";
+import { ErrorCode, StoreStatus } from "../entities/enums";
 
 class StoreController {
 	private readonly storeService: {

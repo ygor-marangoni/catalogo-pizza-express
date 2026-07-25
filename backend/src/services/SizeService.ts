@@ -55,4 +55,4 @@ class SizeService {
 }
 
 module.exports = SizeService;
-import { ErrorCode } from "../enums";
+import { ErrorCode } from "../entities/enums";

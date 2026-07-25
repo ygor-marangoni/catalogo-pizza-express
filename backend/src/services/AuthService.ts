@@ -1,15 +1,19 @@
 const bcrypt = require("bcrypt");
-import { ErrorCode } from "../enums";
-import type { AdminRepository, AdminResource } from "../types/domain";
+import { ErrorCode } from "../entities/enums";
+import type { AdminRepository, AdminResDTO, UserRepository, UserResDTO } from "../dtos/res";
+import type { RegisterUserReqDTO, UpdateUserReqDTO } from "../dtos/req";
 
 class AuthService {
+	// Centraliza autenticação, cadastro e atualização de contas.
 	private readonly adminRepository: AdminRepository;
+	private readonly userRepository: UserRepository;
 
-	constructor(adminRepository: AdminRepository) {
+	constructor(adminRepository: AdminRepository, userRepository: UserRepository) {
 		this.adminRepository = adminRepository;
+		this.userRepository = userRepository;
 	}
 
-	async login(email: string, password: string): Promise<AdminResource> {
+	async login(email: string, password: string): Promise<AdminResDTO> {
 		try {
 			const admin = await this.adminRepository.findByEmail(email);
 
@@ -17,10 +21,7 @@ class AuthService {
 				throw new Error(ErrorCode.INVALID_CREDENTIALS);
 			}
 
-			const passwordMatch = await bcrypt.compare(
-				password,
-				admin.password_hash,
-			);
+			const passwordMatch = await bcrypt.compare(password, admin.password_hash);
 
 			if (!passwordMatch) {
 				throw new Error(ErrorCode.INVALID_CREDENTIALS);
@@ -52,7 +53,7 @@ class AuthService {
 		}
 	}
 
-	async getAdminById(id: number): Promise<AdminResource> {
+	async getAdminById(id: number): Promise<AdminResDTO> {
 		try {
 			const admin = await this.adminRepository.findById(id);
 			if (!admin) {
@@ -62,6 +63,54 @@ class AuthService {
 		} catch (error) {
 			throw error;
 		}
+	}
+
+	async registerUser(data: RegisterUserReqDTO): Promise<UserResDTO> {
+		if (await this.userRepository.findByEmail(data.email)) throw new Error(ErrorCode.EMAIL_ALREADY_EXISTS);
+		return this.userRepository.create(data, await this.hashPassword(data.password));
+	}
+
+	async loginUser(email: string, password: string): Promise<UserResDTO> {
+		const user = await this.userRepository.findByEmail(email);
+		if (!user || !(await this.verifyPassword(password, user.password_hash)))
+			throw new Error(ErrorCode.INVALID_CREDENTIALS);
+		await this.userRepository.updateLastLogin(user.id);
+		return user;
+	}
+
+	async authenticate(
+		email: string,
+		password: string,
+	): Promise<{
+		account: AdminResDTO | UserResDTO;
+		role: "ADMIN" | "CUSTOMER";
+	}> {
+		const admin = await this.adminRepository.findByEmail(email);
+		if (admin && (await this.verifyPassword(password, admin.password_hash))) {
+			await this.adminRepository.updateLastLogin(admin.id);
+			return { account: admin, role: "ADMIN" };
+		}
+		const customer = await this.userRepository.findByEmail(email);
+		if (customer && (await this.verifyPassword(password, customer.password_hash))) {
+			await this.userRepository.updateLastLogin(customer.id);
+			return { account: customer, role: "CUSTOMER" };
+		}
+		throw new Error(ErrorCode.INVALID_CREDENTIALS);
+	}
+
+	async getUserById(id: number): Promise<UserResDTO> {
+		const user = await this.userRepository.findById(id);
+		if (!user) throw new Error(ErrorCode.USER_NOT_FOUND);
+		return user;
+	}
+
+	async updateUser(id: number, data: UpdateUserReqDTO): Promise<UserResDTO> {
+		if (data.email) {
+			const existing = await this.userRepository.findByEmail(data.email);
+			if (existing && existing.id !== id) throw new Error(ErrorCode.EMAIL_ALREADY_EXISTS);
+		}
+		const passwordHash = data.password ? await this.hashPassword(data.password) : undefined;
+		return this.userRepository.update(id, data, passwordHash);
 	}
 }
 

@@ -46,7 +46,12 @@ class Hateoas {
 		return { ...links, ...options.related };
 	}
 
-	static item<T extends { id: number }>(data: T, resource: string, id: number, options: HateoasOptions = {}): HateoasResource<T> {
+	static item<T extends { id: number }>(
+		data: T,
+		resource: string,
+		id: number,
+		options: HateoasOptions = {},
+	): HateoasResource<T> {
 		return { ...data, _links: this.resource(resource, id, options) };
 	}
 
