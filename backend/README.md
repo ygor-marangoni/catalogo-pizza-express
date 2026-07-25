@@ -60,8 +60,8 @@ npm run start
 Com PostgreSQL configurado, execute as migrações e o seed:
 
 ```bash
-npm run migrate
-npm run seed
+npm run migrate:build
+npm run seed:build
 ```
 
 O seed cria 56 produtos, 8 categorias, 4 tamanhos, adicionais, bordas, clientes, favoritos e pedidos para simulação.
@@ -128,8 +128,10 @@ O comando `down --volumes` apaga os dados persistidos dos serviços. Use-o somen
 npm run dev      # Executa em desenvolvimento
 npm run build    # Compila o projeto
 npm run start    # Executa a versão compilada
-npm run migrate  # Executa as migrações do banco
-npm run seed     # Executa os dados iniciais
+npm run migrate       # Executa as migrações usando o dist compilado
+npm run migrate:build # Compila e executa as migrações localmente
+npm run seed          # Executa o seed usando o dist compilado
+npm run seed:build    # Compila e executa o seed localmente
 npm test         # Executa todos os testes
 npm run test:unit        # Executa os testes unitários
 npm run test:integration # Executa os testes de integração com fetch
