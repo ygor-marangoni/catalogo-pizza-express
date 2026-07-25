@@ -1,4 +1,5 @@
 import { ErrorCode } from "../entities/enums";
+const AppError = require("../exceptions/AppError");
 
 class ProductSearchController {
 	constructor(private readonly searchService: any) {}
@@ -12,9 +13,7 @@ class ProductSearchController {
 			});
 			res.json({ success: true, data: { items: products }, error: null });
 		} catch (error) {
-			error.code = ErrorCode.PRODUCT_SEARCH_UNAVAILABLE;
-			error.statusCode = 503;
-			next(error);
+			next(new AppError("Serviço de busca temporariamente indisponível", ErrorCode.PRODUCT_SEARCH_UNAVAILABLE, 503));
 		}
 	}
 }
