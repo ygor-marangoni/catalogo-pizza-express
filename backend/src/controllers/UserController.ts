@@ -1,5 +1,6 @@
 import type { UpdateUserReqDTO } from "../dtos/req";
 import type { FavoriteResDTO, OrderResDTO, ProductResDTO } from "../dtos/res";
+import { parseResourceId } from "../utils/ResourceId";
 
 export class UserController {
 	// Expõe operações limitadas aos dados do cliente autenticado.
@@ -65,7 +66,7 @@ export class UserController {
 
 	async removeFavorite(req, res, next) {
 		try {
-			const favorite = await this.favoriteRepository.findById(Number(req.params.id));
+			const favorite = await this.favoriteRepository.findById(parseResourceId(req.params.id));
 			if (!favorite || favorite.user_id !== req.user.id)
 				throw this.error("FAVORITE_NOT_FOUND", "Favorito não encontrado", 404);
 			await this.favoriteRepository.delete(favorite.id);
@@ -88,7 +89,7 @@ export class UserController {
 
 	async getOrder(req, res, next) {
 		try {
-			const order = await this.orderRepository.findById(Number(req.params.id));
+			const order = await this.orderRepository.findById(parseResourceId(req.params.id));
 			if (!order || order.user_id !== req.user.id)
 				throw this.error("ORDER_NOT_FOUND", "Pedido não encontrado", 404);
 			res.json({ success: true, data: order, error: null });
@@ -139,7 +140,6 @@ export class UserController {
 			id: user.id,
 			name: user.name,
 			email: user.email,
-			last_login: user.last_login,
 			created_at: user.created_at,
 			updated_at: user.updated_at,
 		};

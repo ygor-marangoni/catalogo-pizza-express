@@ -1,3 +1,5 @@
+import { parseResourceId } from "../utils/ResourceId";
+
 export class AdminOrderController {
 	constructor(private readonly orderRepository: any) {}
 
@@ -14,7 +16,7 @@ export class AdminOrderController {
 
 	async updateStatus(req, res, next) {
 		try {
-			const order = await this.orderRepository.findById(Number(req.params.id));
+			const order = await this.orderRepository.findById(parseResourceId(req.params.id));
 			if (!order)
 				throw Object.assign(new Error("Pedido não encontrado"), {
 					code: "ORDER_NOT_FOUND",

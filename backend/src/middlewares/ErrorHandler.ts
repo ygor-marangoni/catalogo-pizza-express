@@ -34,13 +34,15 @@ function isTechnicalMessage(message: string): boolean {
 }
 
 function resolveCode(error: any): string {
+	const errorMessage = String(error?.message || "");
 	if (codes.has(error?.code)) return error.code;
 	if (codes.has(error?.message)) return error.message;
+	for (const code of codes) if (errorMessage.includes(code)) return code;
 	if (error?.code === "23505") return ErrorCode.DUPLICATE_RESOURCE;
 	if (error?.code?.startsWith?.("23")) return ErrorCode.DATABASE_ERROR;
 	if (error?.name === "ZodError") return ErrorCode.VALIDATION_ERROR;
-	if (/registro duplicado|duplicate key/i.test(error?.message || "")) return ErrorCode.DUPLICATE_RESOURCE;
-	if (/registro não encontrado|resource_not_found/i.test(error?.message || "")) return ErrorCode.RESOURCE_NOT_FOUND;
+	if (/registro duplicado|duplicate key/i.test(errorMessage)) return ErrorCode.DUPLICATE_RESOURCE;
+	if (/registro .*encontrado|resource_not_found/i.test(errorMessage)) return ErrorCode.RESOURCE_NOT_FOUND;
 	return ErrorCode.INTERNAL_ERROR;
 }
 

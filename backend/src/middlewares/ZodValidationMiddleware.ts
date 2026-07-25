@@ -6,12 +6,24 @@ export function validate(schema: z.ZodType, source: "body" | "params" | "query" 
 		const result = schema.safeParse(req[source]);
 		if (!result.success) {
 			const issue = result.error.issues[0];
+			const field = issue.path.join(".") || "dados";
+			const message = issue.message.includes("Ã") || issue.message.includes("Expected")
+				? `O campo ${field} possui um valor inválido`
+				: issue.code === "invalid_type"
+					? `O campo ${field} é obrigatório ou possui um tipo inválido`
+					: issue.code === "too_small"
+						? `O campo ${field} não atende ao tamanho ou valor mínimo exigido`
+						: issue.code === "invalid_format"
+							? `O campo ${field} está em formato inválido`
+							: issue.code === "unrecognized_keys"
+								? "A requisição contém campos não permitidos"
+								: issue.message;
 			return res.status(400).json({
 				success: false,
 				data: null,
 				error: {
 					code: "VALIDATION_ERROR",
-					message: issue.message,
+					message,
 					field: issue.path.join(".") || null,
 				},
 			});
