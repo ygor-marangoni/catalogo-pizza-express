@@ -1,138 +1,111 @@
 # Pizza Express — Backend
 
-API REST em Node.js, Express e TypeScript para o catálogo e o painel administrativo da Pizza Express.
+<div align="center">
 
-## Estrutura do projeto
+![Node.js](https://img.shields.io/badge/Node.js-22-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-7-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white)
+![TypeORM](https://img.shields.io/badge/TypeORM-PostgreSQL-FE0803?style=for-the-badge&logo=typeorm&logoColor=white)
+![Elasticsearch](https://img.shields.io/badge/Elasticsearch-Search-005571?style=for-the-badge&logo=elasticsearch&logoColor=white)
+![OpenAPI](https://img.shields.io/badge/OpenAPI-3.0-6BA539?style=for-the-badge&logo=swagger&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-```text
-src/
-├── config/          # Configurações de banco e ambiente
-├── controllers/     # Controladores HTTP
-├── docs/            # Especificação OpenAPI/Swagger
-├── entities/        # Entidades do domínio
-├── enums/           # Enums compartilhados da aplicação
-├── errors/          # Erros customizados
-├── middlewares/     # Autenticação, validação e tratamento de erros
-├── routes/          # Definição das rotas
-├── services/        # Lógica de negócio
-├── types/           # Tipos e contratos do domínio
-└── utils/           # Funções utilitárias
-```
+</div>
 
-## Instalação
+API REST para o catálogo e o painel administrativo da Pizza Express. O backend possui autenticação JWT com os perfis `ADMIN` e `CUSTOMER`, gerenciamento de produtos, categorias, loja, pedidos e favoritos.
+
+## Tecnologias
+
+- Node.js, Express e TypeScript
+- PostgreSQL e TypeORM
+- JWT e bcrypt
+- Swagger/OpenAPI
+- Elasticsearch e Cloudinary
+- Docker
+
+## Execução
+
+### Pré-requisitos
+
+- Node.js
+- npm
+- PostgreSQL
+- Docker
+
+Instale as dependências:
 
 ```bash
 npm install
 ```
 
-Copie `.env.example` para `.env` e configure as variáveis necessárias, principalmente `PORT`, `CORS_ORIGIN`, `JWT_SECRET` e as configurações do Elasticsearch quando a busca de produtos for utilizada.
+Copie `.env.example` para `.env` e ajuste as variáveis necessárias. Para desenvolvimento sem PostgreSQL, mantenha:
 
-## Scripts
+```env
+USE_DATABASE=false
+```
+
+Inicie em desenvolvimento:
 
 ```bash
-npm run dev      # Executa em desenvolvimento com ts-node
-npm run build    # Compila TypeScript para dist/
-npm start        # Executa a versão compilada
-npm test         # Ainda não implementado
+npm run dev
 ```
 
-Não existem scripts de migração ou seed configurados neste backend atualmente.
+Para executar a versão compilada:
 
-## Enums
-
-Os enums ficam em `src/enums` e são exportados por `src/enums/index.ts`:
-
-- `StoreStatus`: `OPEN`, `CLOSED` e `PAUSED`.
-- `ErrorCode`: códigos padronizados de autenticação, validação, busca e recursos não encontrados.
-
-Os códigos de erro são utilizados pelos controllers, services, rotas e middlewares.
-
-## Autenticação
-
-A autenticação usa JWT e senhas protegidas com bcrypt. As rotas protegidas devem enviar:
-
-```http
-Authorization: Bearer <token>
+```bash
+npm run build
+npm run start
 ```
 
-## Endpoints principais
+Com PostgreSQL configurado, execute as migrações e o seed:
 
-### Autenticação
-
-- `POST /api/v1/auth/admin/login`
-- `POST /api/v1/auth/admin/refresh`
-- `POST /api/v1/auth/admin/logout`
-
-### Categorias
-
-- `GET /api/v1/categories`
-- `GET /api/v1/categories/:id`
-- `POST /api/v1/categories`
-- `PUT /api/v1/categories/:id`
-- `DELETE /api/v1/categories/:id`
-
-### Produtos
-
-- `GET /api/v1/products/search?q=calabresa`
-- `GET /api/v1/products`
-- `GET /api/v1/products/:id`
-- `POST /api/v1/products`
-- `PUT /api/v1/products/:id`
-- `DELETE /api/v1/products/:id`
-
-### Loja
-
-- `GET /api/v1/store`
-- `PUT /api/v1/store`
-- `GET /api/v1/store/status`
-- `PUT /api/v1/store/status`
-
-O status atual preserva o campo booleano `is_open` e também expõe `status` como `OPEN` ou `CLOSED`. O valor `PAUSED` já está definido no enum, mas ainda não é aceito pelo endpoint atual, que recebe `is_open: boolean`.
-
-## Resposta padrão
-
-Sucesso:
-
-```json
-{
-  "success": true,
-  "data": {},
-  "error": null
-}
+```bash
+npm run migrate
+npm run seed
 ```
 
-Erro:
+O seed cria 56 produtos, 8 categorias, 4 tamanhos, adicionais, bordas, clientes, favoritos e pedidos para simulação.
 
-```json
-{
-  "success": false,
-  "data": null,
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Descrição do erro",
-    "field": null
-  }
-}
-```
-
-## Documentação da API
-
-Com o servidor em execução:
-
-- Swagger UI: `http://localhost:3000/api-docs`
-- OpenAPI JSON: `http://localhost:3000/api-docs/openapi.json`
-- Health check: `http://localhost:3000/health`
-
-## Docker
-
-Para executar o backend e o Elasticsearch:
+Ou utilize Docker Compose:
 
 ```bash
 docker compose up --build
 ```
 
-Para encerrar os serviços:
+## Documentação
+
+- Swagger UI: [http://localhost:3000/api-docs/](http://localhost:3000/api-docs/)
+- OpenAPI JSON: [http://localhost:3000/api-docs/openapi.json](http://localhost:3000/api-docs/openapi.json)
+- Health check: [http://localhost:3000/health](http://localhost:3000/health)
+- Collection do Postman: [`docs/Pizza-Express.postman_collection.json`](docs/Pizza-Express.postman_collection.json)
+
+## Scripts
 
 ```bash
-docker compose down
+npm run dev      # Executa em desenvolvimento
+npm run build    # Compila o projeto
+npm run start    # Executa a versão compilada
+npm run migrate  # Executa as migrações do banco
+npm run seed     # Executa os dados iniciais
+npm test         # Executa todos os testes
+npm run test:unit        # Executa os testes unitários
+npm run test:integration # Executa os testes de integração com fetch
+npm run test:contract    # Valida a collection do Postman
+```
+
+## Estrutura
+
+```text
+src/
+├── config/          # Configurações de ambiente, banco e OpenAPI
+├── controllers/     # Controladores HTTP
+├── dtos/            # DTOs de requisição e resposta
+├── entities/        # Entidades TypeORM e enums
+├── middlewares/     # Autenticação, validação e resiliência
+├── models/          # Modelos da aplicação
+├── repositories/    # Repositórios em memória e TypeORM
+├── routes/          # Rotas da API
+├── services/        # Regras de negócio
+├── utils/           # Utilitários e recursos de resiliência
+└── validations/     # Schemas Zod
 ```

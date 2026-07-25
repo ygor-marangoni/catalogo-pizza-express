@@ -68,9 +68,9 @@ Não implementar agora:
 
 ```json
 {
-  "success": true,
-  "data": {},
-  "error": null
+	"success": true,
+	"data": {},
+	"error": null
 }
 ```
 
@@ -78,13 +78,13 @@ Não implementar agora:
 
 ```json
 {
-  "success": false,
-  "data": null,
-  "error": {
-    "code": "PRODUCT_NOT_FOUND",
-    "message": "Produto não encontrado.",
-    "field": null
-  }
+	"success": false,
+	"data": null,
+	"error": {
+		"code": "PRODUCT_NOT_FOUND",
+		"message": "Produto não encontrado.",
+		"field": null
+	}
 }
 ```
 
@@ -94,12 +94,12 @@ Não implementar agora:
 
 ### 4.1 Autenticação administrativa
 
-| Método | Endpoint | Função |
-|---|---|---|
-| POST | `/api/v1/auth/admin/login` | Fazer login |
-| POST | `/api/v1/auth/admin/refresh` | Renovar sessão |
-| POST | `/api/v1/auth/admin/logout` | Encerrar sessão |
-| GET | `/api/v1/auth/admin/me` | Retornar administrador autenticado |
+| Método | Endpoint                     | Função                             |
+| ------ | ---------------------------- | ---------------------------------- |
+| POST   | `/api/v1/auth/admin/login`   | Fazer login                        |
+| POST   | `/api/v1/auth/admin/refresh` | Renovar sessão                     |
+| POST   | `/api/v1/auth/admin/logout`  | Encerrar sessão                    |
+| GET    | `/api/v1/auth/admin/me`      | Retornar administrador autenticado |
 
 ### Login
 
@@ -109,8 +109,8 @@ POST /api/v1/auth/admin/login
 
 ```json
 {
-  "email": "admin@pizzaexpress.com.br",
-  "password": "senha"
+	"email": "admin@pizzaexpress.com.br",
+	"password": "senha"
 }
 ```
 
@@ -118,11 +118,11 @@ POST /api/v1/auth/admin/login
 
 ### 4.2 Endpoints públicos da loja
 
-| Método | Endpoint | Função |
-|---|---|---|
-| GET | `/api/v1/store` | Dados públicos da loja |
-| GET | `/api/v1/store/status` | Status atual da loja |
-| GET | `/api/v1/catalog/home` | Dados agregados da home |
+| Método | Endpoint               | Função                  |
+| ------ | ---------------------- | ----------------------- |
+| GET    | `/api/v1/store`        | Dados públicos da loja  |
+| GET    | `/api/v1/store/status` | Status atual da loja    |
+| GET    | `/api/v1/catalog/home` | Dados agregados da home |
 
 Estados da loja:
 
@@ -136,26 +136,26 @@ Exemplo de retorno:
 
 ```json
 {
-  "success": true,
-  "data": {
-    "id": "pizza-express",
-    "name": "Pizza Express",
-    "logoUrl": "https://...",
-    "bannerDesktopUrl": "https://...",
-    "bannerMobileUrl": "https://...",
-    "phone": "3438425153",
-    "whatsapp": "553438425153",
-    "status": "OPEN",
-    "deliveryEnabled": true,
-    "pickupEnabled": true,
-    "deliveryFeeInCents": 500,
-    "minimumOrderInCents": 2500,
-    "estimatedDeliveryMinutes": {
-      "minimum": 30,
-      "maximum": 50
-    }
-  },
-  "error": null
+	"success": true,
+	"data": {
+		"id": "pizza-express",
+		"name": "Pizza Express",
+		"logoUrl": "https://...",
+		"bannerDesktopUrl": "https://...",
+		"bannerMobileUrl": "https://...",
+		"phone": "3438425153",
+		"whatsapp": "553438425153",
+		"status": "OPEN",
+		"deliveryEnabled": true,
+		"pickupEnabled": true,
+		"deliveryFeeInCents": 500,
+		"minimumOrderInCents": 2500,
+		"estimatedDeliveryMinutes": {
+			"minimum": 30,
+			"maximum": 50
+		}
+	},
+	"error": null
 }
 ```
 
@@ -163,10 +163,10 @@ Exemplo de retorno:
 
 ### 4.3 Categorias públicas
 
-| Método | Endpoint | Função |
-|---|---|---|
-| GET | `/api/v1/categories` | Listar categorias ativas |
-| GET | `/api/v1/categories/:slug` | Buscar categoria pelo slug |
+| Método | Endpoint                   | Função                     |
+| ------ | -------------------------- | -------------------------- |
+| GET    | `/api/v1/categories`       | Listar categorias ativas   |
+| GET    | `/api/v1/categories/:slug` | Buscar categoria pelo slug |
 
 Exemplo:
 
@@ -178,10 +178,10 @@ GET /api/v1/categories/salgadas
 
 ### 4.4 Produtos públicos
 
-| Método | Endpoint | Função |
-|---|---|---|
-| GET | `/api/v1/products` | Listar e pesquisar produtos |
-| GET | `/api/v1/products/:slug` | Buscar produto pelo slug |
+| Método | Endpoint                 | Função                      |
+| ------ | ------------------------ | --------------------------- |
+| GET    | `/api/v1/products`       | Listar e pesquisar produtos |
+| GET    | `/api/v1/products/:slug` | Buscar produto pelo slug    |
 
 Filtros esperados:
 
@@ -207,26 +207,26 @@ GET /api/v1/products?category=salgadas&available=true&page=1&limit=20
 
 Todos exigem autenticação.
 
-| Método | Endpoint | Função |
-|---|---|---|
-| GET | `/api/v1/admin/categories` | Listar todas |
-| POST | `/api/v1/admin/categories` | Criar |
-| GET | `/api/v1/admin/categories/:id` | Buscar por ID |
-| PATCH | `/api/v1/admin/categories/:id` | Atualizar |
-| PATCH | `/api/v1/admin/categories/:id/status` | Ativar ou desativar |
-| PATCH | `/api/v1/admin/categories/reorder` | Reordenar |
-| DELETE | `/api/v1/admin/categories/:id` | Exclusão lógica |
+| Método | Endpoint                              | Função              |
+| ------ | ------------------------------------- | ------------------- |
+| GET    | `/api/v1/admin/categories`            | Listar todas        |
+| POST   | `/api/v1/admin/categories`            | Criar               |
+| GET    | `/api/v1/admin/categories/:id`        | Buscar por ID       |
+| PATCH  | `/api/v1/admin/categories/:id`        | Atualizar           |
+| PATCH  | `/api/v1/admin/categories/:id/status` | Ativar ou desativar |
+| PATCH  | `/api/v1/admin/categories/reorder`    | Reordenar           |
+| DELETE | `/api/v1/admin/categories/:id`        | Exclusão lógica     |
 
 Exemplo de criação:
 
 ```json
 {
-  "name": "Salgadas",
-  "slug": "salgadas",
-  "description": "Pizzas salgadas para todos os gostos.",
-  "imageUrl": "https://...",
-  "active": true,
-  "sortOrder": 1
+	"name": "Salgadas",
+	"slug": "salgadas",
+	"description": "Pizzas salgadas para todos os gostos.",
+	"imageUrl": "https://...",
+	"active": true,
+	"sortOrder": 1
 }
 ```
 
@@ -234,17 +234,17 @@ Exemplo de criação:
 
 ### 4.6 Administração de produtos
 
-| Método | Endpoint | Função |
-|---|---|---|
-| GET | `/api/v1/admin/products` | Listar produtos |
-| POST | `/api/v1/admin/products` | Criar produto |
-| GET | `/api/v1/admin/products/:id` | Buscar por ID |
-| PATCH | `/api/v1/admin/products/:id` | Atualizar |
-| PATCH | `/api/v1/admin/products/:id/status` | Ativar ou desativar |
-| PATCH | `/api/v1/admin/products/:id/availability` | Alterar disponibilidade |
-| PATCH | `/api/v1/admin/products/:id/visibility` | Alterar destaque ou promoção |
-| POST | `/api/v1/admin/products/:id/duplicate` | Duplicar |
-| DELETE | `/api/v1/admin/products/:id` | Exclusão lógica |
+| Método | Endpoint                                  | Função                       |
+| ------ | ----------------------------------------- | ---------------------------- |
+| GET    | `/api/v1/admin/products`                  | Listar produtos              |
+| POST   | `/api/v1/admin/products`                  | Criar produto                |
+| GET    | `/api/v1/admin/products/:id`              | Buscar por ID                |
+| PATCH  | `/api/v1/admin/products/:id`              | Atualizar                    |
+| PATCH  | `/api/v1/admin/products/:id/status`       | Ativar ou desativar          |
+| PATCH  | `/api/v1/admin/products/:id/availability` | Alterar disponibilidade      |
+| PATCH  | `/api/v1/admin/products/:id/visibility`   | Alterar destaque ou promoção |
+| POST   | `/api/v1/admin/products/:id/duplicate`    | Duplicar                     |
+| DELETE | `/api/v1/admin/products/:id`              | Exclusão lógica              |
 
 Filtros administrativos:
 
@@ -263,10 +263,10 @@ Filtros administrativos:
 
 ### 4.7 Upload de imagens
 
-| Método | Endpoint | Função |
-|---|---|---|
-| POST | `/api/v1/admin/uploads/images` | Enviar imagem ao Cloudinary |
-| DELETE | `/api/v1/admin/uploads/images` | Remover imagem |
+| Método | Endpoint                       | Função                      |
+| ------ | ------------------------------ | --------------------------- |
+| POST   | `/api/v1/admin/uploads/images` | Enviar imagem ao Cloudinary |
+| DELETE | `/api/v1/admin/uploads/images` | Remover imagem              |
 
 Upload:
 
@@ -287,16 +287,16 @@ Retorno:
 
 ```json
 {
-  "success": true,
-  "data": {
-    "publicId": "pizza-express/products/arquivo",
-    "url": "https://...",
-    "secureUrl": "https://...",
-    "width": 1080,
-    "height": 1080,
-    "format": "webp"
-  },
-  "error": null
+	"success": true,
+	"data": {
+		"publicId": "pizza-express/products/arquivo",
+		"url": "https://...",
+		"secureUrl": "https://...",
+		"width": 1080,
+		"height": 1080,
+		"format": "webp"
+	},
+	"error": null
 }
 ```
 
@@ -310,11 +310,11 @@ Aceitar somente:
 
 ### 4.8 Configurações da loja
 
-| Método | Endpoint | Função |
-|---|---|---|
-| GET | `/api/v1/admin/store` | Obter configurações |
-| PATCH | `/api/v1/admin/store` | Atualizar configurações |
-| PATCH | `/api/v1/admin/store/status` | Abrir, fechar ou pausar |
+| Método | Endpoint                     | Função                  |
+| ------ | ---------------------------- | ----------------------- |
+| GET    | `/api/v1/admin/store`        | Obter configurações     |
+| PATCH  | `/api/v1/admin/store`        | Atualizar configurações |
+| PATCH  | `/api/v1/admin/store/status` | Abrir, fechar ou pausar |
 
 Campos editáveis:
 
@@ -336,9 +336,9 @@ Exemplo de pausa:
 
 ```json
 {
-  "status": "PAUSED",
-  "pauseReason": "Alta demanda",
-  "estimatedReopeningAt": "2026-07-24T21:30:00-03:00"
+	"status": "PAUSED",
+	"pauseReason": "Alta demanda",
+	"estimatedReopeningAt": "2026-07-24T21:30:00-03:00"
 }
 ```
 
@@ -348,27 +348,23 @@ Exemplo de pausa:
 
 ```json
 {
-  "name": "Bacon Express",
-  "slug": "bacon-express",
-  "shortDescription": "Pizza com bacon, cebola e azeitonas.",
-  "description": "Descrição completa.",
-  "categoryId": "category-id",
-  "basePriceInCents": 4990,
-  "compareAtPriceInCents": null,
-  "featured": true,
-  "promotion": false,
-  "available": true,
-  "active": true,
-  "preparationTimeMinutes": 35,
-  "sortOrder": 1,
-  "tags": [
-    "bacon",
-    "cebola",
-    "azeitona"
-  ],
-  "images": [],
-  "variants": [],
-  "optionGroups": []
+	"name": "Bacon Express",
+	"slug": "bacon-express",
+	"shortDescription": "Pizza com bacon, cebola e azeitonas.",
+	"description": "Descrição completa.",
+	"categoryId": "category-id",
+	"basePriceInCents": 4990,
+	"compareAtPriceInCents": null,
+	"featured": true,
+	"promotion": false,
+	"available": true,
+	"active": true,
+	"preparationTimeMinutes": 35,
+	"sortOrder": 1,
+	"tags": ["bacon", "cebola", "azeitona"],
+	"images": [],
+	"variants": [],
+	"optionGroups": []
 }
 ```
 
@@ -380,13 +376,13 @@ As variantes representam principalmente os tamanhos.
 
 ```json
 {
-  "id": "large",
-  "name": "Grande",
-  "description": "8 fatias",
-  "priceInCents": 4990,
-  "slices": 8,
-  "available": true,
-  "sortOrder": 1
+	"id": "large",
+	"name": "Grande",
+	"description": "8 fatias",
+	"priceInCents": 4990,
+	"slices": 8,
+	"available": true,
+	"sortOrder": 1
 }
 ```
 
@@ -394,26 +390,26 @@ Exemplo:
 
 ```json
 {
-  "variants": [
-    {
-      "id": "medium",
-      "name": "Média",
-      "description": "6 fatias",
-      "priceInCents": 4290,
-      "slices": 6,
-      "available": true,
-      "sortOrder": 1
-    },
-    {
-      "id": "large",
-      "name": "Grande",
-      "description": "8 fatias",
-      "priceInCents": 4990,
-      "slices": 8,
-      "available": true,
-      "sortOrder": 2
-    }
-  ]
+	"variants": [
+		{
+			"id": "medium",
+			"name": "Média",
+			"description": "6 fatias",
+			"priceInCents": 4290,
+			"slices": 6,
+			"available": true,
+			"sortOrder": 1
+		},
+		{
+			"id": "large",
+			"name": "Grande",
+			"description": "8 fatias",
+			"priceInCents": 4990,
+			"slices": 8,
+			"available": true,
+			"sortOrder": 2
+		}
+	]
 }
 ```
 
@@ -434,29 +430,29 @@ Exemplo de borda:
 
 ```json
 {
-  "id": "border",
-  "name": "Escolha a borda",
-  "type": "SINGLE",
-  "required": true,
-  "minimumSelections": 1,
-  "maximumSelections": 1,
-  "sortOrder": 1,
-  "options": [
-    {
-      "id": "traditional",
-      "name": "Tradicional",
-      "additionalPriceInCents": 0,
-      "available": true,
-      "sortOrder": 1
-    },
-    {
-      "id": "cheddar",
-      "name": "Recheada com cheddar",
-      "additionalPriceInCents": 900,
-      "available": true,
-      "sortOrder": 2
-    }
-  ]
+	"id": "border",
+	"name": "Escolha a borda",
+	"type": "SINGLE",
+	"required": true,
+	"minimumSelections": 1,
+	"maximumSelections": 1,
+	"sortOrder": 1,
+	"options": [
+		{
+			"id": "traditional",
+			"name": "Tradicional",
+			"additionalPriceInCents": 0,
+			"available": true,
+			"sortOrder": 1
+		},
+		{
+			"id": "cheddar",
+			"name": "Recheada com cheddar",
+			"additionalPriceInCents": 900,
+			"available": true,
+			"sortOrder": 2
+		}
+	]
 }
 ```
 
