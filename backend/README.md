@@ -73,11 +73,47 @@ Administrador: admin@pizzaexpress.com / Admin@123
 Cliente: cliente@pizzaexpress.com / Cliente@123
 ```
 
-Ou utilize Docker Compose:
+### Ambiente Docker limpo
+
+Para recriar o ambiente de desenvolvimento do zero, execute os comandos na pasta `backend`:
+
+1. Pare os containers e remova os volumes, incluindo os dados do PostgreSQL e do Elasticsearch:
 
 ```bash
-docker compose up --build
+docker compose down --volumes --remove-orphans
 ```
+
+2. Gere as imagens novamente sem usar o cache do Docker:
+
+```bash
+docker compose build --no-cache
+```
+
+3. Inicie os serviços em segundo plano:
+
+```bash
+docker compose up -d
+```
+
+4. Execute as migrations dentro do container do backend:
+
+```bash
+docker compose exec backend npm run migrate
+```
+
+5. Insira os dados mockados:
+
+```bash
+docker compose exec backend npm run seed
+```
+
+6. Acompanhe os logs do backend:
+
+```bash
+docker compose logs -f backend
+```
+
+O comando `down --volumes` apaga os dados persistidos dos serviços. Use-o somente quando quiser iniciar um ambiente completamente novo.
 
 ## Documentação
 

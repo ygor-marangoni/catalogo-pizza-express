@@ -2,6 +2,9 @@ const http = require("node:http");
 
 async function startServer() {
 	process.env.USE_DATABASE = "false";
+	process.env.CLOUDINARY_CLOUD_NAME = "";
+	process.env.CLOUDINARY_API_KEY = "";
+	process.env.CLOUDINARY_API_SECRET = "";
 	const app = require("../../dist/server");
 	const server = http.createServer(app);
 	await new Promise((resolve) => server.listen(0, resolve));
@@ -29,4 +32,15 @@ function jsonOptions(method, body, token) {
 	};
 }
 
-module.exports = { startServer, stopServer, request, jsonOptions };
+function multipartOptions(method, fields, token, file) {
+	const form = new FormData();
+	for (const [key, value] of Object.entries(fields)) form.append(key, String(value));
+	if (file) form.append("image", new Blob([file.content], { type: file.type }), file.name);
+	return {
+		method,
+		headers: token ? { authorization: `Bearer ${token}` } : {},
+		body: form,
+	};
+}
+
+module.exports = { startServer, stopServer, request, jsonOptions, multipartOptions };

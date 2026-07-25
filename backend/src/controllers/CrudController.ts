@@ -2,7 +2,11 @@ const Logger = require("../utils/Logger");
 import { ErrorCode } from "../entities/enums";
 import { parseResourceId } from "../utils/ResourceId";
 
-export function createCrudController(service: any, resource: string) {
+export function createCrudController(
+	service: any,
+	resource: string,
+	options: { prepareCreate?: (req) => Promise<any>; prepareUpdate?: (req) => Promise<any> } = {},
+) {
 	const singular =
 		(
 			{
@@ -70,7 +74,8 @@ export function createCrudController(service: any, resource: string) {
 							field: null,
 						},
 					});
-				const record = await service[`create${singular}`](req.body);
+				const data = options.prepareCreate ? await options.prepareCreate(req) : req.body;
+				const record = await service[`create${singular}`](data);
 				Logger.info("Recurso criado", {
 					resource,
 					id: record.id,
@@ -95,7 +100,8 @@ export function createCrudController(service: any, resource: string) {
 							field: null,
 						},
 					});
-				const record = await service[`update${singular}`](id, req.body);
+				const data = options.prepareUpdate ? await options.prepareUpdate(req) : req.body;
+				const record = await service[`update${singular}`](id, data);
 				Logger.info("Recurso atualizado", {
 					resource,
 					id: record.id,

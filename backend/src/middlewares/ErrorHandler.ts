@@ -8,6 +8,7 @@ const statusByCode: Record<string, number> = {
 	[ErrorCode.INVALID_CREDENTIALS]: 401,
 	[ErrorCode.FORBIDDEN]: 403,
 	[ErrorCode.INVALID_INPUT]: 400,
+	[ErrorCode.INVALID_IMAGE]: 400,
 	[ErrorCode.VALIDATION_ERROR]: 400,
 	[ErrorCode.INVALID_ID]: 400,
 	[ErrorCode.PRODUCT_NOT_FOUND]: 404,
@@ -39,6 +40,7 @@ function resolveCode(error: any): string {
 	if (codes.has(error?.message)) return error.message;
 	for (const code of codes) if (errorMessage.includes(code)) return code;
 	if (error?.code === "23505") return ErrorCode.DUPLICATE_RESOURCE;
+	if (error?.code === "LIMIT_FILE_SIZE" || error?.name === "MulterError") return ErrorCode.INVALID_IMAGE;
 	if (error?.code?.startsWith?.("23")) return ErrorCode.DATABASE_ERROR;
 	if (error?.name === "ZodError") return ErrorCode.VALIDATION_ERROR;
 	if (/registro duplicado|duplicate key/i.test(errorMessage)) return ErrorCode.DUPLICATE_RESOURCE;
