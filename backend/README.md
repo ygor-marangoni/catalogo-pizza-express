@@ -176,3 +176,30 @@ Pizza Express Team
 ## 📄 Licença
 
 ISC
+
+## Docker
+
+Para executar o backend e o Elasticsearch:
+
+```bash
+docker compose up --build
+```
+
+Endpoints disponíveis:
+
+- `http://localhost:3000/health`
+- `http://localhost:3000/api-docs`
+- `http://localhost:3000/api-docs/openapi.json`
+- `http://localhost:3000/api/v1/products/search?q=calabresa`
+
+Para encerrar os serviços:
+
+```bash
+docker compose down
+```
+
+Os dados do Elasticsearch ficam no volume `elasticsearch_data`. Para removê-lo junto com os serviços:
+
+```bash
+docker compose down -v
+```
