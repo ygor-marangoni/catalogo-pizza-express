@@ -49,6 +49,7 @@ class ProductSearchService {
 	}
 
 	async search(query: string, filters: ProductSearchFilters = {}): Promise<ProductResource[]> {
+		await this.ensureIndex();
 		const must = query.trim()
 			? [{ multi_match: { query: query.trim(), fields: ["name^3", "description"] } }]
 			: [{ match_all: {} }];
