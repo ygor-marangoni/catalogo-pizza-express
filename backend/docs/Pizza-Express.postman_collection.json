@@ -29,21 +29,15 @@
 			"name": "Autenticação",
 			"item": [
 				{
-					"name": "Login ADMIN",
-					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const resposta = pm.response.json();", "const token = resposta.data?.token;", "if (token) pm.collectionVariables.set('adminToken', token);"] } }],
+					"name": "Login",
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const resposta = pm.response.json();", "const token = resposta.data?.token;", "if (token) { pm.collectionVariables.set('adminToken', token); pm.collectionVariables.set('customerToken', token); }"] } }],
 					"request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@pizzaexpress.com\",\n  \"password\": \"Admin@123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/auth/login" }
 				},
 				{
 					"name": "Cadastrar CUSTOMER",
 					"request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Novo Cliente\",\n  \"email\": \"novo.cliente@example.com\",\n  \"password\": \"Cliente@123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/auth/user/register" }
 				},
-				{
-					"name": "Login CUSTOMER",
-					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const resposta = pm.response.json();", "const token = resposta.data?.token;", "if (token) pm.collectionVariables.set('customerToken', token);"] } }],
-					"request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"cliente@pizzaexpress.com\",\n  \"password\": \"Cliente@123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/auth/login" }
-				},
-				{ "name": "Renovar sessão ADMIN", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/refresh" } },
-				{ "name": "Renovar sessão CUSTOMER", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/refresh" } }
+				{ "name": "Renovar sessão", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/refresh" } }
 			]
 		},
 		{
@@ -62,9 +56,8 @@
 				{ "name": "Buscar produtos", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products/search?q=calabresa&category_id={{categoryId}}&available=true" } },
 				{ "name": "Listar produtos", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products" } },
 				{ "name": "Buscar produto por ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products/{{productId}}" } },
-				{ "name": "Criar produto", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Calabresa Express\",\n  \"description\": \"Calabresa, cebola e queijo\",\n  \"category_id\": {{categoryId}},\n  \"base_price\": 3990,\n  \"image_url\": null,\n  \"available\": true,\n  \"highlighted\": false\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/products" } },
-				{ "name": "Atualizar produto", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"base_price\": 4490,\n  \"available\": true,\n  \"highlighted\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/products/{{productId}}" } },
-				{ "name": "Enviar imagem do produto", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"image_url\": \"https://res.cloudinary.com/demo/image/upload/sample.jpg\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/products/{{productId}}/image" } },
+				{ "name": "Criar produto com imagem", "request": { "method": "POST", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "formdata", "formdata": [{ "key": "name", "value": "Calabresa Express", "type": "text" }, { "key": "description", "value": "Calabresa, cebola e queijo", "type": "text" }, { "key": "category_id", "value": "{{categoryId}}", "type": "text" }, { "key": "base_price", "value": "3990", "type": "text" }, { "key": "available", "value": "true", "type": "text" }, { "key": "highlighted", "value": "false", "type": "text" }, { "key": "image", "type": "file", "src": "" }] }, "url": "{{baseUrl}}/products" } },
+				{ "name": "Atualizar produto com imagem", "request": { "method": "PUT", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "formdata", "formdata": [{ "key": "base_price", "value": "4490", "type": "text" }, { "key": "available", "value": "true", "type": "text" }, { "key": "highlighted", "value": "true", "type": "text" }, { "key": "image", "type": "file", "src": "" }] }, "url": "{{baseUrl}}/products/{{productId}}" } },
 				{ "name": "Excluir produto", "request": { "method": "DELETE", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/products/{{productId}}" } }
 			]
 		},
