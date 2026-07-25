@@ -66,6 +66,13 @@ npm run seed
 
 O seed cria 56 produtos, 8 categorias, 4 tamanhos, adicionais, bordas, clientes, favoritos e pedidos para simulação.
 
+Credenciais mockadas:
+
+```text
+Administrador: admin@pizzaexpress.com / Admin@123
+Cliente: cliente@pizzaexpress.com / Cliente@123
+```
+
 Ou utilize Docker Compose:
 
 ```bash
