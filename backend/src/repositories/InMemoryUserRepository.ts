@@ -26,7 +26,6 @@ export class InMemoryUserRepository implements UserRepository {
 			name: data.name,
 			email: data.email.toLowerCase(),
 			password_hash: passwordHash,
-			last_login: null,
 			created_at: now,
 			updated_at: now,
 			deleted_at: null,
@@ -41,13 +40,5 @@ export class InMemoryUserRepository implements UserRepository {
 		Object.assign(user, data, passwordHash ? { password_hash: passwordHash } : {}, { updated_at: new Date() });
 		if (data.email) user.email = data.email.toLowerCase();
 		return user;
-	}
-
-	async updateLastLogin(id: number): Promise<void> {
-		const user = await this.findById(id);
-		if (user) {
-			user.last_login = new Date();
-			user.updated_at = new Date();
-		}
 	}
 }

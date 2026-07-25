@@ -8,7 +8,6 @@ function account(id, email, passwordHash) {
 		name: "Conta",
 		email,
 		password_hash: passwordHash,
-		last_login: null,
 		created_at: new Date(),
 		updated_at: new Date(),
 		deleted_at: null,
@@ -21,14 +20,10 @@ test("AuthService autentica ADMIN e CUSTOMER pelo mesmo fluxo", async () => {
 	const adminRepository = {
 		findByEmail: async (email) => (email === admin.email ? admin : null),
 		findById: async () => admin,
-		updateLastLogin: async (id) => {
-			admin.last_login = id;
-		},
 	};
 	const userRepository = {
 		findByEmail: async (email) => (email === customer.email ? customer : null),
 		findById: async () => customer,
-		updateLastLogin: async () => {},
 		create: async () => customer,
 		update: async () => customer,
 	};

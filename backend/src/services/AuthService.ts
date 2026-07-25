@@ -27,9 +27,6 @@ class AuthService {
 				throw new Error(ErrorCode.INVALID_CREDENTIALS);
 			}
 
-			// Atualizar último login
-			await this.adminRepository.updateLastLogin(admin.id);
-
 			return admin;
 		} catch (error) {
 			throw error;
@@ -74,7 +71,6 @@ class AuthService {
 		const user = await this.userRepository.findByEmail(email);
 		if (!user || !(await this.verifyPassword(password, user.password_hash)))
 			throw new Error(ErrorCode.INVALID_CREDENTIALS);
-		await this.userRepository.updateLastLogin(user.id);
 		return user;
 	}
 
@@ -87,12 +83,10 @@ class AuthService {
 	}> {
 		const admin = await this.adminRepository.findByEmail(email);
 		if (admin && (await this.verifyPassword(password, admin.password_hash))) {
-			await this.adminRepository.updateLastLogin(admin.id);
 			return { account: admin, role: "ADMIN" };
 		}
 		const customer = await this.userRepository.findByEmail(email);
 		if (customer && (await this.verifyPassword(password, customer.password_hash))) {
-			await this.userRepository.updateLastLogin(customer.id);
 			return { account: customer, role: "CUSTOMER" };
 		}
 		throw new Error(ErrorCode.INVALID_CREDENTIALS);

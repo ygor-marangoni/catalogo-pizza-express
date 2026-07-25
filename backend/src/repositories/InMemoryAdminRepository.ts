@@ -7,7 +7,6 @@ export class InMemoryAdminRepository implements AdminRepository {
 		name: "Administrador",
 		email: process.env.ADMIN_EMAIL || "admin@pizzaexpress.com",
 		password_hash: bcrypt.hashSync(process.env.ADMIN_PASSWORD || "senha", 10),
-		last_login: null,
 		created_at: new Date(),
 		updated_at: new Date(),
 		deleted_at: null,
@@ -19,9 +18,5 @@ export class InMemoryAdminRepository implements AdminRepository {
 
 	async findById(id: number): Promise<AdminResDTO | null> {
 		return id === this.admin.id ? this.admin : null;
-	}
-
-	async updateLastLogin(id: number): Promise<void> {
-		if (id === this.admin.id) this.admin.last_login = new Date();
 	}
 }

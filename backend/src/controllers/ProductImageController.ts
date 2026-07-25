@@ -1,4 +1,5 @@
 const Logger = require("../utils/Logger");
+import { parseResourceId } from "../utils/ResourceId";
 
 class ProductImageController {
 	constructor(
@@ -9,7 +10,7 @@ class ProductImageController {
 	async upload(req, res, next) {
 		try {
 			const imageUrl = await this.imageService.upload(req.body.image_url || req.body.data);
-			const product = await this.productService.updateProduct(Number(req.params.id), { image_url: imageUrl });
+			const product = await this.productService.updateProduct(parseResourceId(req.params.id), { image_url: imageUrl });
 			Logger.info("Imagem de produto atualizada", {
 				productId: product.id,
 				adminId: req.user?.id,

@@ -8,6 +8,7 @@ RUN npm ci
 COPY tsconfig.json ./
 COPY server.ts ./
 COPY src ./src
+COPY scripts ./scripts
 RUN npm run build
 
 FROM node:20-alpine AS production

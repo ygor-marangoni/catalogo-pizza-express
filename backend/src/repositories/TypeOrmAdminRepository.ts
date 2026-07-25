@@ -19,11 +19,4 @@ export class TypeOrmAdminRepository implements AdminRepository {
 			where: { id, deleted_at: IsNull() },
 		}) as Promise<AdminResDTO | null>;
 	}
-
-	async updateLastLogin(id: number): Promise<void> {
-		await this.repository.update(id, {
-			last_login: new Date(),
-			updated_at: new Date(),
-		});
-	}
 }

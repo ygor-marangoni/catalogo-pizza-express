@@ -1,5 +1,6 @@
 const Logger = require("../utils/Logger");
 import { ErrorCode } from "../entities/enums";
+import { parseResourceId } from "../utils/ResourceId";
 
 export function createCrudController(service: any, resource: string) {
 	const singular =
@@ -46,7 +47,7 @@ export function createCrudController(service: any, resource: string) {
 		},
 		findById: async (req, res, next) => {
 			try {
-				const id = parseId(req.params.id);
+				const id = parseResourceId(req.params.id);
 				res.json({
 					success: true,
 					data: await service[`get${singular}ById`](id),
@@ -82,7 +83,7 @@ export function createCrudController(service: any, resource: string) {
 		},
 		update: async (req, res, next) => {
 			try {
-				const id = parseId(req.params.id);
+				const id = parseResourceId(req.params.id);
 				const validationError = req.body.name === undefined ? null : validate(req.body);
 				if (validationError)
 					return res.status(400).json({
@@ -107,7 +108,7 @@ export function createCrudController(service: any, resource: string) {
 		},
 		delete: async (req, res, next) => {
 			try {
-				const id = parseId(req.params.id);
+				const id = parseResourceId(req.params.id);
 				await service[`delete${singular}`](id);
 				Logger.info("Recurso excluído", {
 					resource,
@@ -120,11 +121,4 @@ export function createCrudController(service: any, resource: string) {
 			}
 		},
 	};
-}
-
-function parseId(value: string): number {
-	const id = Number(value);
-	if (!Number.isInteger(id) || id <= 0)
-		throw Object.assign(new Error("Identificador inválido"), { code: ErrorCode.INVALID_ID, statusCode: 400 });
-	return id;
 }
