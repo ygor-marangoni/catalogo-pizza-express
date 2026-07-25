@@ -6,423 +6,125 @@
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "http://localhost:3000/api/v1",
-			"type": "string"
-		},
-		{
-			"key": "token",
-			"value": "",
-			"type": "string"
-		},
-		{
-			"key": "categoryId",
-			"value": "1",
-			"type": "string"
-		},
-		{
-			"key": "productId",
-			"value": "1",
-			"type": "string"
-		}
+		{ "key": "baseUrl", "value": "http://localhost:3000/api/v1", "type": "string" },
+		{ "key": "adminToken", "value": "", "type": "string" },
+		{ "key": "customerToken", "value": "", "type": "string" },
+		{ "key": "categoryId", "value": "1", "type": "string" },
+		{ "key": "productId", "value": "1", "type": "string" },
+		{ "key": "additionalId", "value": "1", "type": "string" },
+		{ "key": "edgeId", "value": "1", "type": "string" },
+		{ "key": "sizeId", "value": "1", "type": "string" },
+		{ "key": "favoriteId", "value": "1", "type": "string" },
+		{ "key": "orderId", "value": "1", "type": "string" }
 	],
 	"item": [
 		{
 			"name": "Sistema",
 			"item": [
-				{
-					"name": "Informações da API",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "http://localhost:3000/"
-					}
-				},
-				{
-					"name": "Verificar saúde da API",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "http://localhost:3000/health"
-					}
-				}
+				{ "name": "Informações da API", "request": { "method": "GET", "header": [], "url": "http://localhost:3000/" } },
+				{ "name": "Verificar saúde da API", "request": { "method": "GET", "header": [], "url": "http://localhost:3000/health" } }
 			]
 		},
 		{
 			"name": "Autenticação",
 			"item": [
 				{
-					"name": "Login do administrador",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"const resposta = pm.response.json();",
-									"const token = resposta.token || resposta.data?.token || resposta.data?.accessToken;",
-									"if (token) pm.collectionVariables.set('token', token);"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"admin@pizzaexpress.com\",\n  \"password\": \"senha\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/auth/login"
-					}
+					"name": "Login ADMIN",
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const resposta = pm.response.json();", "const token = resposta.data?.token;", "if (token) pm.collectionVariables.set('adminToken', token);"] } }],
+					"request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@pizzaexpress.com\",\n  \"password\": \"Admin@123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/auth/login" }
 				},
 				{
-					"name": "Renovar sessão",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"url": "{{baseUrl}}/auth/refresh"
-					}
-				}
+					"name": "Cadastrar CUSTOMER",
+					"request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Novo Cliente\",\n  \"email\": \"novo.cliente@example.com\",\n  \"password\": \"Cliente@123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/auth/user/register" }
+				},
+				{
+					"name": "Login CUSTOMER",
+					"event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["const resposta = pm.response.json();", "const token = resposta.data?.token;", "if (token) pm.collectionVariables.set('customerToken', token);"] } }],
+					"request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"email\": \"cliente@pizzaexpress.com\",\n  \"password\": \"Cliente@123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/auth/login" }
+				},
+				{ "name": "Renovar sessão ADMIN", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/refresh" } },
+				{ "name": "Renovar sessão CUSTOMER", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/refresh" } }
 			]
 		},
 		{
 			"name": "Categorias",
 			"item": [
-				{
-					"name": "Listar categorias",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/categories"
-					}
-				},
-				{
-					"name": "Buscar categoria por ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/categories/{{categoryId}}"
-					}
-				},
-				{
-					"name": "Criar categoria",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Pizzas tradicionais\",\n  \"description\": \"Sabores clássicos da casa\",\n  \"icon_url\": null\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/categories"
-					}
-				},
-				{
-					"name": "Atualizar categoria",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Pizzas especiais\",\n  \"description\": \"Sabores selecionados\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/categories/{{categoryId}}"
-					}
-				},
-				{
-					"name": "Excluir categoria",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"url": "{{baseUrl}}/categories/{{categoryId}}"
-					}
-				}
+				{ "name": "Listar categorias", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/categories" } },
+				{ "name": "Buscar categoria por ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/categories/{{categoryId}}" } },
+				{ "name": "Criar categoria", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Pizzas tradicionais\",\n  \"description\": \"Sabores clássicos da casa\",\n  \"icon_url\": null\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/categories" } },
+				{ "name": "Atualizar categoria", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"description\": \"Sabores selecionados\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/categories/{{categoryId}}" } },
+				{ "name": "Excluir categoria", "request": { "method": "DELETE", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/categories/{{categoryId}}" } }
 			]
 		},
 		{
 			"name": "Produtos",
 			"item": [
-				{
-					"name": "Buscar produtos",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/products/search?q=calabresa&category_id={{categoryId}}&available=true",
-							"host": ["{{baseUrl}}"],
-							"path": ["products", "search"],
-							"query": [
-								{
-									"key": "q",
-									"value": "calabresa",
-									"description": "Texto para buscar no nome ou na descrição"
-								},
-								{
-									"key": "category_id",
-									"value": "{{categoryId}}"
-								},
-								{
-									"key": "available",
-									"value": "true"
-								}
-							]
-						}
-					}
-				},
-				{
-					"name": "Listar produtos",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/products"
-					}
-				},
-				{
-					"name": "Buscar produto por ID",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/products/{{productId}}"
-					}
-				},
-				{
-					"name": "Criar produto",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Calabresa Express\",\n  \"description\": \"Calabresa, cebola e queijo\",\n  \"category_id\": {{categoryId}},\n  \"base_price\": 3990,\n  \"image_url\": null,\n  \"available\": true,\n  \"highlighted\": false\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/products"
-					}
-				},
-				{
-					"name": "Atualizar produto",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"base_price\": 4490,\n  \"available\": true,\n  \"highlighted\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/products/{{productId}}"
-					}
-				},
-				{
-					"name": "Excluir produto",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"url": "{{baseUrl}}/products/{{productId}}"
-					}
-				}
+				{ "name": "Buscar produtos", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products/search?q=calabresa&category_id={{categoryId}}&available=true" } },
+				{ "name": "Listar produtos", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products" } },
+				{ "name": "Buscar produto por ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products/{{productId}}" } },
+				{ "name": "Criar produto", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Calabresa Express\",\n  \"description\": \"Calabresa, cebola e queijo\",\n  \"category_id\": {{categoryId}},\n  \"base_price\": 3990,\n  \"image_url\": null,\n  \"available\": true,\n  \"highlighted\": false\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/products" } },
+				{ "name": "Atualizar produto", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"base_price\": 4490,\n  \"available\": true,\n  \"highlighted\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/products/{{productId}}" } },
+				{ "name": "Enviar imagem do produto", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"image_url\": \"https://res.cloudinary.com/demo/image/upload/sample.jpg\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/products/{{productId}}/image" } },
+				{ "name": "Excluir produto", "request": { "method": "DELETE", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/products/{{productId}}" } }
+			]
+		},
+		{
+			"name": "Adicionais",
+			"item": [
+				{ "name": "Listar adicionais", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/additionals" } },
+				{ "name": "Buscar adicional por ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/additionals/{{additionalId}}" } },
+				{ "name": "Criar adicional", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Bacon\",\n  \"description\": \"Bacon crocante\",\n  \"price\": 500\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/additionals" } },
+				{ "name": "Atualizar adicional", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"price\": 600\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/additionals/{{additionalId}}" } },
+				{ "name": "Excluir adicional", "request": { "method": "DELETE", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/additionals/{{additionalId}}" } }
+			]
+		},
+		{
+			"name": "Bordas",
+			"item": [
+				{ "name": "Listar bordas", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/edges" } },
+				{ "name": "Buscar borda por ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/edges/{{edgeId}}" } },
+				{ "name": "Criar borda", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Catupiry\",\n  \"description\": \"Borda recheada\",\n  \"additional_price\": 700\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/edges" } },
+				{ "name": "Atualizar borda", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"additional_price\": 800\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/edges/{{edgeId}}" } },
+				{ "name": "Excluir borda", "request": { "method": "DELETE", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/edges/{{edgeId}}" } }
+			]
+		},
+		{
+			"name": "Tamanhos",
+			"item": [
+				{ "name": "Listar tamanhos", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/sizes" } },
+				{ "name": "Buscar tamanho por ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/sizes/{{sizeId}}" } },
+				{ "name": "Criar tamanho", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Gigante\",\n  \"description\": \"Pizza grande\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/sizes" } },
+				{ "name": "Atualizar tamanho", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"description\": \"Pizza grande para compartilhar\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/sizes/{{sizeId}}" } },
+				{ "name": "Excluir tamanho", "request": { "method": "DELETE", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/sizes/{{sizeId}}" } }
 			]
 		},
 		{
 			"name": "Loja",
 			"item": [
-				{
-					"name": "Consultar informações da loja",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/store"
-					}
-				},
-				{
-					"name": "Consultar status da loja",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseUrl}}/store/status"
-					}
-				},
-				{
-					"name": "Atualizar informações da loja",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Pizza Express\",\n  \"phone\": \"(34) 3842-5153\",\n  \"email\": \"contato@pizzaexpress.com\",\n  \"address\": \"Rua das Pizzas, 100\",\n  \"opening_hours\": \"18:00 às 23:00\",\n  \"delivery_fee\": 500,\n  \"min_order_value\": 2500\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/store"
-					}
-				},
-				{
-					"name": "Atualizar status da loja",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"is_open\": true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseUrl}}/store/status"
-					}
-				}
+				{ "name": "Consultar informações da loja", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/store" } },
+				{ "name": "Consultar status da loja", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/store/status" } },
+				{ "name": "Atualizar informações da loja", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Pizza Express\",\n  \"phone\": \"(34) 3842-5153\",\n  \"email\": \"contato@pizzaexpress.com\",\n  \"address\": \"Rua das Pizzas, 100\",\n  \"opening_hours\": \"18:00 às 23:00\",\n  \"delivery_fee\": 500,\n  \"min_order_value\": 2500\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/store" } },
+				{ "name": "Atualizar status da loja", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"is_open\": true\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/store/status" } }
+			]
+		},
+		{
+			"name": "CUSTOMER",
+			"item": [
+				{ "name": "Consultar meu perfil", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "url": "{{baseUrl}}/users/me" } },
+				{ "name": "Atualizar meu perfil", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"name\": \"Cliente Atualizado\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/users/me" } },
+				{ "name": "Listar meus favoritos", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "url": "{{baseUrl}}/users/me/favorites" } },
+				{ "name": "Adicionar produto aos favoritos", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"product_id\": {{productId}}\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/users/me/favorites" } },
+				{ "name": "Remover produto dos favoritos", "request": { "method": "DELETE", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "url": "{{baseUrl}}/users/me/favorites/{{favoriteId}}" } },
+				{ "name": "Listar meus pedidos", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "url": "{{baseUrl}}/users/me/orders" } },
+				{ "name": "Criar pedido", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"items\": [\n    {\n      \"product_id\": {{productId}},\n      \"quantity\": 1\n    }\n  ]\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/users/me/orders" } },
+				{ "name": "Buscar meu pedido por ID", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{customerToken}}", "type": "string" }] }, "url": "{{baseUrl}}/users/me/orders/{{orderId}}" } }
+			]
+		},
+		{
+			"name": "Pedidos ADMIN",
+			"item": [
+				{ "name": "Listar todos os pedidos", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/admin/orders" } },
+				{ "name": "Atualizar status do pedido", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"status\": \"PREPARING\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/orders/{{orderId}}/status" } }
 			]
 		}
 	]
