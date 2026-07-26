@@ -1,7 +1,7 @@
 import { categories } from "@/fixtures/catalog/categories";
 import { products } from "@/fixtures/catalog/products";
 import { store } from "@/fixtures/catalog/store";
-import { productMatchesSearch, sortProducts } from "@/features/catalog/catalog-domain";
+import { isAddonOnlyProduct, productMatchesSearch, sortProducts } from "@/features/catalog/catalog-domain";
 
 export class LocalCatalogRepository {
   async getStore() {
@@ -9,7 +9,7 @@ export class LocalCatalogRepository {
   }
 
   async getCategories() {
-    return structuredClone(categories.filter((category) => category.active).sort((a, b) => a.sortOrder - b.sortOrder));
+    return structuredClone(categories.filter((category) => category.active && category.slug !== "adicionais").sort((a, b) => a.sortOrder - b.sortOrder));
   }
 
   async getCategoryBySlug(slug) {
@@ -26,7 +26,7 @@ export class LocalCatalogRepository {
   }
 
   async getProducts(options = {}) {
-    let result = products.filter((product) => product.active);
+    let result = products.filter((product) => product.active && !isAddonOnlyProduct(product));
     if (options.categoryId) result = result.filter((product) => product.categoryId === options.categoryId);
     if (options.filter === "available") result = result.filter((product) => product.available);
     if (options.filter === "promotions") result = result.filter((product) => product.compareAtPriceInCents > product.basePriceInCents);
@@ -34,11 +34,11 @@ export class LocalCatalogRepository {
   }
 
   async getProductBySlug(slug) {
-    const product = products.find((item) => item.active && item.slug === slug);
+    const product = products.find((item) => item.active && !isAddonOnlyProduct(item) && item.slug === slug);
     return product ? structuredClone(product) : null;
   }
 
   async searchProducts(term) {
-    return structuredClone(products.filter((product) => product.active && productMatchesSearch(product, term, categories)));
+    return structuredClone(products.filter((product) => product.active && !isAddonOnlyProduct(product) && productMatchesSearch(product, term, categories)));
   }
 }

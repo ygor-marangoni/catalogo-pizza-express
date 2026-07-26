@@ -24,7 +24,7 @@ export function categoryImage(category) {
 }
 
 export function mapCategories(records) {
-  return assignUniqueSlugs(records).map((category, index) => ({
+  return assignUniqueSlugs(records).filter((category) => !slugify(category.name).includes("adicion")).map((category, index) => ({
     id: String(category.id), name: category.name, slug: category.slug,
     description: category.description || "", image: categoryImage(category),
     accent: category.slug.includes("promoc"), active: true, sortOrder: index + 1,
@@ -94,7 +94,7 @@ export function mapProducts(records, categories, options = {}) {
       categoryId: String(product.category_id), tags: [], images: [product.image_url || fallbackProduct],
       basePriceInCents: product.base_price, compareAtPriceInCents: null,
       active: true, available: product.available, featured: product.highlighted,
-      popular: product.highlighted, preparationTime: "", ...configuration,
+      popular: product.highlighted, addonOnly: slugify(category?.name).includes("adicion"), preparationTime: "", ...configuration,
     };
   });
 }

@@ -3,6 +3,10 @@ export function normalizeSearchTerm(value = "") {
   return value.trim().toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
+export function isAddonOnlyProduct(product) {
+  return product?.addonOnly === true || product?.categoryId === "cat-adicionais";
+}
+
 /**
  * @param {object} product
  * @param {string} term

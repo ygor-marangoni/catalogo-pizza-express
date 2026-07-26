@@ -17,9 +17,7 @@ export default async function HomePage() {
     repository.getPopularProducts(),
     repository.getProducts(),
   ]);
-  const additionsCategory = categories.find((category) => category.slug.includes("adicion"));
   const combosCategory = categories.find((category) => category.slug.includes("promoc"));
-  const additions = allProducts.filter((product) => product.categoryId === additionsCategory?.id);
   const combos = allProducts.filter((product) => product.categoryId === combosCategory?.id);
 
   return <>
@@ -33,11 +31,6 @@ export default async function HomePage() {
     <Container as="section" className={styles.productsSection}>
       <h2 className={styles.productsTitle}>DESTAQUES</h2>
       <ProductCarousel products={popular.slice(0, 4)} label="Destaques" />
-    </Container>
-
-    <Container as="section" className={styles.productsSection}>
-      <h2 className={styles.productsTitle}>ADICIONAIS</h2>
-      <ProductCarousel products={additions} label="Adicionais" />
     </Container>
 
     <Container as="section" className={styles.productsSection}>
