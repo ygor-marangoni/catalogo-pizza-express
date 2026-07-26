@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BadgePercent, CakeSlice, CupSoda, House, MapPin, Phone, Pizza } from "lucide-react";
-import facebookIcon from "../../../assets/icons/facebook.svg";
-import instagramIcon from "../../../assets/icons/instagram.svg";
 import whatsappIcon from "../../../assets/icons/whatsapp.svg";
 import { Container } from "@/components/ui/Container";
 import styles from "./layout.module.css";
@@ -55,20 +53,14 @@ export function Footer({ store }) {
             </a>
           </address>
 
-          <div className={styles.footerSocialBlock}>
-            <h3>Sociais</h3>
+          {store.contact.whatsapp && <div className={styles.footerSocialBlock}>
+            <h3>Contato digital</h3>
             <div className={styles.footerSocials}>
               <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="Falar com a Pizza Express pelo WhatsApp" title="WhatsApp">
                 <Image src={whatsappIcon} alt="" width={20} height={20} />
               </a>
-              <a href={store.contact.instagramUrl} target="_blank" rel="noreferrer" aria-label={`Abrir Instagram ${store.contact.instagramLabel}`} title="Instagram">
-                <Image src={instagramIcon} alt="" width={20} height={20} />
-              </a>
-              <a href={store.contact.facebookUrl} target="_blank" rel="noreferrer" aria-label="Abrir Facebook da Pizza Express" title="Facebook">
-                <Image src={facebookIcon} alt="" width={20} height={20} />
-              </a>
             </div>
-          </div>
+          </div>}
         </section>
       </div>
 

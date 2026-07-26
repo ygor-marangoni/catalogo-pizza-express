@@ -12,7 +12,7 @@ const ProductCustomizationModal = dynamic(
   { ssr: false },
 );
 
-export function ProductModalController({ productIndex, localProducts, categories }) {
+export function ProductModalController({ productIndex, categories }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -21,8 +21,7 @@ export function ProductModalController({ productIndex, localProducts, categories
   const [loadedProduct, setLoadedProduct] = useState(null);
   const requestRef = useRef(0);
   const productReference = productIndex.find((item) => item.slug === slug) || null;
-  const localProduct = localProducts?.find((item) => item.slug === slug) || null;
-  const product = localProduct || (loadedProduct?.slug === slug ? loadedProduct.value : null);
+  const product = loadedProduct?.slug === slug ? loadedProduct.value : null;
   const editingItem = editingItemId
     ? cart.items.find((item) => item.id === editingItemId && item.productSlug === slug) || null
     : null;
@@ -33,7 +32,7 @@ export function ProductModalController({ productIndex, localProducts, categories
   useEffect(() => {
     const requestId = requestRef.current + 1;
     requestRef.current = requestId;
-    if (!productReference || localProducts) return;
+    if (!productReference) return;
     Promise.all([
       apiRequest(`/products/${productReference.id}`, { skipAuth: true }),
       apiRequest(`/products/${productReference.id}/configuration`, { skipAuth: true }),
@@ -43,8 +42,8 @@ export function ProductModalController({ productIndex, localProducts, categories
         configurations: new Map([[String(rawProduct.id), configuration]]),
       })[0];
       setLoadedProduct({ slug: productReference.slug, value: { ...mapped, slug: productReference.slug } });
-    }).catch(() => {});
-  }, [categories, localProducts, productReference]);
+    }).catch(() => setLoadedProduct(null));
+  }, [categories, productReference]);
 
   useEffect(() => {
     const previousSlug = previousSlugRef.current;

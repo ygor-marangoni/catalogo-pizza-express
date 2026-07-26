@@ -11,14 +11,13 @@ export function StorefrontShell({
   store,
   headerStore,
   productIndex,
-  localProducts,
   searchSuggestions,
   categories,
 }) {
   return <CartProvider storeId={store.id} storeInfo={store}>
     <Header store={headerStore} suggestions={searchSuggestions} categories={categories} />
     <Suspense fallback={null}>
-      <ProductModalController productIndex={productIndex} localProducts={localProducts} categories={categories} />
+      <ProductModalController productIndex={productIndex} categories={categories} />
     </Suspense>
     <main id="conteudo">{children}</main>
     <Footer store={store} />

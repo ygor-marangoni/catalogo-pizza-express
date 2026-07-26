@@ -62,14 +62,16 @@ class ProductSearchService {
 					async () => {
 						await this.ensureIndex();
 						const must = query.trim()
-							? [
-									{
-										multi_match: {
-											query: query.trim(),
-											fields: ["name^3", "description"],
-										},
-									},
-								]
+							? [{
+								bool: {
+									should: [
+										{ multi_match: { query: query.trim(), fields: ["name^3", "description"] } },
+										{ match_phrase_prefix: { name: { query: query.trim(), boost: 4 } } },
+										{ match_phrase_prefix: { description: { query: query.trim() } } },
+									],
+									minimum_should_match: 1,
+								},
+							}]
 							: [{ match_all: {} }];
 						const filter: Array<Record<string, unknown>> = [];
 

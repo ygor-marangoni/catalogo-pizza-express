@@ -9,7 +9,6 @@ import bannerImage from "../../../assets/images/banner-2.webp";
 import bannerMobileImage from "../../../assets/images/banner-mobile.webp";
 import pizzaBadgeImage from "../../../assets/images/pizza banner.png";
 import brazilFlagImage from "../../../assets/images/brasil-bandeira.svg";
-import { store as localStore } from "@/fixtures/catalog/store";
 import { assignUniqueSlugs, slugify } from "./slugify";
 
 const categoryFallbacks = {
@@ -92,27 +91,24 @@ export function mapProducts(records, categories, options = {}) {
       id: String(product.id), name: product.name, slug: product.slug,
       shortDescription: product.description || "", description: product.description || "",
       categoryId: String(product.category_id), tags: [], images: [product.image_url || fallbackProduct],
-      basePriceInCents: product.base_price, compareAtPriceInCents: null,
-      active: true, available: product.available, featured: product.highlighted,
-      popular: product.highlighted, addonOnly: slugify(category?.name).includes("adicion"), preparationTime: "", ...configuration,
+      basePriceInCents: product.base_price,
+      available: product.available, featured: product.highlighted,
+      addonOnly: slugify(category?.name).includes("adicion"), ...configuration,
     };
   });
 }
 
 export function mapStore(store, status = store) {
-  const businessHours = Array.isArray(store.opening_hours)
-    ? store.opening_hours
-    : localStore.businessHours;
+  const phone = store.phone || "";
   return {
-    ...localStore, id: String(store.id), name: store.name, description: store.description || localStore.description,
+    id: String(store.id), name: store.name, description: store.description || "",
     logo: logoImage, banner: bannerImage, bannerMobile: bannerMobileImage,
     heroPizzaBadge: pizzaBadgeImage, heroBrazilFlag: brazilFlagImage,
-    address: store.address || localStore.address,
-    businessHours,
+    address: store.address || null,
     openingHoursText: typeof store.opening_hours === "string" ? store.opening_hours : null,
-    estimatedTime: store.estimated_time || localStore.estimatedTime,
-    minimumOrderInCents: store.min_order_value || 0, deliveryFeeInCents: store.delivery_fee || 0,
+    estimatedTime: store.estimated_time || null,
+    minimumOrderInCents: store.min_order_value ?? 0, deliveryFeeInCents: store.delivery_fee ?? 0,
     status: status.is_open ?? store.is_open, isOpen: status.is_open ?? store.is_open,
-    contact: { ...localStore.contact, phoneDisplay: store.phone || localStore.contact.phoneDisplay },
+    contact: { phone, phoneDisplay: phone || "Telefone nÃ£o informado", phoneHref: phone.replace(/\D/g, ""), whatsapp: phone.replace(/\D/g, "") },
   };
 }

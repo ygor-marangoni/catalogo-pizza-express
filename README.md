@@ -1,375 +1,154 @@
-# Catálogo Pizza Express
+# Pizza Express
 
-> O backend Express/TypeScript é a fonte de verdade. Ambiente local: frontend `http://localhost:3000`, backend `http://localhost:3001`, Swagger `http://localhost:3001/api-docs`. Veja `frontend/docs/API_INTEGRATION.md`.
-
-<div align="center">
-
-<img src="https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16">
-<img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React 19">
-<img src="https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js e Express">
-<img src="https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
-<img src="https://img.shields.io/badge/Cloudflare-Deploy-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare">
-
-<br><br>
-
-Catálogo digital e painel administrativo da Pizza Express, desenvolvido com Next.js, React, Node.js e Express.
-
-</div>
-
----
-
-## Visão geral
-
-O Catálogo Pizza Express permite consultar categorias, produtos, detalhes, adicionais e promoções, além de montar o carrinho de compras.
-
-O frontend utiliza Next.js, React, CSS Modules e integração com uma API REST versionada em `/api/v1`.
-
-O backend será responsável pelo catálogo público, painel administrativo, autenticação do administrador, persistência em PostgreSQL e gerenciamento de imagens no Cloudinary.
-
-<div align="center">
-
-<!-- Adicionar aqui a imagem de visão geral / arquitetura do projeto -->
-
-</div>
-
-<table>
-<tr>
-<td width="33%" valign="top">
-
-### Frontend
-
-* Next.js
-* React
-* JavaScript
-* CSS Modules
-* Vitest
-* Playwright
-
-</td>
-<td width="33%" valign="top">
-
-### Backend
-
-* Node.js
-* Express
-* PostgreSQL
-* JWT
-* bcrypt
-* Swagger / OpenAPI
-* Cloudinary
-
-</td>
-<td width="33%" valign="top">
-
-### Infraestrutura
-
-* API versionada
-* Refresh token em cookie `httpOnly`
-* CORS
-* Rate limit no login
-* Tratamento centralizado de erros
-* Logs administrativos
-
-</td>
-</tr>
-</table>
-
----
-
-## Funcionalidades
-
-<table>
-<tr>
-<td width="33%" valign="top">
-
-### Catálogo público
-
-* Dados públicos da loja
-* Status da loja
-* Consulta de categorias ativas
-* Listagem e busca de produtos
-* Filtros por categoria, destaque e promoção
-
-</td>
-<td width="33%" valign="top">
-
-### Painel administrativo
-
-* Login administrativo
-* CRUD de categorias
-* CRUD de produtos
-* Cadastro de tamanhos
-* Cadastro de bordas e adicionais
-* Upload de imagens
-* Controle de disponibilidade e visibilidade
-
-</td>
-<td width="33%" valign="top">
-
-### Loja e catálogo
-
-* Configurações da loja
-* Horários de funcionamento
-* Taxa de entrega
-* Pedido mínimo
-* Tempo estimado
-* Abertura, fechamento e pausa da loja
-
-</td>
-</tr>
-</table>
-
----
-
-## Autenticação
-
-A autenticação administrativa utiliza JWT, refresh token em cookie `httpOnly` e senhas protegidas com bcrypt.
-
-O fluxo contempla login, renovação de sessão, logout e consulta do administrador autenticado.
-
-<div align="center">
-
-<!-- Adicionar aqui um diagrama do fluxo de autenticação -->
-
-</div>
-
----
+Catálogo digital e painel administrativo da Pizza Express. O monorepositório contém um frontend Next.js e uma API Express/TypeScript integrada a PostgreSQL, Elasticsearch e Cloudinary.
 
 ## Arquitetura
 
-O projeto é dividido entre o frontend público e o backend da API REST. O frontend é organizado por componentes, funcionalidades, contextos, hooks, fixtures e repositórios. O backend seguirá uma organização por rotas, controllers, services, repositories, validações e middlewares.
+- `frontend/`: Next.js 16, React 19, App Router, CSS Modules, carrinho e painel administrativo.
+- `backend/`: Express 5, TypeScript, TypeORM, autenticação JWT, validação Zod e Swagger/OpenAPI.
+- PostgreSQL: persistência de usuários, catálogo, loja, pedidos e favoritos.
+- Elasticsearch: busca textual de produtos.
+- Cloudinary: upload de imagens de produtos e categorias quando as credenciais estão configuradas.
 
-<div align="center">
+## Requisitos
 
-<!-- Adicionar aqui um diagrama da arquitetura em camadas -->
+- Node.js 20 ou superior;
+- npm;
+- Docker Desktop para o ambiente completo;
+- PostgreSQL, Elasticsearch e Cloudinary quando executados fora do Docker.
 
-</div>
+## Portas locais
 
-<table>
-<tr>
-<td width="50%" valign="top">
+| Serviço | URL |
+| --- | --- |
+| Frontend | `http://localhost:3000` |
+| API | `http://localhost:3001` |
+| Swagger | `http://localhost:3001/api-docs` |
+| PostgreSQL | `localhost:5432` |
+| Elasticsearch | `http://localhost:9200` |
 
-### Padrões utilizados
+## Execução com Docker
 
-* Component-Based Architecture
-* Repository Pattern
-* Context API
-* Feature Modules
-* Custom Hooks
-* API versionada
-* Service Layer
-
-</td>
-<td width="50%" valign="top">
-
-### Componentes de suporte
-
-* Carrinho de compras
-* Modal de personalização
-* Busca de produtos
-* Layout responsivo
-* JWT e refresh token
-* Validação de dados
-* Tratamento centralizado de erros
-
-</td>
-</tr>
-</table>
-
----
-
-## Regras de negócio
-
-Entre as principais regras implementadas estão:
-
-* Produtos podem possuir variantes, bordas e adicionais configuráveis
-* Valores financeiros são armazenados em centavos
-* Slugs de categorias e produtos devem ser únicos
-* Preços não podem ser negativos
-* O preço promocional deve ser menor que o preço normal
-* Categorias e produtos inativos não aparecem no catálogo público
-* Produtos indisponíveis podem aparecer, mas não podem ser adicionados
-* A loja pode estar aberta, fechada ou pausada
-* Categorias com produtos ativos não podem ser excluídas sem aviso
-* O carrinho deve manter as quantidades atualizadas
-* Os dados do carrinho são persistidos localmente
-
-<div align="center">
-
-<!-- Adicionar aqui um diagrama do fluxo de configuração do produto -->
-
-</div>
-
----
-
-## Banco de dados
-
-O backend utilizará PostgreSQL como banco de dados relacional. O frontend mantém fixtures locais apenas durante a transição para a API.
-
-O domínio principal é formado pelas entidades `Admin`, `Store`, `Category`, `Product`, `ProductImage`, `ProductVariant`, `ProductOptionGroup`, `ProductOption`, `RefreshToken` e `AdminAuditLog`.
-
-<div align="center">
-  <!-- Adicionar aqui a imagem da modelagem do banco de dados -->
-</div>
-
-As principais estruturas persistidas são:
-
-```text
-admins
-stores
-categories
-products
-product_images
-product_variants
-product_option_groups
-product_options
-refresh_tokens
-admin_audit_logs
+```bash
+cd backend
+docker compose up -d --build
+docker compose exec backend npm run migrate
+docker compose exec backend npm run seed
 ```
 
----
+Para recriar os dados locais do zero, removendo os volumes:
 
-## Documentação da API
-
-A API REST será disponibilizada pelo backend em Node.js e Express, com documentação Swagger/OpenAPI.
-
-<div align="center">
-<table>
-<tr>
-<td align="center" width="50%">
-
-<strong>API</strong>
-
-<br>
-
-<!-- Adicionar aqui a imagem da documentação da API -->
-
-</td>
-<td align="center" width="50%">
-
-<strong>Integração</strong>
-
-<br>
-
-<!-- Adicionar aqui a imagem da integração com a API -->
-
-</td>
-</tr>
-</table>
-</div>
-
-| Interface        | Endereço                         |
-| :--------------- | :------------------------------- |
-| **Frontend local** | `http://localhost:3000`         |
-| **API**             | `/api/v1`                       |
-| **Backend**         | `Em desenvolvimento`             |
-
-Endpoints principais:
-
-```text
-POST   /api/v1/auth/admin/login
-POST   /api/v1/auth/admin/refresh
-POST   /api/v1/auth/admin/logout
-GET    /api/v1/auth/admin/me
-
-GET    /api/v1/store
-GET    /api/v1/store/status
-GET    /api/v1/catalog/home
-GET    /api/v1/categories
-GET    /api/v1/categories/:slug
-GET    /api/v1/products
-GET    /api/v1/products/:slug
-
-GET    /api/v1/admin/categories
-POST   /api/v1/admin/categories
-PATCH  /api/v1/admin/categories/:id
-DELETE /api/v1/admin/categories/:id
-GET    /api/v1/admin/products
-POST   /api/v1/admin/products
-PATCH  /api/v1/admin/products/:id
-DELETE /api/v1/admin/products/:id
-POST   /api/v1/admin/uploads/images
-GET    /api/v1/admin/store
-PATCH  /api/v1/admin/store
+```bash
+docker compose down --volumes --remove-orphans
+docker compose build --no-cache
+docker compose up -d
+docker compose exec backend npm run migrate
+docker compose exec backend npm run seed
 ```
 
----
+O backend escuta `3000` dentro do container e é publicado em `3001` no host. O frontend deve ser iniciado em outro terminal:
 
-## Como executar
+```bash
+cd frontend
+npm install
+npm run dev -- --webpack
+```
 
-### Execução local
+## Execução manual do backend
+
+```bash
+cd backend
+npm install
+copy .env.example .env
+npm run build
+npm run migrate
+npm run seed
+npm start
+```
+
+Para desenvolvimento, use `npm run dev`. Configure `USE_DATABASE=true` quando PostgreSQL estiver disponível; `USE_DATABASE=false` é destinado a testes e desenvolvimento sem persistência. A busca textual exige Elasticsearch. Uploads exigem as variáveis do Cloudinary.
+
+## Variáveis de ambiente
+
+Consulte `backend/.env.example` e `frontend/.env.example`. A variável pública do frontend é:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1
+```
+
+O backend usa `PORT=3000` internamente, `CORS_ORIGIN=http://localhost:3000`, PostgreSQL em `DB_*`, Elasticsearch em `ELASTICSEARCH_URL` e credenciais do Cloudinary em `CLOUDINARY_*`.
+
+## Funcionalidades implementadas
+
+- catálogo público, categorias, busca e personalização de produtos;
+- adicionais, bordas e tamanhos vinculados à configuração do produto;
+- carrinho e checkout via WhatsApp;
+- autenticação administrativa e controle por role;
+- CRUD administrativo de produtos, categorias, tamanhos, bordas, adicionais e loja;
+- pedidos de clientes e acompanhamento administrativo;
+- favoritos e perfil do cliente pela API;
+- documentação Swagger e collection Postman.
+
+Adicionais são opções de configuração e não produtos independentes no catálogo público. Fixtures do frontend são mantidas somente para testes; o runtime público consulta a API.
+
+## API
+
+Prefixo: `/api/v1`.
+
+- Autenticação: `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/me`, `/auth/user/register`;
+- catálogo: `/categories`, `/products`, `/products/search`, `/products/configurations`, `/additionals`, `/edges`, `/sizes`;
+- loja: `/store`, `/store/status`;
+- cliente: `/users/me`, `/users/me/favorites`, `/users/me/orders`;
+- administração de pedidos: `/admin/orders`, `/admin/orders/:id/status`.
+
+Os métodos, corpos, parâmetros e envelopes atuais estão em `backend/src/config/openApiConfig.ts` e `backend/docs/Pizza-Express.postman_collection.json`.
+
+## Credenciais de demonstração
+
+Criadas pelo seed local:
+
+```text
+Administrador: admin@pizzaexpress.com / Admin@123
+Cliente: cliente@pizzaexpress.com / Cliente@123
+```
+
+Não use essas credenciais em produção.
+
+## Testes e builds
 
 Frontend:
 
 ```bash
 cd frontend
-npm install
-```
-
-Inicie o ambiente de desenvolvimento:
-
-```bash
-npm run dev
-```
-
-Acesse a aplicação:
-
-```text
-http://localhost:3000
+npm run lint
+npm test -- --run
+npm run test:e2e
+npm run build
 ```
 
 Backend:
 
 ```bash
 cd backend
-npm install
+npm run build
+npm run test:unit
+npm run test:integration
+npm run test:contract
 ```
 
-Configure as variáveis de ambiente a partir do arquivo `.env.example`, incluindo a conexão com PostgreSQL, as credenciais JWT e as credenciais do Cloudinary.
+O backend não possui script de lint dedicado. Testes de integração precisam de PostgreSQL/configuração compatível; E2E precisa do frontend e backend em execução.
 
-Execute a API:
+## Limitações conhecidas
 
-```bash
-npm run dev
-```
+- Elasticsearch é obrigatório para a busca indexada;
+- upload depende de Cloudinary configurado;
+- o checkout persistido depende de PostgreSQL;
+- o frontend não inventa fallback de dados quando a API falha;
+- migrations já aplicadas não devem ser removidas nem reordenadas.
 
-O backend utilizará um seed com um administrador inicial e deverá disponibilizar a API em `/api/v1`.
+## Documentação complementar
 
----
-
-## Estrutura resumida
-
-```text
-catalogo-pizza-express/
-├── backend/
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   └── repositories/
-│   ├── .env.example
-│   └── package.json
-└── frontend/
-    ├── assets/
-    ├── docs/
-    ├── public/
-    ├── src/
-    │   ├── app/
-    │   ├── components/
-    │   ├── contexts/
-    │   ├── features/
-    │   ├── fixtures/
-    │   ├── hooks/
-    │   ├── lib/
-    │   └── repositories/
-    └── tests/
-```
-
----
-
-## Relato de bugs
-
-Encontrou algum comportamento inesperado?
-
-[Abra uma issue](https://github.com/ygor-marangoni/catalogo-pizza-express/issues/new) descrevendo o problema, os passos para reprodução e o resultado esperado.
+- [README do backend](backend/README.md)
+- [README do frontend](frontend/README.md)
+- [Collection Postman](backend/docs/Pizza-Express.postman_collection.json)
+- [Swagger](http://localhost:3001/api-docs)
