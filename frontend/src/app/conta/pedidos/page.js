@@ -8,8 +8,8 @@ import { useCustomerAuth } from "@/contexts/CustomerAuthContext";
 import { customerService } from "@/services/customer-service";
 import styles from "../account.module.css";
 
-const statusLabels = { PENDING: "Em análise", CONFIRMED: "Confirmado", PREPARING: "Preparando", READY: "Pronto", COMPLETED: "Concluído", CANCELLED: "Cancelado" };
-const statusClass = { COMPLETED: styles.statusDone, CANCELLED: styles.statusCancelled, PENDING: styles.statusPending, CONFIRMED: styles.statusPending, PREPARING: styles.statusPending, READY: styles.statusDone };
+const statusLabels = { PENDING: "Em análise", PREPARING: "Preparando", DELIVERED: "Entregue", CANCELLED: "Cancelado" };
+const statusClass = { DELIVERED: styles.statusDone, CANCELLED: styles.statusCancelled, PENDING: styles.statusPending, PREPARING: styles.statusPending };
 
 export default function OrdersPage() {
   const { account, loading } = useCustomerAuth();

@@ -1,12 +1,14 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth-service";
 import { setAccessToken } from "@/services/api-client";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const router = useRouter();
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,8 +22,8 @@ export function AuthProvider({ children }) {
   const value = useMemo(() => ({
     account, loading,
     async login(credentials) { const session = await authService.login(credentials); if (session.role !== "ADMIN") throw new Error("Esta área é exclusiva para administradores."); setAccount(session); return session; },
-    async logout() { setAccessToken(null); setAccount(null); },
-  }), [account, loading]);
+    async logout() { await authService.logout(); setAccount(null); router.replace("/login"); },
+  }), [account, loading, router]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

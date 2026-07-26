@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Clock3, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useOverlay } from "@/hooks/useOverlay";
 import { Badge } from "@/components/ui/Badge";
 import { IconButton } from "@/components/ui/IconButton";
@@ -26,10 +26,10 @@ export function ProductCustomizationModal({ product, editingItem, onClose, onCom
         <div className={styles.visual}>
           <div className={styles.image}>{product.images[0] ? <Image src={product.images[0]} alt={`Imagem de ${product.name}`} fill sizes="(max-width: 760px) 100vw, 440px" preload /> : <span>{product.name.slice(0, 1)}</span>}</div>
           <div className={styles.visualCopy}>
-            <div className={styles.badges}>{product.compareAtPriceInCents > startingPrice && <Badge tone="success">Oferta</Badge>} {!product.available && <Badge tone="danger">Indisponível</Badge>}</div>
+            <div className={styles.badges}>{!product.available && <Badge tone="danger">Indisponível</Badge>}</div>
             <h3>{product.name}</h3>
             <p>{product.description}</p>
-            <div className={styles.meta}><Price className={styles.neutralPrice} value={startingPrice} compareAt={product.compareAtPriceInCents} prefix={product.variants?.length ? "a partir de" : undefined} /><span className={styles.prep}><Clock3 size={16} />{product.preparationTime}</span></div>
+            <div className={styles.meta}><Price className={styles.neutralPrice} value={startingPrice} prefix={product.variants?.length ? "a partir de" : undefined} /></div>
           </div>
         </div>
         <div className={styles.content}><ProductConfigurator key={editingItem?.id || product.id} product={product} editingItem={editingItem} inModal onComplete={onComplete} /></div>

@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@/config/api";
 
 let accessToken = null;
 let refreshRequest = null;
+const sessionListeners = new Set();
 
 export class ApiError extends Error {
   constructor(message, status, code, field) {
@@ -13,8 +14,12 @@ export class ApiError extends Error {
   }
 }
 
-export function setAccessToken(token) { accessToken = token || null; }
+export function setAccessToken(token) {
+  accessToken = token || null;
+  sessionListeners.forEach((listener) => listener(accessToken));
+}
 export function getAccessToken() { return accessToken; }
+export function onSessionChange(listener) { sessionListeners.add(listener); return () => sessionListeners.delete(listener); }
 
 async function parseResponse(response) {
   const body = await response.json().catch(() => null);
@@ -24,7 +29,7 @@ async function parseResponse(response) {
   return body?.data ?? body;
 }
 
-async function refresh() {
+export async function refreshAccessToken() {
   if (!refreshRequest) {
     refreshRequest = fetch(`${API_BASE_URL}/auth/refresh`, { method: "POST", credentials: "include" })
       .then(parseResponse)
@@ -40,7 +45,7 @@ export async function apiRequest(path, options = {}, canRefresh = true) {
   if (!(options.body instanceof FormData) && options.body !== undefined) headers.set("Content-Type", "application/json");
   const response = await fetch(`${API_BASE_URL}${path}`, { ...options, headers, credentials: "include" });
   if (response.status === 401 && canRefresh && !path.includes("/auth/")) {
-    try { await refresh(); return apiRequest(path, options, false); } catch { setAccessToken(null); }
+    try { await refreshAccessToken(); return apiRequest(path, options, false); } catch { setAccessToken(null); }
   }
   return parseResponse(response);
 }

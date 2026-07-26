@@ -6,4 +6,5 @@ export const authService = {
   async refresh() { const data = await post("/auth/refresh"); setAccessToken(data.token); return data; },
   async me() { return get("/users/me"); },
   async updateMe(body) { return put("/users/me", body); },
+  async logout() { setAccessToken(null); },
 };

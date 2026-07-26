@@ -1,19 +1,18 @@
-import { del, get, post, put } from "@/services/api-client";
+import { del, get, patch, post, put } from "@/services/api-client";
 
-const slugify = (value) => value.toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 const unwrapItems = (data) => data?.items || data || [];
 const mapProduct = (item) => {
   const sizes = item.sizes || [];
   const edges = item.edges || [];
   const additionals = item.additionals || [];
-  const variants = sizes.map((size) => ({ id: String(size.id), sourceId: size.id, name: size.name, description: size.description || "", priceInCents: item.base_price + Number(size.additional_price || 0), available: true }));
+  const variants = sizes.map((size) => ({ id: String(size.id), sourceId: size.id, name: size.name, description: size.description || "", priceInCents: item.base_price + Number(size.additional_price || 0) }));
   const addonGroups = [
-    edges.length ? { id: "edges", name: "Escolha a borda", min: 0, max: 1, required: false, options: edges.map((edge) => ({ id: String(edge.id), sourceId: edge.id, name: edge.name, priceInCents: edge.additional_price || 0, available: true })) } : null,
-    additionals.length ? { id: "additionals", name: "Adicionais", min: 0, max: additionals.length, required: false, options: additionals.map((additional) => ({ id: String(additional.id), sourceId: additional.id, name: additional.name, priceInCents: additional.price || 0, available: true })) } : null,
+    edges.length ? { id: "edges", name: "Escolha a borda", min: 0, max: 1, required: false, options: edges.map((edge) => ({ id: String(edge.id), sourceId: edge.id, name: edge.name, priceInCents: edge.additional_price || 0 })) } : null,
+    additionals.length ? { id: "additionals", name: "Adicionais", min: 0, max: additionals.length, required: false, options: additionals.map((additional) => ({ id: String(additional.id), sourceId: additional.id, name: additional.name, priceInCents: additional.price || 0 })) } : null,
   ].filter(Boolean);
-  return { ...item, categoryId: item.category_id, basePriceInCents: item.base_price, compareAtPriceInCents: item.base_price, shortDescription: item.description || "", slug: `${slugify(item.name)}-${item.id}`, images: item.image_url ? [item.image_url] : [], active: item.deleted_at == null, available: item.available !== false, featured: item.highlighted === true, popular: item.highlighted === true, variants, addonGroups, tags: [], preparationTime: null };
+  return { ...item, categoryId: item.category_id, basePriceInCents: item.base_price, shortDescription: item.description || "", slug: String(item.id), images: item.image_url ? [item.image_url] : [], available: item.available !== false, featured: item.highlighted === true, variants, addonGroups };
 };
-const mapCategory = (item) => ({ ...item, slug: `${slugify(item.name)}-${item.id}`, active: item.deleted_at == null, sortOrder: item.id });
+const mapCategory = (item) => ({ ...item, slug: String(item.id), image: item.icon_url || null });
 
 export const catalogService = {
   async getStore() { return get("/store"); },
@@ -45,4 +44,6 @@ export const catalogService = {
   deleteSize: (id) => del(`/sizes/${id}`),
   updateStore: (body) => put("/store", body),
   updateStoreStatus: (is_open) => put("/store/status", { is_open }),
+  getAdminOrders: (status) => get(`/admin/orders${status ? `?status=${encodeURIComponent(status)}` : ""}`),
+  updateAdminOrderStatus: (id, status) => patch(`/admin/orders/${id}/status`, { status }),
 };

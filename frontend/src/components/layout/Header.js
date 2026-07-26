@@ -39,7 +39,7 @@ export function Header({ store, suggestions, categories }) {
           <button className={styles.utility} type="button" onClick={showDeliveryInfo}><MapPin size={18} />Entrega</button>
           <button className={`${styles.utility} ${styles.coupon}`} type="button" onClick={showCouponInfo}><TicketPercent size={18} />Cupons</button>
         </nav>
-        <Link href="/" className={styles.brand} aria-label={`${store.name} | início`}><Image src={store.logo} alt="Logo oficial da Pizza Express" width={104} height={104} priority /></Link>
+        <Link href="/" className={styles.brand} aria-label={`${store.name} | início`}><Image src={store.logo} alt="Logo oficial da Pizza Express" width={104} height={104} priority loading="eager" /></Link>
         <div className={styles.rightGroup}>
           <div className={styles.search}><SearchInput compact suggestions={suggestions} /></div>
           <div className={styles.actions}>

@@ -68,7 +68,7 @@ export function MobileMenu({ open, onClose, onAccount, onDelivery, categories, s
           <span className={styles.mobileContextIcon}><Image className={styles.mobileAccountIcon} src={userIcon} alt="" width={19} height={19} /></span>
           <strong>Minha conta</strong>
         </button>
-        <address className={styles.mobileLocation}><MapPin size={17} strokeWidth={1.8} aria-hidden="true" /><span>{store.address}</span></address>
+        {store.address && <address className={styles.mobileLocation}><MapPin size={17} strokeWidth={1.8} aria-hidden="true" /><span>{store.address}</span></address>}
       </div>
     </aside>
   </div>;

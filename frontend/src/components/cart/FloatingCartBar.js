@@ -21,7 +21,7 @@ export function FloatingCartBar({ onOpen }) {
     <Container className={styles.inner}>
       <div className={styles.summary}>
         <span className={styles.bagIcon} aria-hidden="true">
-          <Image src={shoppingBagIcon} alt="" width={25} height={25} />
+          <Image src={shoppingBagIcon} alt="" width={22} height={22} />
           <small>{itemCount}</small>
         </span>
         <span className={styles.copy}>

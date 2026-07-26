@@ -1,13 +1,12 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import styles from "./ui.module.css";
 
 export function SearchInput({ initialValue = "", suggestions = [], compact = false }) {
   const router = useRouter();
-  const pathname = usePathname();
   const [value, setValue] = useState(initialValue);
   const [focused, setFocused] = useState(false);
   const debounceRef = useRef(null);
@@ -31,10 +30,8 @@ export function SearchInput({ initialValue = "", suggestions = [], compact = fal
 
   function openSuggestion(item) {
     window.clearTimeout(debounceRef.current);
-    const params = new URLSearchParams(window.location.search);
-    params.set("produto", item.slug);
     setFocused(false);
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    router.push(`/busca?q=${encodeURIComponent(item.name)}`);
   }
 
   const visibleSuggestions = value.trim().length >= 2

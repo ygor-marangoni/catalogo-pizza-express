@@ -6,7 +6,7 @@ import { SearchInput } from "@/components/ui/SearchInput";
 import { getCatalogRepository } from "@/repositories/catalog";
 import styles from "./search.module.css";
 
-export const metadata = { title: "Buscar no cardápio", description: "Busque por produtos, ingredientes, categorias e tags." };
+export const metadata = { title: "Buscar no cardápio", description: "Busque produtos disponíveis no catálogo Pizza Express." };
 
 export default async function SearchPage({ searchParams }) {
   const { q = "" } = await searchParams;

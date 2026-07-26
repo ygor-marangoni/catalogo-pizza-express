@@ -2,12 +2,14 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth-service";
 import { setAccessToken } from "@/services/api-client";
 
 const CustomerAuthContext = createContext(null);
 
 export function CustomerAuthProvider({ children }) {
+  const router = useRouter();
   const [account, setAccount] = useState(null);
   const isAdminRoute = usePathname().startsWith("/admin");
   const [loading, setLoading] = useState(() => !isAdminRoute);
@@ -59,8 +61,8 @@ export function CustomerAuthProvider({ children }) {
     },
     async register(data) { return authService.register(data); },
     async updateProfile(data) { const profile = await authService.updateMe(data); setAccount(profile); return profile; },
-    async logout() { setAccessToken(null); setAccount(null); },
-  }), [account, loading]);
+    async logout() { await authService.logout(); setAccount(null); router.replace("/"); },
+  }), [account, loading, router]);
 
   return <CustomerAuthContext.Provider value={value}>{children}</CustomerAuthContext.Provider>;
 }

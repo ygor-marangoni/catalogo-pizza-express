@@ -6,12 +6,7 @@ import heroBrazilFlag from "../../../assets/images/brasil-bandeira.svg";
 import { catalogService } from "@/services/catalog-service";
 
 function mapStore(store) {
-  const hoursMatch = typeof store.opening_hours === "string"
-    ? store.opening_hours.match(/(\d{1,2}:\d{2})\s*(?:às|-|a)\s*(\d{1,2}:\d{2})/i)
-    : null;
-  const businessHours = hoursMatch
-    ? ["sun", "mon", "tue", "wed", "thu", "fri", "sat"].map((day) => ({ day, open: hoursMatch[1], close: hoursMatch[2] }))
-    : [];
+  const phone = store.phone || "";
   return {
     ...store,
     id: String(store.id || "pizza-express"),
@@ -20,19 +15,14 @@ function mapStore(store) {
     logo: logo.src,
     heroPizzaBadge: heroPizzaBadge.src,
     heroBrazilFlag: heroBrazilFlag.src,
-    businessHours,
-    timeZone: "America/Sao_Paulo",
-    deliveryEnabled: true,
-    pickupEnabled: true,
-    estimatedTime: null,
-    contact: { whatsapp: store.phone || "" },
+    contact: { phone, phoneDisplay: phone || "Telefone não informado", phoneHref: phone.replace(/\D/g, ""), whatsapp: phone.replace(/\D/g, "") },
   };
 }
 
 export const apiCatalogRepository = {
   async getStore() { return mapStore(await catalogService.getStore()); },
   async getCategories() { return catalogService.getCategories(); },
-  async getCategoryBySlug(slug) { return (await catalogService.getCategories()).find((category) => category.slug === slug) || null; },
+  async getCategoryBySlug(slug) { return Number.isInteger(Number(slug)) && Number(slug) > 0 ? catalogService.getCategoryById(Number(slug)).catch(() => null) : null; },
   async getFeaturedProducts() { return (await catalogService.getProducts({ active: true })).filter((product) => product.featured); },
   async getPopularProducts() { return catalogService.getProducts({ active: true }); },
   async getProducts(options = {}) {
@@ -40,8 +30,24 @@ export const apiCatalogRepository = {
     const products = await catalogService.getProducts({ category_id: categoryId, active: true, available: options.filter === "available" ? true : undefined });
     return categoryId === undefined ? products : products.filter((product) => product.category_id === categoryId);
   },
-  async getProductBySlug(slug) { const products = await catalogService.getProducts({ active: true }); return products.find((product) => product.slug === slug) || null; },
-  async searchProducts(term) { return catalogService.searchProducts({ q: term }); },
+  async getProductBySlug(slug) { return Number.isInteger(Number(slug)) && Number(slug) > 0 ? catalogService.getProductById(Number(slug)).catch(() => null) : null; },
+  async searchProducts(term) {
+    const normalizedTerm = term.trim().toLocaleLowerCase("pt-BR");
+    if (!normalizedTerm) return [];
+
+    let indexedResults = [];
+    try {
+      indexedResults = await catalogService.searchProducts({ q: term });
+    } catch {
+      indexedResults = [];
+    }
+    const catalogProducts = await catalogService.getProducts({ available: true });
+    const textResults = catalogProducts.filter((product) => [product.name, product.description, product.shortDescription]
+      .filter(Boolean)
+      .some((field) => field.toLocaleLowerCase("pt-BR").includes(normalizedTerm)));
+    const productsById = new Map([...indexedResults, ...textResults].map((product) => [product.id, product]));
+    return [...productsById.values()];
+  },
 };
 
 export function getCatalogRepository() { return apiCatalogRepository; }
