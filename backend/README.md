@@ -136,6 +136,19 @@ Cada vínculo de tamanho armazena o preço final do produto naquele tamanho e um
 
 As respostas HTTP são comprimidas quando o cliente envia `Accept-Encoding`, reduzindo o tráfego das listagens e configurações do catálogo.
 
+### Clientes e operação de pedidos
+
+As rotas abaixo exigem Bearer Token com role `ADMIN`:
+
+- `GET|POST /api/v1/admin/customers`;
+- `GET|PUT|DELETE /api/v1/admin/customers/:id`;
+- `GET /api/v1/admin/orders` e `GET /api/v1/admin/orders/:id`;
+- `PATCH /api/v1/admin/orders/:id/status`.
+
+Clientes são contas reais da tabela `users`; a exclusão é lógica e não remove o histórico de pedidos. O fluxo operacional aceito é `PENDING → APPROVED → PREPARING → OUT_FOR_DELIVERY → COMPLETED`, com cancelamento permitido enquanto o pedido estiver em andamento. `DELIVERED` continua aceito como estado final legado.
+
+O checkout persiste um snapshot seguro do pedido antes de abrir o WhatsApp. O backend recalcula tamanhos, bordas, adicionais, cupom e entrega; preços enviados pelo navegador não são usados como fonte de verdade. A migration `012-AddOrderFulfillment` adiciona telefone, atendimento, endereço, pagamento, observações, frete, desconto e código do cupom.
+
 ## Scripts
 
 ```bash

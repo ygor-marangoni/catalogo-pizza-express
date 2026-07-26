@@ -10,19 +10,19 @@ function pageItems(current, total) {
   return [1, "start-gap", current - 1, current, current + 1, "end-gap", total];
 }
 
-export function AdminPagination({ page, pageSize, total, onPageChange }) {
+export function AdminPagination({ page, pageSize, total, onPageChange, itemLabel = "produto", itemLabelPlural = "produtos" }) {
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const currentPage = Math.min(page, totalPages);
   const first = total === 0 ? 0 : (currentPage - 1) * pageSize + 1;
   const last = Math.min(currentPage * pageSize, total);
 
   if (total <= pageSize) {
-    return <footer className={styles.pagination}><p>Mostrando <strong>{total}</strong> {total === 1 ? "produto" : "produtos"}</p></footer>;
+    return <footer className={styles.pagination}><p>Mostrando <strong>{total}</strong> {total === 1 ? itemLabel : itemLabelPlural}</p></footer>;
   }
 
   return <footer className={styles.pagination}>
-    <p>Mostrando <strong>{first}–{last}</strong> de <strong>{total}</strong> produtos</p>
-    <nav className={styles.paginationNav} aria-label="Paginação de produtos">
+    <p>Mostrando <strong>{first}–{last}</strong> de <strong>{total}</strong> {itemLabelPlural}</p>
+    <nav className={styles.paginationNav} aria-label={`Paginação de ${itemLabelPlural}`}>
       <button type="button" onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} aria-label="Página anterior"><ChevronLeft size={17} /></button>
       {pageItems(currentPage, totalPages).map((item) => typeof item === "string"
         ? <span className={styles.paginationGap} key={item}>…</span>

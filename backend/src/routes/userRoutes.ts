@@ -8,12 +8,21 @@ import { favoriteSchema, orderSchema, updateUserSchema } from "../validations/sc
 const router = express.Router();
 const protect = AuthMiddleware.verifyToken.bind(AuthMiddleware);
 const customerOnly = AuthMiddleware.requireRole("CUSTOMER");
-const controller = new UserController(services.auth, services.product, services.order, services.favorite);
+const controller = new UserController(
+	services.auth,
+	services.product,
+	services.order,
+	services.favorite,
+	services.productConfiguration,
+	services.coupon,
+	services.store,
+);
 
 // Todas as rotas abaixo operam somente sobre o cliente autenticado.
 router.use(protect, customerOnly);
 router.get("/me", controller.getProfile.bind(controller));
 router.put("/me", validate(updateUserSchema), controller.updateProfile.bind(controller));
+router.delete("/me", controller.deleteProfile.bind(controller));
 router.get("/me/favorites", controller.listFavorites.bind(controller));
 router.post("/me/favorites", validate(favoriteSchema), controller.addFavorite.bind(controller));
 router.delete("/me/favorites/:id", controller.removeFavorite.bind(controller));

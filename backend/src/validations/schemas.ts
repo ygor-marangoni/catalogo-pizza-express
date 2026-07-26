@@ -28,16 +28,28 @@ export const orderSchema = z
 		items: z
 			.array(z.object({
 				product_id: positiveInteger,
-				quantity: positiveInteger,
+				quantity: positiveInteger.max(99),
 				size_id: positiveInteger.optional(),
-				edge_id: positiveInteger.nullable().optional(),
-				additional_ids: z.array(positiveInteger).max(50).optional(),
-				note: z.string().max(300).optional(),
+				edge_id: positiveInteger.optional(),
+				additional_ids: z.array(positiveInteger).max(10).optional(),
+				note: z.string().trim().max(300).optional(),
 			}).strict())
 			.min(1)
 			.max(50),
+		customer: z.object({
+			phone: z.string().trim().min(10).max(40),
+			fulfillment: z.enum(["delivery", "pickup"]),
+			address: z.string().trim().max(500).optional(),
+			payment: z.enum(["Pix", "Cartão", "Dinheiro"]),
+			notes: z.string().trim().max(300).optional(),
+		}).strict().optional(),
+		coupon_code: z.string().trim().min(2).max(40).optional(),
 	})
-	.strict();
+	.strict()
+	.refine((data) => data.customer?.fulfillment !== "delivery" || Boolean(data.customer.address), {
+		message: "Informe o endereço para entrega",
+		path: ["customer", "address"],
+	});
 export const categoryCreateSchema = z
 	.object({
 		name: z.string().trim().min(1).max(120),
@@ -57,9 +69,6 @@ export const productCreateSchema = z
 		image_url: z.string().url().nullable().optional(),
 		available: z.boolean().optional(),
 		highlighted: z.boolean().optional(),
-		size_ids: z.array(positiveInteger).max(20).optional(),
-		edge_ids: z.array(positiveInteger).max(20).optional(),
-		additional_ids: z.array(positiveInteger).max(50).optional(),
 	})
 	.strict();
 export const productUpdateSchema = productCreateSchema.partial().refine((data) => Object.keys(data).length > 0, {
@@ -106,7 +115,15 @@ export const productConfigurationSchema = z.object({
 	});
 export const orderStatusSchema = z
 	.object({
-		status: z.enum(["PENDING", "PREPARING", "DELIVERED", "CANCELLED"]),
+		status: z.enum([
+			"PENDING",
+			"APPROVED",
+			"PREPARING",
+			"OUT_FOR_DELIVERY",
+			"COMPLETED",
+			"DELIVERED",
+			"CANCELLED",
+		]),
 	})
 	.strict();
 export const storeUpdateSchema = z

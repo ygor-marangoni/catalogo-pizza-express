@@ -33,3 +33,13 @@ O catálogo agrupa categorias, produtos e configurações em chamadas paralelas 
 As respostas JSON do backend usam compressão HTTP. O modo API continua sem cache persistente para que alterações administrativas apareçam após atualizar a página.
 
 A busca usa Elasticsearch e, somente em erro 503, recarrega `/products` para filtrar no frontend.
+
+## Clientes e pedidos administrativos
+
+O painel possui:
+
+- `/admin/clientes`: pesquisa, paginação, criação, edição e exclusão lógica das contas de clientes;
+- `/admin/pedidos`: Kanban responsivo com novos, aprovados, preparando, em entrega e concluídos, além do histórico de cancelados;
+- detalhes do pedido com cliente, contato, atendimento, pagamento, endereço, itens personalizados, frete, cupom e total.
+
+O Kanban permite arrastar somente para a próxima etapa válida e também fornece botões, preservando navegação por teclado. As transições são validadas novamente pela API. Ao concluir a finalização no storefront, `POST /users/me/orders` registra o pedido antes de abrir o WhatsApp.

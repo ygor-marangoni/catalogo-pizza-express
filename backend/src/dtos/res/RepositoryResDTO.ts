@@ -24,8 +24,10 @@ export interface AdminRepository {
 }
 
 export interface UserRepository {
+	findAll(search?: string): Promise<UserResDTO[]>;
 	findByEmail(email: string): Promise<UserResDTO | null>;
 	findById(id: number): Promise<UserResDTO | null>;
 	create(data: RegisterUserReqDTO, passwordHash: string): Promise<UserResDTO>;
 	update(id: number, data: UpdateUserReqDTO, passwordHash?: string): Promise<UserResDTO>;
+	delete(id: number): Promise<void>;
 }

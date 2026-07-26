@@ -6,7 +6,8 @@ import { ArrowLeft, Bike, Store } from "lucide-react";
 import whatsappIcon from "../../../assets/icons/whatsapp.svg";
 import { Price } from "@/components/ui/Price";
 import { buildWhatsAppOrderUrl, calculateOrderTotal } from "@/features/cart/whatsapp-order";
-import { couponsApi } from "@/features/admin-catalog/coupons-api";
+import { validateCustomerCoupon } from "@/features/promotions/public-coupons-api";
+import { customerService } from "@/services/customer-service";
 import styles from "./cart.module.css";
 
 function formatPhoneInput(value) {
@@ -24,6 +25,7 @@ export function CheckoutForm({ items, subtotalInCents, store, page, onBack, onCo
   const [coupon, setCoupon] = useState(null);
   const [couponMessage, setCouponMessage] = useState("");
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const deliveryFee = store?.deliveryFeeInCents || 0;
   const total = calculateOrderTotal(subtotalInCents, fulfillment, deliveryFee, coupon?.discount_in_cents || 0);
 
@@ -32,7 +34,7 @@ export function CheckoutForm({ items, subtotalInCents, store, page, onBack, onCo
     setValidatingCoupon(true);
     setCouponMessage("");
     try {
-      const validated = await couponsApi.validate(couponCode.trim(), subtotalInCents);
+      const validated = await validateCustomerCoupon(couponCode.trim(), subtotalInCents);
       setCoupon(validated);
       setCouponCode(validated.code);
       setCouponMessage("Cupom aplicado com sucesso.");
@@ -42,8 +44,9 @@ export function CheckoutForm({ items, subtotalInCents, store, page, onBack, onCo
     } finally { setValidatingCoupon(false); }
   }
 
-  function submit(event) {
+  async function submit(event) {
     event.preventDefault();
+    if (submitting) return;
     setError("");
     const form = new FormData(event.currentTarget);
     const customer = {
@@ -59,15 +62,41 @@ export function CheckoutForm({ items, subtotalInCents, store, page, onBack, onCo
       setError("Informe o endereço completo para entrega.");
       return;
     }
+    const popup = window.open("", "_blank");
+    setSubmitting(true);
     try {
       const url = buildWhatsAppOrderUrl(store?.contact?.whatsapp, {
         storeName: store?.name, customer, items, subtotalInCents, deliveryFeeInCents: deliveryFee, coupon,
       });
-      window.open(url, "_blank", "noopener,noreferrer");
+      await customerService.createOrder({
+        items: items.map((item) => ({
+          product_id: Number(item.productId),
+          quantity: item.quantity,
+          ...(item.variant ? { size_id: Number(item.variant.id) } : {}),
+          ...(item.addons?.find((addon) => addon.groupId === "edges")
+            ? { edge_id: Number(item.addons.find((addon) => addon.groupId === "edges").optionId) }
+            : {}),
+          additional_ids: (item.addons || [])
+            .filter((addon) => addon.groupId === "additionals")
+            .map((addon) => Number(addon.optionId)),
+          ...(item.note ? { note: item.note } : {}),
+        })),
+        customer: {
+          phone: customer.phone,
+          fulfillment: customer.fulfillment,
+          ...(customer.address ? { address: customer.address } : {}),
+          payment: customer.payment,
+          ...(customer.notes ? { notes: customer.notes } : {}),
+        },
+        ...(coupon?.code ? { coupon_code: coupon.code } : {}),
+      });
+      if (popup) popup.location.href = url;
+      else window.location.href = url;
       onComplete?.();
     } catch (submitError) {
+      popup?.close();
       setError(submitError.message);
-    }
+    } finally { setSubmitting(false); }
   }
 
   return <div className={`${styles.checkout} ${page ? styles.checkoutPage : ""}`}>
@@ -109,7 +138,7 @@ export function CheckoutForm({ items, subtotalInCents, store, page, onBack, onCo
         {fulfillment === "delivery" && <div className={styles.checkoutDynamic}><span>Taxa de entrega</span><Price value={deliveryFee} /></div>}
         {coupon && <div className={`${styles.couponDiscount} ${styles.checkoutDynamic}`}><span>Cupom {coupon.code}</span><span>- <Price value={coupon.discount_in_cents} /></span></div>}
         <div className={styles.checkoutTotal}><strong>Total estimado</strong><Price value={total} /></div>
-        <button type="submit"><Image src={whatsappIcon} alt="" width={19} height={19} /><span>Enviar pedido pelo WhatsApp</span></button>
+        <button type="submit" disabled={submitting}><Image src={whatsappIcon} alt="" width={19} height={19} /><span>{submitting ? "Registrando pedido…" : "Enviar pedido pelo WhatsApp"}</span></button>
       </footer>
     </form>
   </div>;

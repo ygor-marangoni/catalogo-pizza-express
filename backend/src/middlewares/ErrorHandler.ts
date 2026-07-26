@@ -20,6 +20,7 @@ const statusByCode: Record<string, number> = {
 	[ErrorCode.ADMIN_NOT_FOUND]: 404,
 	[ErrorCode.USER_NOT_FOUND]: 404,
 	[ErrorCode.ORDER_NOT_FOUND]: 404,
+	[ErrorCode.INVALID_ORDER_TRANSITION]: 409,
 	[ErrorCode.FAVORITE_NOT_FOUND]: 404,
 	[ErrorCode.RESOURCE_NOT_FOUND]: 404,
 	[ErrorCode.EMAIL_ALREADY_EXISTS]: 409,

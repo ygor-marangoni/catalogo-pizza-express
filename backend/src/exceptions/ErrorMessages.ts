@@ -16,6 +16,7 @@ export const errorMessages: Record<string, string> = {
 	[ErrorCode.ADMIN_NOT_FOUND]: "Administrador não encontrado",
 	[ErrorCode.USER_NOT_FOUND]: "Cliente não encontrado",
 	[ErrorCode.ORDER_NOT_FOUND]: "Pedido não encontrado",
+	[ErrorCode.INVALID_ORDER_TRANSITION]: "Esta mudança de status não é permitida para o pedido",
 	[ErrorCode.FAVORITE_NOT_FOUND]: "Favorito não encontrado",
 	[ErrorCode.INVALID_CREDENTIALS]: "E-mail ou senha inválidos",
 	[ErrorCode.EMAIL_ALREADY_EXISTS]: "Já existe uma conta cadastrada com este e-mail",

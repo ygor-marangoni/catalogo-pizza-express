@@ -84,7 +84,31 @@ test(
 				200,
 			);
 
-			assert.equal((await request(baseUrl, "/api/v1/admin/orders", adminOptions("GET"))).response.status, 200);
+			const adminOrders = await request(baseUrl, "/api/v1/admin/orders", adminOptions("GET"));
+			assert.equal(adminOrders.response.status, 200);
+			assert.equal(adminOrders.body.data[0].customer.email, registration.credentials.email);
+			assert.equal(
+				(
+					await request(
+						baseUrl,
+						`/api/v1/admin/orders/${order.body.data.id}/status`,
+						adminOptions("PATCH", { status: "APPROVED" }),
+					)
+				).response.status,
+				200,
+			);
+			for (const status of ["PREPARING", "OUT_FOR_DELIVERY", "COMPLETED"]) {
+				assert.equal(
+					(
+						await request(
+							baseUrl,
+							`/api/v1/admin/orders/${order.body.data.id}/status`,
+							adminOptions("PATCH", { status }),
+						)
+					).response.status,
+					200,
+				);
+			}
 			assert.equal(
 				(
 					await request(
@@ -93,7 +117,7 @@ test(
 						adminOptions("PATCH", { status: "PREPARING" }),
 					)
 				).response.status,
-				200,
+				409,
 			);
 			assert.equal(
 				(
@@ -104,6 +128,37 @@ test(
 					)
 				).response.status,
 				403,
+			);
+
+			const managedEmail = `managed-${Date.now()}@example.com`;
+			const managedCustomer = await request(
+				baseUrl,
+				"/api/v1/admin/customers",
+				adminOptions("POST", { name: "Cliente Gerenciado", email: managedEmail, password: "senha-segura" }),
+			);
+			assert.equal(managedCustomer.response.status, 201);
+			const managedId = managedCustomer.body.data.id;
+			assert.equal(managedCustomer.body.data.password_hash, undefined);
+			const customerList = await request(baseUrl, "/api/v1/admin/customers?search=Gerenciado", adminOptions("GET"));
+			assert.equal(customerList.response.status, 200);
+			assert.equal(customerList.body.data.length, 1);
+			assert.equal(
+				(
+					await request(
+						baseUrl,
+						`/api/v1/admin/customers/${managedId}`,
+						adminOptions("PUT", { name: "Cliente Atualizado pelo Admin" }),
+					)
+				).response.status,
+				200,
+			);
+			assert.equal(
+				(await request(baseUrl, `/api/v1/admin/customers/${managedId}`, adminOptions("DELETE"))).response.status,
+				200,
+			);
+			assert.equal(
+				(await request(baseUrl, `/api/v1/admin/customers/${managedId}`, adminOptions("GET"))).response.status,
+				404,
 			);
 
 			assert.equal(

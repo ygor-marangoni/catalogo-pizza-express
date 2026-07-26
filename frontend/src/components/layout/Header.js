@@ -3,15 +3,17 @@
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Bike, Equal, MapPin, TicketPercent } from "lucide-react";
+import { Bike, Equal, LogIn, MapPin, TicketPercent, UserPlus } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import shoppingBagIcon from "../../../assets/icons/shopping-bag.webp";
 import userIcon from "../../../assets/icons/user.webp";
 import { useCart } from "@/contexts/CartContext";
+import { useCustomerAuth } from "@/contexts/CustomerAuthContext";
 import { FloatingCartBar } from "@/components/cart/FloatingCartBar";
+import { Avatar } from "@/components/ui/Avatar";
 import { IconButton } from "@/components/ui/IconButton";
 import { SearchInput } from "@/components/ui/SearchInput";
-import { Tooltip } from "@/components/ui/Tooltip";
 import { Container } from "@/components/ui/Container";
 import { formatCurrency } from "@/lib/currency";
 import { getPublicCoupons } from "@/features/promotions/public-coupons-api";
@@ -22,6 +24,9 @@ const Modal = dynamic(() => import("@/components/ui/Modal").then((module) => mod
 const MobileMenu = dynamic(() => import("./MobileMenu").then((module) => module.MobileMenu), { ssr: false });
 
 export function Header({ store, suggestions, categories }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const mountedRef = useRef(false);
   const couponRequestRef = useRef(0);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -30,10 +35,14 @@ export function Header({ store, suggestions, categories }) {
   const [coupons, setCoupons] = useState([]);
   const [couponsLoading, setCouponsLoading] = useState(false);
   const [couponsError, setCouponsError] = useState("");
+  const [authMounted, setAuthMounted] = useState(false);
   const { itemCount, hydrated, cartOpen, openCart, closeCart } = useCart();
+  const { account, loading: authLoading } = useCustomerAuth();
   useEffect(() => {
     mountedRef.current = true;
+    const authTimer = window.setTimeout(() => setAuthMounted(true), 0);
     return () => {
+      window.clearTimeout(authTimer);
       mountedRef.current = false;
       couponRequestRef.current += 1;
     };
@@ -48,6 +57,11 @@ export function Header({ store, suggestions, categories }) {
   }, []);
   const showCouponInfo = useCallback(async () => {
     if (!mountedRef.current) return;
+    if (authLoading) return;
+    if (!account) {
+      setInfoModal("coupon-auth");
+      return;
+    }
     const requestId = couponRequestRef.current + 1;
     couponRequestRef.current = requestId;
     setInfoModal("coupons");
@@ -62,8 +76,19 @@ export function Header({ store, suggestions, categories }) {
     } finally {
       if (mountedRef.current && couponRequestRef.current === requestId) setCouponsLoading(false);
     }
-  }, []);
-  const showAccountInfo = useCallback(() => setFutureInfo("A conta do cliente será disponibilizada em uma próxima entrega."), []);
+  }, [account, authLoading]);
+  const showAccountInfo = useCallback(() => router.push(account ? "/conta" : `/login?next=${encodeURIComponent(pathname)}`), [account, pathname, router]);
+
+  useEffect(() => {
+    if (!account || searchParams.get("cupons") !== "1" || infoModal === "coupons") return;
+    const timer = window.setTimeout(() => {
+      showCouponInfo();
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("cupons");
+      router.replace(`${pathname}${params.size ? `?${params}` : ""}`, { scroll: false });
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [account, infoModal, pathname, router, searchParams, showCouponInfo]);
   return <>
     <header className={styles.header}>
       <Container className={styles.headerInner}>
@@ -76,7 +101,11 @@ export function Header({ store, suggestions, categories }) {
         <div className={styles.rightGroup}>
           <div className={styles.search}><SearchInput compact suggestions={suggestions} /></div>
           <div className={styles.actions}>
-            <span className={styles.desktopAccount}><Tooltip content="Conta disponível em uma próxima etapa"><IconButton className={`${styles.actionButton} ${styles.accountButton}`} label="Conta | disponível em breve" disabled><Image className={styles.headerAssetIcon} src={userIcon} alt="" width={22} height={22} preload unoptimized /></IconButton></Tooltip></span>
+            <span className={styles.desktopAccount}>
+              {authMounted && !authLoading && (account
+                ? <Link className={styles.accountAvatarLink} href="/conta" aria-label={`Abrir minha conta, ${account.name}`}><Avatar name={account.name} size="small" /></Link>
+                : <Link href={`/login?next=${encodeURIComponent(pathname)}`} aria-label="Entrar na conta"><IconButton className={`${styles.actionButton} ${styles.accountButton}`} label="Entrar na conta"><Image className={styles.headerAssetIcon} src={userIcon} alt="" width={22} height={22} preload unoptimized /></IconButton></Link>)}
+            </span>
             <span className={styles.cartButton}><IconButton className={styles.actionButton} label={`Abrir carrinho${hydrated ? ` com ${itemCount} item(ns)` : ""}`} onClick={openCart}><Image className={styles.headerAssetIcon} src={shoppingBagIcon} alt="" width={22} height={22} preload unoptimized /></IconButton>{hydrated && itemCount > 0 && <span className={styles.count} aria-hidden="true">{itemCount}</span>}</span>
           </div>
         </div>
@@ -129,6 +158,28 @@ export function Header({ store, suggestions, categories }) {
             </div>
           </article>)}
         </div>}
+      </div>
+    </Modal>}
+    {infoModal === "coupon-auth" && <Modal open onClose={closeInfoModal} title="Cupons disponíveis">
+      <div className={styles.couponAuthContent}>
+        <span className={styles.couponAuthIcon}><TicketPercent size={25} /></span>
+        <div className={styles.couponAuthCopy}>
+          <h3>Crie sua conta para ver os cupons</h3>
+          <p>Cadastre-se gratuitamente e aproveite os descontos disponíveis no seu próximo pedido.</p>
+        </div>
+        <div className={styles.couponAuthActions}>
+          <Link className={styles.couponAuthPrimary} href="/cadastro">
+            <UserPlus size={17} />
+            Criar minha conta
+          </Link>
+          <Link
+            className={styles.couponAuthSecondary}
+            href={`/login?next=${encodeURIComponent(`${pathname}?cupons=1`)}`}
+          >
+            <LogIn size={17} />
+            Já tenho uma conta
+          </Link>
+        </div>
       </div>
     </Modal>}
     {futureInfo && <Modal open onClose={closeFutureInfo} title="Disponível em breve"><p>{futureInfo}</p></Modal>}
