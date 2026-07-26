@@ -7,6 +7,7 @@
 		"clean": "node scripts/clean.js",
 		"build": "npm run clean && tsc",
 		"dev": "ts-node server.ts",
+		"docker:setup": "docker compose down --volumes --remove-orphans && docker compose build --no-cache && docker compose up -d && docker compose exec backend npm run migrate && docker compose exec backend npm run seed",
 		"migrate": "node scripts/migrate.js",
 		"migrate:build": "npm run build && npm run migrate",
 		"seed": "node scripts/seed.js",

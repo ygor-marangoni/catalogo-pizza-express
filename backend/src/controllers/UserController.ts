@@ -106,6 +106,10 @@ export class UserController {
 				quantity: number;
 				unit_price: number;
 				subtotal: number;
+				size?: unknown;
+				edge?: unknown;
+				additionals?: unknown[];
+				note?: string;
 			}> = [];
 			let total = 0;
 			for (const item of req.body.items) {
@@ -113,14 +117,30 @@ export class UserController {
 				if (!product) throw this.error("PRODUCT_NOT_FOUND", `Produto ${item.product_id} não encontrado`, 404);
 				if (!product.available)
 					throw this.error("PRODUCT_UNAVAILABLE", `Produto ${product.name} não está disponível`, 409);
-				const subtotal = product.base_price * item.quantity;
+				const sizes: any[] = product.sizes || [];
+				const edges: any[] = product.edges || [];
+				const additionals: any[] = product.additionals || [];
+				if (sizes.length && !item.size_id) throw this.error("SIZE_REQUIRED", `Escolha um tamanho para ${product.name}`, 400);
+				const size = item.size_id ? sizes.find((option: any) => option.id === item.size_id) : null;
+				if (item.size_id && !size) throw this.error("SIZE_NOT_ALLOWED", `Tamanho não permitido para ${product.name}`, 400);
+				const edge = item.edge_id ? edges.find((option: any) => option.id === item.edge_id) : null;
+				if (item.edge_id && !edge) throw this.error("EDGE_NOT_ALLOWED", `Borda não permitida para ${product.name}`, 400);
+				const selectedAdditionalIds = [...new Set(item.additional_ids || [])];
+				const selectedAdditionals = selectedAdditionalIds.map((id) => additionals.find((option: any) => option.id === id));
+				if (selectedAdditionals.some((option) => !option)) throw this.error("ADDITIONAL_NOT_ALLOWED", `Adicional não permitido para ${product.name}`, 400);
+				const unitPrice = product.base_price + (size?.additional_price || 0) + (edge?.additional_price || 0) + selectedAdditionals.reduce((sum, option: any) => sum + option.price, 0);
+				const subtotal = unitPrice * item.quantity;
 				total += subtotal;
 				items.push({
 					product_id: product.id,
 					name: product.name,
 					quantity: item.quantity,
-					unit_price: product.base_price,
+					unit_price: unitPrice,
 					subtotal,
+					size: size ? { id: size.id, name: size.name, additional_price: size.additional_price } : null,
+					edge: edge ? { id: edge.id, name: edge.name, additional_price: edge.additional_price } : null,
+					additionals: selectedAdditionals.map((option: any) => ({ id: option.id, name: option.name, price: option.price })),
+					note: typeof item.note === "string" ? item.note.trim().slice(0, 300) : "",
 				});
 			}
 			const order = await this.orderRepository.create({

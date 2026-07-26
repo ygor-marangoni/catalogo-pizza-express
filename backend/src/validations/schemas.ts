@@ -26,7 +26,14 @@ export const favoriteSchema = z.object({ product_id: positiveInteger }).strict()
 export const orderSchema = z
 	.object({
 		items: z
-			.array(z.object({ product_id: positiveInteger, quantity: positiveInteger }).strict())
+			.array(z.object({
+				product_id: positiveInteger,
+				quantity: positiveInteger,
+				size_id: positiveInteger.optional(),
+				edge_id: positiveInteger.nullable().optional(),
+				additional_ids: z.array(positiveInteger).max(50).optional(),
+				note: z.string().max(300).optional(),
+			}).strict())
 			.min(1)
 			.max(50),
 	})
@@ -50,6 +57,9 @@ export const productCreateSchema = z
 		image_url: z.string().url().nullable().optional(),
 		available: z.boolean().optional(),
 		highlighted: z.boolean().optional(),
+		size_ids: z.array(positiveInteger).max(20).optional(),
+		edge_ids: z.array(positiveInteger).max(20).optional(),
+		additional_ids: z.array(positiveInteger).max(50).optional(),
 	})
 	.strict();
 export const productUpdateSchema = productCreateSchema.partial().refine((data) => Object.keys(data).length > 0, {
