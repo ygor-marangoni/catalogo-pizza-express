@@ -24,7 +24,7 @@ export function ProductCustomizationModal({ product, editingItem, onClose, onCom
       </header>
       <div className={styles.body}>
         <div className={styles.visual}>
-          <div className={styles.image}><Image src={product.images[0]} alt={`Imagem de ${product.name}`} fill sizes="(max-width: 760px) 100vw, 440px" preload /></div>
+          <div className={styles.image}>{product.images[0] ? <Image src={product.images[0]} alt={`Imagem de ${product.name}`} fill sizes="(max-width: 760px) 100vw, 440px" preload /> : <span>{product.name.slice(0, 1)}</span>}</div>
           <div className={styles.visualCopy}>
             <div className={styles.badges}>{product.compareAtPriceInCents > startingPrice && <Badge tone="success">Oferta</Badge>} {!product.available && <Badge tone="danger">Indisponível</Badge>}</div>
             <h3>{product.name}</h3>

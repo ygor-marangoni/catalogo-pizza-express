@@ -14,6 +14,9 @@
 .rightGroup { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
 .search { width: 198px; }
 .actions { display: flex; align-items: center; justify-content: flex-end; gap: 0.8rem; }
+.accountAvatarLink { display: inline-flex; border-radius: 50%; transition: transform var(--transition-fast); }
+.accountAvatarLink:hover { transform: translateY(-1px); }
+.accountAvatarLink:focus-visible { outline: 3px solid #e22121; outline-offset: 3px; }
 .actionButton { width: 44px !important; min-height: 44px !important; border: 1px solid rgba(153, 0, 0, 0.15) !important; background: var(--color-primary) !important; color: white; }
 .actionButton:hover:not(:disabled) { background: var(--color-primary-hover) !important; }
 .accountButton:disabled { background: #e56e73 !important; border-color: #e56e73 !important; color: white; opacity: 1 !important; }

@@ -10,6 +10,9 @@ import { Footer } from "@/components/layout/Footer";
 import { ProductModalController } from "@/components/catalog/ProductModalController";
 import { getCatalogRepository } from "@/repositories/catalog";
 import { SITE_URL } from "@/constants/site";
+import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
+
+export const dynamic = "force-dynamic";
 
 const figtree = Figtree({
   subsets: ["latin"],
@@ -65,12 +68,12 @@ export default async function RootLayout({ children }) {
     .map(({ id, name, slug }) => ({ id, name, slug }));
   return <html lang="pt-BR" data-scroll-behavior="smooth" suppressHydrationWarning>
     <body className={`${figtree.variable} ${soehneBreit.variable} ${syne.variable}`}>
-      <ToastProvider><CartProvider storeId={store.id}>
+      <ToastProvider><CustomerAuthProvider><CartProvider storeId={store.id}>
         <Header store={headerStore} suggestions={searchSuggestions} categories={categories} />
         <Suspense fallback={null}><ProductModalController products={suggestions} /></Suspense>
         <main id="conteudo">{children}</main>
         <Footer store={store} />
-      </CartProvider></ToastProvider>
+      </CartProvider></CustomerAuthProvider></ToastProvider>
     </body>
   </html>;
 }

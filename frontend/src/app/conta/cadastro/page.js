@@ -1,0 +1,8 @@
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCustomerAuth } from "@/contexts/CustomerAuthContext";
+import styles from "../account.module.css";
+export default function RegisterPage(){const {register}=useCustomerAuth();const router=useRouter();const [form,setForm]=useState({name:"",email:"",password:""});const [error,setError]=useState("");const [success,setSuccess]=useState(false);const [sending,setSending]=useState(false);return <main className={styles.page}><section className={`${styles.panel} ${styles.narrow}`}><h1>Criar conta</h1>{success?<><p className={styles.success}>Conta criada com sucesso.</p><Link href="/conta/login">Entrar agora</Link></>:<form className={styles.form} onSubmit={async(e)=>{e.preventDefault();setSending(true);setError("");try{await register(form);setSuccess(true);setTimeout(()=>router.push("/conta/login"),900)}catch(err){setError(err.message)}finally{setSending(false)}}}><label>Nome<input required minLength="2" maxLength="120" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></label><label>Email<input type="email" required value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/></label><label>Senha<input type="password" required minLength="8" value={form.password} onChange={e=>setForm({...form,password:e.target.value})}/></label>{error&&<p className={styles.error} role="alert">{error}</p>}<button className={styles.primary} disabled={sending}>{sending?"Criando…":"Criar conta"}</button></form>}<div className={styles.links}><Link href="/conta/login">Já tenho uma conta</Link></div></section></main>}
+

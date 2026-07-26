@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
 import { ArrowRight, PencilLine, Trash2, X } from "lucide-react";
 import shoppingBagIcon from "../../../assets/icons/shopping-bag.webp";
 import { useCart } from "@/contexts/CartContext";
@@ -10,12 +11,17 @@ import { calculateItemTotal } from "@/features/cart/cart-domain";
 import { Button } from "@/components/ui/Button";
 import { Price } from "@/components/ui/Price";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
+import { useCustomerAuth } from "@/contexts/CustomerAuthContext";
+import { customerService } from "@/services/customer-service";
 import { Skeleton } from "@/components/ui/Skeleton";
 import styles from "./cart.module.css";
 
 export function CartContents({ page = false, onNavigate }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { account } = useCustomerAuth();
+  const [submitting, setSubmitting] = useState(false);
+  const [orderError, setOrderError] = useState("");
   const { cart, hydrated, subtotalInCents, updateQuantity, removeItem, clearCart, startEditing } = useCart();
 
   function editItem(item) {
@@ -39,6 +45,22 @@ export function CartContents({ page = false, onNavigate }) {
       ...(item.note ? [{ label: "Observação", value: item.note }] : []),
     ];
   }
+  async function finishOrder() {
+    if (!account) { router.push("/login?next=/carrinho"); return; }
+    setSubmitting(true); setOrderError("");
+    try {
+      const order = await customerService.createOrder(cart.items.map((item) => ({
+        product_id: Number(item.productId),
+        quantity: item.quantity,
+        size_id: item.variant?.id ? Number(item.variant.id) : undefined,
+        edge_id: Number(item.addons?.find((addon) => addon.groupId === "edges")?.optionId) || undefined,
+        additional_ids: (item.addons || []).filter((addon) => addon.groupId === "additionals").map((addon) => Number(addon.optionId)),
+        note: item.note || undefined,
+      })));
+      clearCart();
+      router.push(`/conta/pedidos/${order.id}`);
+    } catch (error) { setOrderError(error.message); setSubmitting(false); }
+  }
   if (!hydrated) return <div className={styles.skeletons} aria-label="Carregando carrinho"><Skeleton height="90px" /><Skeleton height="90px" /></div>;
   if (!cart.items.length) return <div className={`${styles.empty} ${page ? "" : styles.emptyDrawer}`.trim()}>
     <section className={styles.emptyState} aria-labelledby="empty-cart-title">
@@ -58,7 +80,7 @@ export function CartContents({ page = false, onNavigate }) {
     <div className={styles.items}>{cart.items.map((item) => {
       const configuration = getItemConfiguration(item);
       return <article className={styles.item} key={item.id}>
-      <div className={styles.image}><Image src={item.image} alt="" fill sizes="76px" /></div>
+      <div className={styles.image}>{item.image ? <Image src={item.image} alt="" fill sizes="76px" /> : <span aria-hidden="true">{item.name.slice(0, 1)}</span>}</div>
       <div className={styles.details}>
         <div className={styles.itemTitleRow}><h3>{item.name}</h3><div className={styles.itemPrice}><Price className={styles.neutralPrice} value={calculateItemTotal(item)} /></div></div>
         {configuration.length > 0 && <ul className={styles.configuration}>{configuration.map((detail) => <li key={detail.label}><strong>{detail.label}:</strong> <span>{detail.value}</span></li>)}</ul>}
@@ -77,7 +99,8 @@ export function CartContents({ page = false, onNavigate }) {
   const summary = <div className={styles.summary}>
     <div className={styles.summaryRow}><strong>Subtotal</strong><Price className={styles.neutralPrice} value={subtotalInCents} /></div>
     <p className={styles.future}>Frete, cupom, identificação e confirmação do pedido estarão disponíveis em uma próxima etapa.</p>
-    <Button block disabled title="Disponível em uma próxima etapa">Continuar para identificação | em breve</Button>
+    {orderError && <p role="alert">{orderError}</p>}
+    <Button block onClick={finishOrder} disabled={submitting}>{submitting ? "Enviando pedido…" : account ? "Confirmar pedido" : "Entrar para continuar"}</Button>
   </div>;
 
   if (page) return <div className={styles.pageLayout}><section className={styles.pageItems} aria-label="Itens do carrinho">{items}</section><aside className={styles.pageSummary} aria-label="Resumo do carrinho">{summary}</aside></div>;

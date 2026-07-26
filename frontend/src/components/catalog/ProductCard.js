@@ -31,7 +31,7 @@ export function ProductCard({ product }) {
           {product.compareAtPriceInCents > price && <Badge tone="success">Oferta</Badge>}
           {!product.available && <Badge tone="danger">Indisponível</Badge>}
         </div>
-        <Image src={product.images[0]} alt={`Apresentação de ${product.name}`} fill sizes="(max-width: 780px) 96px, 172px" />
+        {product.images[0] ? <Image src={product.images[0]} alt={`Apresentação de ${product.name}`} fill sizes="(max-width: 780px) 96px, 172px" /> : <span aria-hidden="true">{product.name.slice(0, 1)}</span>}
       </div>
     </Card>
   ;

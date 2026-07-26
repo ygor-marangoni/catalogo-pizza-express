@@ -18,8 +18,8 @@
 .productMeta { margin-top: auto; font-size: 0.92rem; }
 .productPrice > small { color: var(--color-text-muted); font-weight: 500; }
 .productPrice > span:first-of-type { color: var(--color-text); }
-.productImage { position: relative; min-width: 0; height: 100%; overflow: hidden; border-left: 1px solid var(--color-border); background: #3a130d; }
-.productImage img { object-fit: cover; padding: 0; transition: transform var(--transition-default); }
+.productImage { position: relative; min-width: 0; height: 100%; overflow: hidden; border-left: 1px solid var(--color-border); background: transparent; }
+.productImage img { object-fit: contain; padding: 0; transition: transform var(--transition-default); }
 .productCard:has(.cardTrigger:hover) .productImage img { transform: scale(1.035); }
 .badges { position: absolute; z-index: 2; top: 0.55rem; right: 0.55rem; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.35rem; }
 .carousel { position: relative; }
