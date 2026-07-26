@@ -100,7 +100,7 @@ export function Header({ store, suggestions, categories }) {
           <p>Receba seu pedido em qualquer bairro de Monte Carmelo–MG.</p>
         </div>
         <div className={styles.deliveryDetails}>
-          <div><span>Taxa de entrega</span><strong>{formatCurrency(store.deliveryFeeInCents ?? 700)}</strong></div>
+          <div><span>Taxa de entrega</span><strong>{formatCurrency(store.deliveryFeeInCents ?? 0)}</strong></div>
           <div><span>Área atendida</span><strong>Todo o município</strong></div>
         </div>
         <p className={styles.infoModalNote}><MapPin size={16} />Informe o endereço completo durante a finalização do pedido.</p>

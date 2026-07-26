@@ -121,6 +121,22 @@
 				{ "name": "Listar todos os pedidos", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/admin/orders" } },
 				{ "name": "Atualizar status do pedido", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"status\": \"PREPARING\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/orders/{{orderId}}/status" } }
 			]
+		},
+		{
+			"name": "Configuração de produtos",
+			"item": [
+				{ "name": "Listar configurações", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products/configurations" } },
+				{ "name": "Consultar configuração do produto", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/products/{{productId}}/configuration" } },
+				{ "name": "Atualizar configuração do produto", "request": { "method": "PUT", "header": [{ "key": "Content-Type", "value": "application/json" }], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "body": { "mode": "raw", "raw": "{\n  \"sizes\": [],\n  \"edges\": [],\n  \"additionals\": []\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/products/{{productId}}/configuration" } }
+			]
+		},
+		{
+			"name": "Cupons",
+			"item": [
+				{ "name": "Listar cupons públicos", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/coupons/public" } },
+				{ "name": "Validar cupom", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"code\": \"PIZZA10\",\n  \"subtotal\": 3990\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/coupons/validate" } },
+				{ "name": "Listar cupons ADMIN", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/coupons" } }
+			]
 		}
 	]
 }

@@ -37,7 +37,7 @@ export class ApiCatalogRepository {
   async getCategories() { return (await this.loadCatalog()).categories; }
   async getCategoryBySlug(slug) { return (await this.getCategories()).find((item) => item.slug === slug) || null; }
   async getFeaturedProducts() { return (await this.loadCatalog()).products.filter((item) => !isAddonOnlyProduct(item) && item.featured); }
-  async getPopularProducts() { return (await this.loadCatalog()).products.filter((item) => !isAddonOnlyProduct(item) && item.popular); }
+  async getPopularProducts() { return (await this.loadCatalog()).products.filter((item) => !isAddonOnlyProduct(item) && item.featured); }
   async getProducts(options = {}) {
     let { products } = await this.loadCatalog();
     products = products.filter((item) => !isAddonOnlyProduct(item));
