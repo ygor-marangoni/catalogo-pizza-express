@@ -5,7 +5,6 @@ import Link from "next/link";
 import { BadgePercent, Bike, CakeSlice, CirclePlus, CupSoda, House, MapPin, Pizza, Search, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import userIcon from "../../../assets/icons/user.webp";
 import { useOverlay } from "@/hooks/useOverlay";
 import styles from "./layout.module.css";
 
@@ -17,7 +16,7 @@ const CATEGORY_ICONS = {
   adicionais: CirclePlus,
 };
 
-export function MobileMenu({ open, onClose, onAccount, onDelivery, categories, store }) {
+export function MobileMenu({ open, onClose, onDelivery, categories, store }) {
   const [query, setQuery] = useState("");
   const pathname = usePathname();
   const router = useRouter();
@@ -58,16 +57,12 @@ export function MobileMenu({ open, onClose, onAccount, onDelivery, categories, s
         })}
       </nav>
 
-      <div className={styles.mobileContextCard} aria-label="Entrega e conta">
+      <div className={styles.mobileContextCard} aria-label="Entrega">
         <button className={styles.mobileDelivery} type="button" onClick={() => { onClose(); onDelivery(); }}>
           <span className={styles.mobileContextIcon}><Bike size={20} strokeWidth={1.8} aria-hidden="true" /></span>
           <span><strong>Entrega</strong><small>Escolher local de entrega</small></span>
         </button>
 
-        <button className={styles.mobileAccount} type="button" onClick={() => { onClose(); onAccount(); }}>
-          <span className={styles.mobileContextIcon}><Image className={styles.mobileAccountIcon} src={userIcon} alt="" width={19} height={19} /></span>
-          <strong>Minha conta</strong>
-        </button>
         {store.address && <address className={styles.mobileLocation}><MapPin size={17} strokeWidth={1.8} aria-hidden="true" /><span>{store.address}</span></address>}
       </div>
     </aside>

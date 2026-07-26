@@ -11,6 +11,7 @@ const CustomerAuthContext = createContext(null);
 export function CustomerAuthProvider({ children }) {
   const router = useRouter();
   const [account, setAccount] = useState(null);
+  const [role, setRole] = useState(null);
   const isAdminRoute = usePathname().startsWith("/admin");
   const [loading, setLoading] = useState(() => !isAdminRoute);
 
@@ -24,16 +25,21 @@ export function CustomerAuthProvider({ children }) {
     async function restoreSession() {
       try {
         const session = await authService.refresh();
+        if (session.role === "ADMIN") {
+          setRole("ADMIN");
+          return;
+        }
         if (session.role !== "CUSTOMER") {
+          setRole(null);
           setAccessToken(null);
           return;
         }
 
         const profile = await authService.me();
-        if (mounted) setAccount(profile);
+        if (mounted) { setRole("CUSTOMER"); setAccount(profile); }
       } catch {
         setAccessToken(null);
-        if (mounted) setAccount(null);
+        if (mounted) { setRole(null); setAccount(null); }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -45,10 +51,12 @@ export function CustomerAuthProvider({ children }) {
 
   const value = useMemo(() => ({
     account,
+    role,
     loading,
     async adoptSession(session) {
       if (session.role !== "CUSTOMER") throw new Error("Esta conta não é de cliente.");
       const profile = await authService.me();
+      setRole("CUSTOMER");
       setAccount(profile);
       return profile;
     },
@@ -56,13 +64,14 @@ export function CustomerAuthProvider({ children }) {
       const session = await authService.login(credentials);
       if (session.role !== "CUSTOMER") throw new Error("Use o acesso administrativo na área de administração.");
       const profile = await authService.me();
+      setRole("CUSTOMER");
       setAccount(profile);
       return profile;
     },
     async register(data) { return authService.register(data); },
     async updateProfile(data) { const profile = await authService.updateMe(data); setAccount(profile); return profile; },
-    async logout() { await authService.logout(); setAccount(null); router.replace("/"); },
-  }), [account, loading, router]);
+    async logout() { await authService.logout(); setRole(null); setAccount(null); router.replace("/"); },
+  }), [account, loading, role, router]);
 
   return <CustomerAuthContext.Provider value={value}>{children}</CustomerAuthContext.Provider>;
 }

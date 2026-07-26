@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Bike, Equal, LogIn, MapPin, TicketPercent, UserPlus } from "lucide-react";
+import { Bike, Equal, LayoutDashboard, LogIn, MapPin, TicketPercent, UserPlus } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import shoppingBagIcon from "../../../assets/icons/shopping-bag.webp";
@@ -37,7 +37,7 @@ export function Header({ store, suggestions, categories }) {
   const [couponsError, setCouponsError] = useState("");
   const [authMounted, setAuthMounted] = useState(false);
   const { itemCount, hydrated, cartOpen, openCart, closeCart } = useCart();
-  const { account, loading: authLoading } = useCustomerAuth();
+  const { account, role, loading: authLoading } = useCustomerAuth();
   useEffect(() => {
     mountedRef.current = true;
     const authTimer = window.setTimeout(() => setAuthMounted(true), 0);
@@ -102,7 +102,9 @@ export function Header({ store, suggestions, categories }) {
           <div className={styles.search}><SearchInput compact suggestions={suggestions} /></div>
           <div className={styles.actions}>
             <span className={styles.desktopAccount}>
-              {authMounted && !authLoading && (account
+              {authMounted && !authLoading && (role === "ADMIN"
+                ? <Link href="/admin" aria-label="Abrir dashboard administrativo"><IconButton className={styles.actionButton} label="Dashboard administrativo"><LayoutDashboard size={21} /></IconButton></Link>
+                : account
                 ? <Link className={styles.accountAvatarLink} href="/conta" aria-label={`Abrir minha conta, ${account.name}`}><Avatar name={account.name} size="small" /></Link>
                 : <Link href={`/login?next=${encodeURIComponent(pathname)}`} aria-label="Entrar na conta"><IconButton className={`${styles.actionButton} ${styles.accountButton}`} label="Entrar na conta"><Image className={styles.headerAssetIcon} src={userIcon} alt="" width={22} height={22} preload unoptimized /></IconButton></Link>)}
             </span>

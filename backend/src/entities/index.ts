@@ -13,6 +13,7 @@ export { Coupon } from "./Coupon";
 export { ProductSize } from "./ProductSize";
 export { ProductEdge } from "./ProductEdge";
 export { ProductAdditional } from "./ProductAdditional";
+export { RefreshSession } from "./RefreshSession";
 import { Additional } from "./Additional";
 import { Admin } from "./Admin";
 import { User } from "./User";
@@ -27,5 +28,6 @@ import { Coupon } from "./Coupon";
 import { ProductSize } from "./ProductSize";
 import { ProductEdge } from "./ProductEdge";
 import { ProductAdditional } from "./ProductAdditional";
+import { RefreshSession } from "./RefreshSession";
 
-export const ormEntities = [Admin, User, Order, Favorite, Category, Product, Additional, Edge, Size, Store, Coupon, ProductSize, ProductEdge, ProductAdditional];
+export const ormEntities = [Admin, User, Order, Favorite, Category, Product, Additional, Edge, Size, Store, Coupon, ProductSize, ProductEdge, ProductAdditional, RefreshSession];

@@ -2,6 +2,7 @@ const express = require("express");
 const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 require("dotenv").config();
+require("./src/config/envConfig");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 
@@ -43,14 +44,16 @@ app.use(
 	),
 );
 
-const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:3000";
+const corsOrigins = (process.env.CORS_ORIGIN || "http://localhost:3000,http://127.0.0.1:3000")
+	.split(",")
+	.map((origin) => origin.trim())
+	.filter(Boolean);
 
 app.use((req, res, next) => {
 	const requestOrigin = req.headers.origin;
+	const allowedOrigin = requestOrigin && corsOrigins.includes(requestOrigin) ? requestOrigin : null;
 
-	if (!requestOrigin || requestOrigin === corsOrigin) {
-		res.header("Access-Control-Allow-Origin", corsOrigin);
-	}
+	if (allowedOrigin) res.header("Access-Control-Allow-Origin", allowedOrigin);
 
 	res.header("Vary", "Origin");
 	res.header("Access-Control-Allow-Credentials", "true");

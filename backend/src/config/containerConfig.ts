@@ -20,6 +20,7 @@ import type { AdditionalResDTO, CategoryResDTO, EdgeResDTO, ProductResDTO, SizeR
 import { InMemoryUserRepository } from "../repositories/InMemoryUserRepository";
 import { TypeOrmUserRepository } from "../repositories/TypeOrmUserRepository";
 import { ProductAssociationRepository } from "../repositories/ProductAssociationRepository";
+import { RefreshSessionRepository } from "../repositories/RefreshSessionRepository";
 
 const useDatabase = process.env.USE_DATABASE === "true";
 // Seleciona persistência em PostgreSQL ou em memória conforme o ambiente.
@@ -37,6 +38,7 @@ export const repositories = useDatabase
 			favorite: new TypeOrmRepository<any>(Favorite as any),
 			coupon: new TypeOrmRepository<any>(Coupon as any),
 			productConfiguration: new TypeOrmProductConfigurationRepository(),
+			session: new RefreshSessionRepository(),
 		}
 	: {
 			admin: new InMemoryAdminRepository(),
@@ -51,6 +53,7 @@ export const repositories = useDatabase
 			favorite: new InMemoryRepository<any>(),
 			coupon: new InMemoryRepository<any>(),
 			productConfiguration: new InMemoryProductConfigurationRepository(),
+			session: new RefreshSessionRepository(),
 		};
 
 export const services = {
@@ -65,4 +68,5 @@ export const services = {
 	favorite: repositories.favorite,
 	coupon: new CouponService(repositories.coupon),
 	productConfiguration: new ProductConfigurationService(repositories.productConfiguration, repositories.product),
+	session: repositories.session,
 };

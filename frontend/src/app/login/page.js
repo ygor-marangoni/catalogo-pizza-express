@@ -19,6 +19,11 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
 
+  function fillCredentials(email, password) {
+    setForm({ email, password });
+    setError("");
+  }
+
   async function submit(event) {
     event.preventDefault();
     if (sending) return;
@@ -79,6 +84,13 @@ export default function LoginPage() {
           </button>
         </span>
       </label>
+      <div className={styles.demoCredentials} aria-label="Credenciais de demonstração">
+        <span>Preencher acesso de demonstração:</span>
+        <div>
+          <button type="button" onClick={() => fillCredentials("cliente@pizzaexpress.com", "Cliente@123")}>Cliente</button>
+          <button type="button" onClick={() => fillCredentials("admin@pizzaexpress.com", "Admin@123")}>Administrador</button>
+        </div>
+      </div>
       {error && <p className={styles.error} role="alert">{error}</p>}
       <button className={`${styles.primary} ${styles.authSubmit}`} disabled={sending}>
         <LogIn size={17} />

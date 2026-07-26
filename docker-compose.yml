@@ -3,24 +3,22 @@ name: pizza-express
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: pizza-express-postgres
     environment:
-      POSTGRES_DB: db_pizza_express_dev
-      POSTGRES_PASSWORD: password
-      POSTGRES_USER: postgres
+      POSTGRES_DB: ${POSTGRES_DB:?Copy .env.example to .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Copy .env.example to .env}
+      POSTGRES_USER: ${POSTGRES_USER:?Copy .env.example to .env}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d db_pizza_express_dev"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-db_pizza_express_dev}"]
       interval: 5s
       timeout: 5s
       retries: 20
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-    container_name: pizza-express-elasticsearch
     environment:
       discovery.type: single-node
       xpack.security.enabled: "false"
@@ -39,20 +37,19 @@ services:
     build:
       context: ./backend
       target: production
-    container_name: pizza-express-backend-init
     environment: &backend-environment
       NODE_ENV: production
       PORT: 3000
       USE_DATABASE: "true"
       DB_HOST: postgres
       DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: password
-      DB_NAME: db_pizza_express_dev
-      JWT_SECRET: pizza-express-secret-key
+      DB_USER: ${POSTGRES_USER:?Copy .env.example to .env}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Copy .env.example to .env}
+      DB_NAME: ${POSTGRES_DB:?Copy .env.example to .env}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
       JWT_EXPIRATION: 24h
       COOKIE_SECURE: "false"
-      CORS_ORIGIN: http://localhost:3000
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000,http://127.0.0.1:3000}
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_PRODUCTS_INDEX: pizza-products
     depends_on:
@@ -67,7 +64,6 @@ services:
     build:
       context: ./backend
       target: production
-    container_name: pizza-express-backend
     environment:
       <<: *backend-environment
     ports:
@@ -85,11 +81,10 @@ services:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
-    container_name: pizza-express-frontend
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api/v1}
     environment:
       NODE_ENV: production
-      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001/api/v1}
       API_INTERNAL_URL: http://backend:3000/api/v1
     ports:
       - "3000:3000"

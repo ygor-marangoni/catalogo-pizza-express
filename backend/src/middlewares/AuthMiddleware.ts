@@ -3,6 +3,9 @@ import { ErrorCode } from "../entities/enums";
 import { getErrorMessage } from "../exceptions/ErrorMessages";
 
 class AuthMiddleware {
+	static getSecret() {
+		return require("../config/envConfig").envConfig.JWT_SECRET;
+	}
 	static requireRole(...roles) {
 		return (req, res, next) =>
 			roles.includes(req.user?.role)
@@ -23,7 +26,7 @@ class AuthMiddleware {
 					data: null,
 					error: { code: ErrorCode.UNAUTHORIZED, message: getErrorMessage(ErrorCode.UNAUTHORIZED), field: null },
 				});
-			req.user = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
+			req.user = jwt.verify(token, AuthMiddleware.getSecret());
 			next();
 		} catch {
 			return res.status(401).json({
@@ -35,11 +38,11 @@ class AuthMiddleware {
 	}
 
 	static generateToken(id, role = "ADMIN") {
-		return jwt.sign({ id, role }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "24h" });
+		return jwt.sign({ id, role }, AuthMiddleware.getSecret(), { expiresIn: require("../config/envConfig").envConfig.JWT_EXPIRATION });
 	}
 
 	static generateRefreshToken(id, role = "ADMIN") {
-		return jwt.sign({ id, role, type: "refresh" }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: "7d" });
+		return jwt.sign({ id, role, type: "refresh" }, AuthMiddleware.getSecret(), { expiresIn: "7d" });
 	}
 }
 

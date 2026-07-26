@@ -6,7 +6,7 @@ import { loginSchema, registerUserSchema } from "../validations/schemas";
 const AuthMiddleware = require("../middlewares/AuthMiddleware");
 
 const router = express.Router();
-const controller = new AuthController(services.auth);
+const controller = new AuthController(services.auth, services.session);
 
 // Mantém login e renovação unificados para ADMIN e CUSTOMER.
 router.post("/login", validate(loginSchema), controller.login.bind(controller));

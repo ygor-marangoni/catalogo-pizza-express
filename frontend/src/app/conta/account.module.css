@@ -374,6 +374,38 @@
   opacity: 0.58;
 }
 
+.demoCredentials {
+  display: grid;
+  gap: 0.55rem;
+  margin-top: -0.35rem;
+  color: #897c77;
+  font-size: 0.75rem;
+}
+
+.demoCredentials > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.demoCredentials button {
+  min-height: 34px;
+  border: 1px solid #ded3ce;
+  border-radius: 0.55rem;
+  background: #fffaf8;
+  color: var(--color-text);
+  padding: 0.45rem 0.75rem;
+  font: 700 0.75rem/1 var(--font-body), sans-serif;
+  cursor: pointer;
+}
+
+.demoCredentials button:hover,
+.demoCredentials button:focus-visible {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  outline: none;
+}
+
 .secondary {
   padding: 0.7rem 1rem;
   border: 1px solid #ded3ce;

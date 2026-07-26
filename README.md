@@ -3,66 +3,60 @@
 Catalogo digital e painel administrativo da Pizza Express, com frontend
 Next.js e API Express/TypeScript integrada a PostgreSQL e Elasticsearch.
 
-## Execucao completa com Docker
+## Execucao obrigatoria via Docker
 
-Na raiz do projeto:
+Docker Desktop deve estar instalado e em execucao. Backend, frontend,
+PostgreSQL, Elasticsearch, migrations e seed sao iniciados pelo Compose da
+raiz.
 
-```bash
+```powershell
+copy .env.example .env
+# Edite JWT_SECRET no .env com um segredo longo e exclusivo.
 docker compose -p pizza-express up -d --build
 ```
 
-O Compose inicia frontend, backend, PostgreSQL e Elasticsearch. O serviço
-temporario `backend-init` executa migrations e seed antes da API iniciar.
+O servico temporario `backend-init` prepara o banco antes de liberar a API e
+o frontend.
 
-Para acompanhar os logs:
-
-```bash
-docker compose -p pizza-express logs -f
-```
-
-Para remover containers e dados locais:
-
-```bash
-docker compose -p pizza-express down --volumes --remove-orphans
-```
-
-## Portas
+## URLs
 
 | Servico | URL |
 | --- | --- |
-| Frontend | `http://localhost:3000` |
-| API | `http://localhost:3001` |
-| Swagger | `http://localhost:3001/api-docs` |
-| PostgreSQL | `localhost:5432` |
-| Elasticsearch | `http://localhost:9200` |
+| Frontend | http://localhost:3000 |
+| API | http://localhost:3001 |
+| Swagger | http://localhost:3001/api-docs |
+| PostgreSQL | localhost:5432 |
+| Elasticsearch | http://localhost:9200 |
 
-## Arquitetura
+## Operacao
 
-- `frontend/`: Next.js, catalogo publico, busca, carrinho e painel admin;
-- `backend/`: Express, TypeScript, JWT, TypeORM, OpenAPI e regras de negocio;
-- PostgreSQL: usuarios, catalogo, loja, favoritos e pedidos;
-- Elasticsearch: busca textual por nome e descricao.
+```powershell
+# Logs
+docker compose -p pizza-express logs -f
 
-O navegador usa `http://localhost:3001/api/v1`; o frontend usa
-`http://backend:3000/api/v1` internamente durante a renderizacao no container.
+# Rebuild apos alteracoes de codigo
+docker compose -p pizza-express up -d --build
 
-## Execucao manual
+# Parar sem remover dados
+docker compose -p pizza-express stop
 
-Consulte os READMEs de [backend](backend/README.md) e [frontend](frontend/README.md).
-Copie os arquivos `.env.example` para os respectivos ambientes antes de
-executar fora do Compose.
-
-## Documentacao e testes
-
-- [OpenAPI](http://localhost:3001/api-docs)
-- [Collection Postman](backend/docs/Pizza-Express.postman_collection.json)
-- [Requisitos atuais da API](backend/pizza-express-backend-requisitos.md)
-
-```bash
-cd frontend && npm run lint && npm test -- --run && npm run build
-cd ../backend && npm run build && npm run test:unit && npm run test:integration && npm run test:contract
+# Remover containers e volumes locais
+docker compose -p pizza-express down --volumes --remove-orphans
 ```
 
-Adicionais e bordas são opções vinculadas à configuração de um produto, não
-itens independentes do carrinho. Credenciais de seed são apenas para ambiente
-local e devem ser alteradas em qualquer ambiente compartilhado.
+Nao execute `npm run dev`, `npm start` ou servidores separados para esta
+aplicacao. A execucao oficial e centralizada no Compose da raiz.
+
+Credenciais de demonstracao locais:
+
+- Admin: `admin@pizzaexpress.com` / `Admin@123`
+- Cliente: `cliente@pizzaexpress.com` / `Cliente@123`
+
+Altere essas credenciais e o `JWT_SECRET` antes de compartilhar o ambiente.
+
+## Documentacao
+
+- Backend: `backend/src`, migrations e rotas da API;
+- Frontend: `frontend/src`, paginas e componentes Next.js;
+- [OpenAPI](http://localhost:3001/api-docs)
+- [Collection Postman](backend/docs/Pizza-Express.postman_collection.json)

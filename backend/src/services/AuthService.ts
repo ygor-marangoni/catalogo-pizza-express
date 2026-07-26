@@ -98,6 +98,10 @@ class AuthService {
 		return user;
 	}
 
+	async getAccountByRole(id: number, role: "ADMIN" | "CUSTOMER") {
+		return role === "ADMIN" ? this.getAdminById(id) : this.getUserById(id);
+	}
+
 	async updateUser(id: number, data: UpdateUserReqDTO): Promise<UserResDTO> {
 		if (data.email) {
 			const existing = await this.userRepository.findByEmail(data.email);
