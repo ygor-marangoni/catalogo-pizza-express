@@ -15,6 +15,7 @@ import { Additional, Category, Edge, Product, Size, Order, Favorite } from "../e
 import type { AdditionalResDTO, CategoryResDTO, EdgeResDTO, ProductResDTO, SizeResDTO } from "../dtos/res";
 import { InMemoryUserRepository } from "../repositories/InMemoryUserRepository";
 import { TypeOrmUserRepository } from "../repositories/TypeOrmUserRepository";
+import { ProductAssociationRepository } from "../repositories/ProductAssociationRepository";
 
 const useDatabase = process.env.USE_DATABASE === "true";
 // Seleciona persistência em PostgreSQL ou em memória conforme o ambiente.
@@ -47,7 +48,7 @@ export const repositories = useDatabase
 export const services = {
 	auth: new AuthService(repositories.admin, repositories.user),
 	category: new CategoryService(repositories.category),
-	product: new ProductService(repositories.product, repositories.category),
+	product: new ProductService(repositories.product, repositories.category, repositories.size, repositories.edge, repositories.additional, new ProductAssociationRepository()),
 	additional: new AdditionalService(repositories.additional),
 	edge: new EdgeService(repositories.edge),
 	size: new SizeService(repositories.size),

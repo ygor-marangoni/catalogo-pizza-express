@@ -12,4 +12,7 @@ export interface ProductResDTO {
 	created_at: NullableDate;
 	updated_at: NullableDate;
 	deleted_at: NullableDate;
+	sizes?: unknown[];
+	edges?: unknown[];
+	additionals?: unknown[];
 }

@@ -23,7 +23,8 @@ const port = Number.parseInt(process.env.PORT ?? "", 10) || 3000;
 const apiPrefix = "/api/v1";
 const loginLimiter = rateLimit({
 	windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS || 900000),
-	limit: Number(process.env.RATE_LIMIT_MAX_REQUESTS || 5),
+	limit: Number(process.env.RATE_LIMIT_MAX_REQUESTS || 10),
+	skipSuccessfulRequests: true,
 	standardHeaders: true,
 	legacyHeaders: false,
 });
@@ -40,12 +41,19 @@ app.use(
 );
 
 const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:3000";
+const localhostOrigin = /^https?:\/\/localhost(?::\d+)?$/;
 
 app.use((req, res, next) => {
 	const requestOrigin = req.headers.origin;
+	const originAllowed =
+		!requestOrigin ||
+		corsOrigin === "*" ||
+		requestOrigin === corsOrigin ||
+		localhostOrigin.test(requestOrigin);
 
-	if (corsOrigin === "*" || !requestOrigin || requestOrigin === corsOrigin) {
-		res.header("Access-Control-Allow-Origin", corsOrigin);
+	if (originAllowed && requestOrigin) {
+		res.header("Access-Control-Allow-Origin", requestOrigin);
+		res.header("Access-Control-Allow-Credentials", "true");
 	}
 
 	res.header("Vary", "Origin");

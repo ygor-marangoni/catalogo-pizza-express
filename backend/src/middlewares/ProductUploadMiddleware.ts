@@ -22,5 +22,9 @@ export function normalizeProductMultipart(req, _res, next): void {
 		if (req.body[field] === "true") req.body[field] = true;
 		if (req.body[field] === "false") req.body[field] = false;
 	}
+	for (const field of ["size_ids", "edge_ids", "additional_ids"])
+		if (typeof req.body[field] === "string") {
+			try { req.body[field] = JSON.parse(req.body[field]); } catch { req.body[field] = []; }
+		}
 	next();
 }
