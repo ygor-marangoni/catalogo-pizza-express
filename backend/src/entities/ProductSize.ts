@@ -1,14 +1,19 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("product_sizes")
-@Unique(["product_id", "size_id"])
 export class ProductSize {
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column()
+	@PrimaryColumn()
 	product_id: number;
 
-	@Column()
+	@PrimaryColumn()
 	size_id: number;
+
+	@Column({ type: "integer" })
+	price: number;
+
+	@Column({ default: false })
+	is_default: boolean;
+
+	@Column({ default: true })
+	available: boolean;
 }

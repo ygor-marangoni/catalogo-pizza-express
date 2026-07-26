@@ -20,8 +20,12 @@ export function StoreHero({ store, headingLevel = 1, titleId = "hero-title", tit
     </picture>
     <div className={`${styles.heroContent} ${categoryHero ? styles.categoryHeroContent : ""}`.trim()}>
       {!categoryHero && <TodayStoreInfo
-        isOpen={store.is_open}
-        openingHours={store.opening_hours}
+        businessHours={store.businessHours}
+        timeZone={store.timeZone}
+        storeIsOpen={store.isOpen}
+        deliveryEnabled={store.deliveryEnabled}
+        pickupEnabled={store.pickupEnabled}
+        estimatedTime={store.estimatedTime}
       />}
       {categoryHero ? <>
         <span className={styles.categoryHeroEyebrow}>Cardápio Pizza Express</span>
@@ -30,12 +34,12 @@ export function StoreHero({ store, headingLevel = 1, titleId = "hero-title", tit
       </> : <Heading id={titleId} className={styles.heroTitle}>
         <span className={styles.heroLine}>
           <span>A MELHOR</span>
-          <Image className={styles.heroTitleAsset} src={store.heroPizzaBadge} alt="" aria-hidden="true" width={96} height={96} />
+          <Image className={styles.heroTitleAsset} src={store.heroPizzaBadge} alt="" aria-hidden="true" />
           <span>PIZZA</span>
         </span>
         <span className={styles.heroLine}>
           <span>DO</span>
-          <Image className={styles.heroTitleAsset} src={store.heroBrazilFlag} alt="" aria-hidden="true" width={48} height={32} />
+          <Image className={styles.heroTitleAsset} src={store.heroBrazilFlag} alt="" aria-hidden="true" />
           <span>BRASIL</span>
         </span>
       </Heading>}

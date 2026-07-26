@@ -11,11 +11,16 @@ import styles from "./storefront.module.css";
 
 export default async function HomePage() {
   const repository = getCatalogRepository();
-  const [store, categories, products] = await Promise.all([
+  const [store, categories, popular, allProducts] = await Promise.all([
     repository.getStore(),
     repository.getCategories(),
     repository.getPopularProducts(),
+    repository.getProducts(),
   ]);
+  const additionsCategory = categories.find((category) => category.slug.includes("adicion"));
+  const combosCategory = categories.find((category) => category.slug.includes("promoc"));
+  const additions = allProducts.filter((product) => product.categoryId === additionsCategory?.id);
+  const combos = allProducts.filter((product) => product.categoryId === combosCategory?.id);
 
   return <>
     <StoreHero store={store} />
@@ -27,7 +32,17 @@ export default async function HomePage() {
 
     <Container as="section" className={styles.productsSection}>
       <h2 className={styles.productsTitle}>DESTAQUES</h2>
-      <ProductCarousel products={products.filter((product) => product.featured).slice(0, 4)} label="Destaques" />
+      <ProductCarousel products={popular.slice(0, 4)} label="Destaques" />
+    </Container>
+
+    <Container as="section" className={styles.productsSection}>
+      <h2 className={styles.productsTitle}>ADICIONAIS</h2>
+      <ProductCarousel products={additions} label="Adicionais" />
+    </Container>
+
+    <Container as="section" className={styles.productsSection}>
+      <h2 className={styles.productsTitle}>COMBOS</h2>
+      <ProductCarousel products={combos} label="Combos" />
     </Container>
 
     <Container as="section" className={styles.promotionSection} aria-labelledby="promocao-aniversario">

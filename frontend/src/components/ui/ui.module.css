@@ -59,11 +59,12 @@
 .warning { background: #fff0d6; color: var(--color-warning); }
 .danger { background: #fee4e2; color: var(--color-danger); }
 .card { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); overflow: hidden; }
-.overlay { position: fixed; z-index: 200; inset: 0; display: flex; justify-content: center; align-items: center; padding: 1rem; background: rgba(29, 23, 20, 0.58); }
-.modal { width: min(100%, 560px); max-height: calc(100dvh - 2rem); overflow: auto; border-radius: var(--radius-lg); background: var(--color-surface); }
-.overlayHeader { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border); }
-.overlayHeader h2 { margin: 0; font-size: 1.2rem; }
-.overlayBody { padding: 1.25rem; }
+.overlay { position: fixed; z-index: 200; inset: 0; display: flex; justify-content: center; align-items: center; padding: 1rem; background: rgba(22, 18, 16, 0.66); backdrop-filter:blur(3px); }
+.modal { width: min(100%, 560px); max-height: calc(100dvh - 2rem); overflow: auto; border:1px solid rgba(255,255,255,.5); border-radius: 1rem; background: var(--color-surface); }
+.overlayHeader { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.15rem 1.35rem; border-bottom: 1px solid var(--color-border); }
+.overlayHeader h2 { margin: 0; font-family:var(--font-body),sans-serif;font-size: 1.18rem;font-weight:700; }
+.overlayHeader button{border:1px solid #eee8e5!important;background:#f8f6f5!important}.overlayHeader button:hover{border-color:#dfd5d1!important;background:#f1ecea!important}
+.overlayBody { padding: 1.35rem; }
 .drawerOverlay { align-items: stretch; justify-content: flex-end; padding: 0; animation: drawerOverlayEnter 180ms ease-out both; }
 .drawer { width: min(100%, 440px); height: 100dvh; overflow: auto; overscroll-behavior: contain; background: var(--color-surface); animation: drawerEnter 340ms cubic-bezier(0.22, 1, 0.36, 1) both; will-change: transform; -webkit-overflow-scrolling: touch; }
 @keyframes drawerOverlayEnter { from { background: rgba(29, 23, 20, 0); } to { background: rgba(29, 23, 20, 0.58); } }

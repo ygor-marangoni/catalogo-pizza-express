@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowRight, PencilLine, Trash2, X } from "lucide-react";
 import shoppingBagIcon from "../../../assets/icons/shopping-bag.webp";
 import { useCart } from "@/contexts/CartContext";
@@ -11,18 +11,15 @@ import { calculateItemTotal } from "@/features/cart/cart-domain";
 import { Button } from "@/components/ui/Button";
 import { Price } from "@/components/ui/Price";
 import { QuantitySelector } from "@/components/ui/QuantitySelector";
-import { useCustomerAuth } from "@/contexts/CustomerAuthContext";
-import { customerService } from "@/services/customer-service";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { CheckoutForm } from "./CheckoutForm";
 import styles from "./cart.module.css";
 
-export function CartContents({ page = false, onNavigate }) {
+export function CartContents({ page = false, onNavigate, onCheckoutChange }) {
+  const [checkout, setCheckout] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { account } = useCustomerAuth();
-  const [submitting, setSubmitting] = useState(false);
-  const [orderError, setOrderError] = useState("");
-  const { cart, hydrated, subtotalInCents, updateQuantity, removeItem, clearCart, startEditing } = useCart();
+  const { cart, hydrated, subtotalInCents, storeInfo, updateQuantity, removeItem, clearCart, startEditing } = useCart();
 
   function editItem(item) {
     const params = new URLSearchParams(window.location.search);
@@ -38,69 +35,48 @@ export function CartContents({ page = false, onNavigate }) {
       groups.set(addon.groupName, [...existing, addon.name]);
       return groups;
     }, new Map());
-
     return [
       ...(item.variant ? [{ label: "Tamanho", value: item.variant.name }] : []),
       ...[...groupedAddons].map(([label, values]) => ({ label: label.replace(/^Escolha (a|o|as|os)\s+/i, ""), value: values.join(", ") })),
       ...(item.note ? [{ label: "Observação", value: item.note }] : []),
     ];
   }
-  async function finishOrder() {
-    if (!account) { router.push("/login?next=/carrinho"); return; }
-    setSubmitting(true); setOrderError("");
-    try {
-      const order = await customerService.createOrder(cart.items.map((item) => ({
-        product_id: Number(item.productId),
-        quantity: item.quantity,
-        size_id: item.variant?.id ? Number(item.variant.id) : undefined,
-        edge_id: Number(item.addons?.find((addon) => addon.groupId === "edges")?.optionId) || undefined,
-        additional_ids: (item.addons || []).filter((addon) => addon.groupId === "additionals").map((addon) => Number(addon.optionId)),
-        note: item.note || undefined,
-      })));
-      clearCart();
-      router.push(`/conta/pedidos/${order.id}`);
-    } catch (error) { setOrderError(error.message); setSubmitting(false); }
-  }
+
   if (!hydrated) return <div className={styles.skeletons} aria-label="Carregando carrinho"><Skeleton height="90px" /><Skeleton height="90px" /></div>;
   if (!cart.items.length) return <div className={`${styles.empty} ${page ? "" : styles.emptyDrawer}`.trim()}>
     <section className={styles.emptyState} aria-labelledby="empty-cart-title">
-      <div className={styles.emptyIcon} aria-hidden="true">
-        <Image src={shoppingBagIcon} alt="" width={29} height={29} />
-      </div>
+      <div className={styles.emptyIcon} aria-hidden="true"><Image src={shoppingBagIcon} alt="" width={29} height={29} /></div>
       <h2 id="empty-cart-title">Seu carrinho está vazio</h2>
       <p className={styles.emptyDescription}>Escolha suas pizzas favoritas, personalize cada detalhe e volte quando estiver pronto.</p>
-      <Link className={styles.emptyAction} href="/" onClick={onNavigate}>
-        <span>Explorar cardápio</span>
-        <ArrowRight size={18} aria-hidden="true" />
-      </Link>
+      <Link className={styles.emptyAction} href="/" onClick={onNavigate}><span>Explorar cardápio</span><ArrowRight size={18} aria-hidden="true" /></Link>
     </section>
   </div>;
+
+  if (checkout) return <CheckoutForm items={cart.items} subtotalInCents={subtotalInCents} store={storeInfo} page={page} onBack={() => { setCheckout(false); onCheckoutChange?.(false); }} onComplete={onNavigate} />;
 
   const items = <>
     <div className={styles.items}>{cart.items.map((item) => {
       const configuration = getItemConfiguration(item);
       return <article className={styles.item} key={item.id}>
-      <div className={styles.image}>{item.image ? <Image src={item.image} alt="" fill sizes="76px" /> : <span aria-hidden="true">{item.name.slice(0, 1)}</span>}</div>
-      <div className={styles.details}>
-        <div className={styles.itemTitleRow}><h3>{item.name}</h3><div className={styles.itemPrice}><Price className={styles.neutralPrice} value={calculateItemTotal(item)} /></div></div>
-        {configuration.length > 0 && <ul className={styles.configuration}>{configuration.map((detail) => <li key={detail.label}><strong>{detail.label}:</strong> <span>{detail.value}</span></li>)}</ul>}
-        <button type="button" className={styles.editAction} onClick={() => editItem(item)}><PencilLine size={14} aria-hidden="true" /><span>Editar escolhas</span></button>
-      </div>
-      <div className={styles.itemActions}>
-        <QuantitySelector label={`Quantidade de ${item.name}`} value={item.quantity} onChange={(quantity) => updateQuantity(item.id, quantity)} />
-        <div className={styles.itemActionButtons}>
-          <button type="button" className={styles.removeAction} onClick={() => removeItem(item.id)} aria-label={`Remover ${item.name}`}><X size={16} aria-hidden="true" /><span>Remover</span></button>
+        <div className={styles.image}><Image src={item.image} alt="" fill sizes="76px" /></div>
+        <div className={styles.details}>
+          <div className={styles.itemTitleRow}><h3>{item.name}</h3><div className={styles.itemPrice}><Price className={styles.neutralPrice} value={calculateItemTotal(item)} /></div></div>
+          {configuration.length > 0 && <ul className={styles.configuration}>{configuration.map((detail) => <li key={detail.label}><strong>{detail.label}:</strong> <span>{detail.value}</span></li>)}</ul>}
+          <button type="button" className={styles.editAction} onClick={() => editItem(item)}><PencilLine size={14} aria-hidden="true" /><span>Editar escolhas</span></button>
         </div>
-      </div>
-    </article>})}</div>
+        <div className={styles.itemActions}>
+          <QuantitySelector label={`Quantidade de ${item.name}`} value={item.quantity} onChange={(quantity) => updateQuantity(item.id, quantity)} />
+          <div className={styles.itemActionButtons}><button type="button" className={styles.removeAction} onClick={() => removeItem(item.id)} aria-label={`Remover ${item.name}`}><X size={16} aria-hidden="true" /><span>Remover</span></button></div>
+        </div>
+      </article>;
+    })}</div>
     <div className={styles.clearRow}><button className={styles.clearAction} type="button" onClick={clearCart}><Trash2 size={15} aria-hidden="true" /><span>Limpar carrinho</span></button></div>
   </>;
 
   const summary = <div className={styles.summary}>
     <div className={styles.summaryRow}><strong>Subtotal</strong><Price className={styles.neutralPrice} value={subtotalInCents} /></div>
-    <p className={styles.future}>Frete, cupom, identificação e confirmação do pedido estarão disponíveis em uma próxima etapa.</p>
-    {orderError && <p role="alert">{orderError}</p>}
-    <Button block onClick={finishOrder} disabled={submitting}>{submitting ? "Enviando pedido…" : account ? "Confirmar pedido" : "Entrar para continuar"}</Button>
+    <p className={styles.future}>Revise seu pedido antes de continuar.</p>
+    <Button block onClick={() => { setCheckout(true); onCheckoutChange?.(true); }}>Continuar para finalização</Button>
   </div>;
 
   if (page) return <div className={styles.pageLayout}><section className={styles.pageItems} aria-label="Itens do carrinho">{items}</section><aside className={styles.pageSummary} aria-label="Resumo do carrinho">{summary}</aside></div>;

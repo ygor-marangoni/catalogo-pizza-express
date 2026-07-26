@@ -21,7 +21,7 @@ export class TypeOrmRepository<T extends { id: number; deleted_at?: Date | null 
 					([key, value]) =>
 						value !== undefined &&
 						value !== "" &&
-						["category_id", "available", "highlighted", "user_id", "product_id", "status", "name", "code"].includes(key),
+						["category_id", "available", "highlighted", "active", "user_id", "product_id", "status", "name", "code"].includes(key),
 				),
 			),
 		} as any;

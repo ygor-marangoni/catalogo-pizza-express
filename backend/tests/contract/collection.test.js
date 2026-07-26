@@ -30,7 +30,8 @@ test("collection do Postman possui estrutura e endpoints essenciais", () => {
 	assert.ok(requests.length > 0);
 	assert.ok(requests.every((item) => item.request.method && item.request.url));
 	const serialized = JSON.stringify(collection).toLowerCase();
-	assert.equal(serialized.includes("logout"), false);
+	assert.equal(serialized.includes("logout"), true);
+	assert.match(serialized, /auth\/me/);
 
 	const paths = requests.map(requestPath).join("\n");
 	for (const endpoint of ["/auth/login", "/auth/refresh", "/categories", "/products", "/store"]) {

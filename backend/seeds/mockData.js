@@ -59,7 +59,7 @@ module.exports = {
 		email: index === 0 ? "cliente@pizzaexpress.com" : `cliente${index + 1}@pizzaexpress.com`,
 		password: "Cliente@123",
 	})),
-	store: { id: 1, name: "Pizza Express", description: "Loja principal da Pizza Express", opening_hours: "18:00 às 23:00", delivery_fee: 500, min_order_value: 2000 },
+	store: { id: 1, name: "Pizza Express", description: "Loja principal da Pizza Express", opening_hours: "18:00 às 23:00", delivery_fee: 700, min_order_value: 2000 },
 	categories,
 	products,
 	sizes: [

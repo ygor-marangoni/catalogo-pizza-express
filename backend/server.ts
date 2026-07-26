@@ -1,4 +1,5 @@
 const express = require("express");
+const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 const path = require("path");
@@ -13,6 +14,7 @@ const edgeRoutes = require("./src/routes/edgeRoutes");
 const sizeRoutes = require("./src/routes/sizeRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const adminOrderRoutes = require("./src/routes/adminOrderRoutes");
+const couponRoutes = require("./src/routes/couponRoutes");
 const ErrorHandler = require("./src/middlewares/ErrorHandler");
 const swaggerSpec = require("./src/config/openApiConfig");
 const { concurrencyLimit } = require("./src/middlewares/ConcurrencyMiddleware");
@@ -23,14 +25,14 @@ const port = Number.parseInt(process.env.PORT ?? "", 10) || 3000;
 const apiPrefix = "/api/v1";
 const loginLimiter = rateLimit({
 	windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS || 900000),
-	limit: Number(process.env.RATE_LIMIT_MAX_REQUESTS || 10),
-	skipSuccessfulRequests: true,
+	limit: Number(process.env.RATE_LIMIT_MAX_REQUESTS || 5),
 	standardHeaders: true,
 	legacyHeaders: false,
 });
 // Limita concorrência e tentativas de autenticação antes das rotas.
 
 app.disable("x-powered-by");
+app.use(compression());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -41,22 +43,16 @@ app.use(
 );
 
 const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:3000";
-const localhostOrigin = /^https?:\/\/localhost(?::\d+)?$/;
 
 app.use((req, res, next) => {
 	const requestOrigin = req.headers.origin;
-	const originAllowed =
-		!requestOrigin ||
-		corsOrigin === "*" ||
-		requestOrigin === corsOrigin ||
-		localhostOrigin.test(requestOrigin);
 
-	if (originAllowed && requestOrigin) {
-		res.header("Access-Control-Allow-Origin", requestOrigin);
-		res.header("Access-Control-Allow-Credentials", "true");
+	if (!requestOrigin || requestOrigin === corsOrigin) {
+		res.header("Access-Control-Allow-Origin", corsOrigin);
 	}
 
 	res.header("Vary", "Origin");
+	res.header("Access-Control-Allow-Credentials", "true");
 	res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 	res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 
@@ -105,6 +101,7 @@ app.use(`${apiPrefix}/store`, storeRoutes);
 app.use(`${apiPrefix}/additionals`, additionalRoutes);
 app.use(`${apiPrefix}/edges`, edgeRoutes);
 app.use(`${apiPrefix}/sizes`, sizeRoutes);
+app.use(`${apiPrefix}/coupons`, couponRoutes);
 
 app.use((req, res) => {
 	res.status(404).json({

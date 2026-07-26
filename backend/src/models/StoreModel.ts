@@ -9,6 +9,7 @@ class StoreModel implements StoreResDTO {
 		public email: string | null,
 		public address: string | null,
 		public opening_hours: string | null,
+		public estimated_time: string | null,
 		public is_open: boolean,
 		public delivery_fee: number,
 		public min_order_value: number,

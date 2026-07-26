@@ -4,6 +4,7 @@ import type { StoreRepository, StoreResDTO } from "../dtos/res";
 export class InMemoryStoreRepository implements StoreRepository {
 	private store: StoreResDTO = {
 		id: 1,
+		estimated_time: "60–70 min",
 		name: "Pizza Express",
 		description: "Pizzaria Express",
 		phone: null,
@@ -11,7 +12,7 @@ export class InMemoryStoreRepository implements StoreRepository {
 		address: null,
 		opening_hours: "18:00 às 23:00",
 		is_open: true,
-		delivery_fee: 500,
+		delivery_fee: 700,
 		min_order_value: 2500,
 		created_at: new Date(),
 		updated_at: new Date(),

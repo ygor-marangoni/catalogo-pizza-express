@@ -117,10 +117,24 @@ O comando `down --volumes` apaga os dados persistidos dos serviços. Use-o somen
 
 ## Documentação
 
-- Swagger UI: [http://localhost:3000/api-docs/](http://localhost:3000/api-docs/)
-- OpenAPI JSON: [http://localhost:3000/api-docs/openapi.json](http://localhost:3000/api-docs/openapi.json)
-- Health check: [http://localhost:3000/health](http://localhost:3000/health)
+- Swagger UI: [http://localhost:3001/api-docs/](http://localhost:3001/api-docs/)
+- OpenAPI JSON: [http://localhost:3001/api-docs/openapi.json](http://localhost:3001/api-docs/openapi.json)
+- Health check: [http://localhost:3001/health](http://localhost:3001/health)
 - Collection do Postman: [`docs/Pizza-Express.postman_collection.json`](docs/Pizza-Express.postman_collection.json)
+
+O Docker mantém a porta interna 3000 e publica `3001:3000`. Para HTTP local, use `CORS_ORIGIN=http://localhost:3000` e `COOKIE_SECURE=false`; em produção HTTPS, use `COOKIE_SECURE=true`.
+
+Fluxo administrativo: `POST /api/v1/auth/login`, `POST /api/v1/auth/refresh`, `GET /api/v1/auth/me` e `POST /api/v1/auth/logout`. Credencial local do seed: `admin@pizzaexpress.com` / `Admin@123`.
+
+### Configuração comercial dos produtos
+
+- `GET /api/v1/products/configurations`: lote público usado pelo cardápio;
+- `GET /api/v1/products/:id/configuration`: configuração efetiva do produto;
+- `PUT /api/v1/products/:id/configuration`: atualização administrativa protegida por Bearer Token.
+
+Cada vínculo de tamanho armazena o preço final do produto naquele tamanho e um único tamanho padrão. Bordas e adicionais permanecem com preço global; `price_override` permite uma exceção por produto. A migration `010-CreateProductConfigurations` cria os vínculos e migra as opções globais existentes para produtos de categorias de pizza.
+
+As respostas HTTP são comprimidas quando o cliente envia `Accept-Encoding`, reduzindo o tráfego das listagens e configurações do catálogo.
 
 ## Scripts
 

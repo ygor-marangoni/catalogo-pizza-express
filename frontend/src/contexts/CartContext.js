@@ -7,7 +7,7 @@ import { getCartStore } from "@/features/cart/cart-store";
 const CartContext = createContext(null);
 const subscribeToHydration = () => () => {};
 
-export function CartProvider({ children, storeId = "pizza-express" }) {
+export function CartProvider({ children, storeId = "pizza-express", storeInfo = null }) {
   const store = useMemo(() => getCartStore(storeId), [storeId]);
   const [editingItemId, setEditingItemId] = useState(null);
   const [cartOpen, setCartOpen] = useState(false);
@@ -33,8 +33,9 @@ export function CartProvider({ children, storeId = "pizza-express" }) {
     cartOpen,
     itemCount: cart.items.reduce((total, item) => total + item.quantity, 0),
     subtotalInCents: calculateCartSubtotal(cart.items),
+    storeInfo,
     ...actions,
-  }), [cart, hydrated, editingItemId, cartOpen, actions]);
+  }), [cart, hydrated, editingItemId, cartOpen, storeInfo, actions]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

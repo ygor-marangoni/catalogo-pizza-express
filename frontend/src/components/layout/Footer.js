@@ -1,15 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
-import { House, MapPin, Phone, Search, ShoppingBag, UserRound } from "lucide-react";
+import { BadgePercent, CakeSlice, CupSoda, House, MapPin, Phone, Pizza } from "lucide-react";
+import facebookIcon from "../../../assets/icons/facebook.svg";
+import instagramIcon from "../../../assets/icons/instagram.svg";
 import whatsappIcon from "../../../assets/icons/whatsapp.svg";
 import { Container } from "@/components/ui/Container";
 import styles from "./layout.module.css";
 
 const FOOTER_LINKS = [
   { href: "/", label: "Início", Icon: House },
-  { href: "/busca", label: "Buscar", Icon: Search },
-  { href: "/carrinho", label: "Carrinho", Icon: ShoppingBag },
-  { href: "/conta", label: "Minha conta", Icon: UserRound },
+  { href: "/categoria/promocoes", label: "Promoções", Icon: BadgePercent },
+  { href: "/categoria/salgadas", label: "Salgadas", Icon: Pizza },
+  { href: "/categoria/doces", label: "Doces", Icon: CakeSlice },
+  { href: "/categoria/bebidas", label: "Bebidas", Icon: CupSoda },
 ];
 
 export function Footer({ store }) {
@@ -26,7 +29,7 @@ export function Footer({ store }) {
               <span>Rei das pizzas</span>
             </div>
           </div>
-          {store.description && <p className={styles.footerClaim}>{store.description}</p>}
+          <p className={styles.footerClaim}>A melhor pizza do Brasil.</p>
           <p className={styles.footerDescription}>Sabor, praticidade e aquele momento especial em volta da mesa.</p>
         </section>
 
@@ -44,20 +47,26 @@ export function Footer({ store }) {
           <address className={styles.footerContactList}>
             <div className={styles.footerContactItem}>
               <span className={styles.footerContactIcon}><MapPin size={20} aria-hidden="true" /></span>
-              <span><small>Endereço</small><strong>{store.address || "Endereço não informado"}</strong></span>
+              <span><small>Endereço</small><strong>{store.address}</strong></span>
             </div>
-            {store.contact.phoneHref && <a className={styles.footerContactItem} href={`tel:${store.contact.phoneHref}`}>
+            <a className={styles.footerContactItem} href={`tel:${store.contact.phoneHref}`}>
               <span className={styles.footerContactIcon}><Phone size={20} aria-hidden="true" /></span>
               <span><small>Telefone</small><strong>{store.contact.phoneDisplay}</strong></span>
-            </a>}
+            </a>
           </address>
 
           <div className={styles.footerSocialBlock}>
             <h3>Sociais</h3>
             <div className={styles.footerSocials}>
-              {store.contact.whatsapp && <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="Falar com a Pizza Express pelo WhatsApp" title="WhatsApp">
+              <a href={whatsappUrl} target="_blank" rel="noreferrer" aria-label="Falar com a Pizza Express pelo WhatsApp" title="WhatsApp">
                 <Image src={whatsappIcon} alt="" width={20} height={20} />
-              </a>}
+              </a>
+              <a href={store.contact.instagramUrl} target="_blank" rel="noreferrer" aria-label={`Abrir Instagram ${store.contact.instagramLabel}`} title="Instagram">
+                <Image src={instagramIcon} alt="" width={20} height={20} />
+              </a>
+              <a href={store.contact.facebookUrl} target="_blank" rel="noreferrer" aria-label="Abrir Facebook da Pizza Express" title="Facebook">
+                <Image src={facebookIcon} alt="" width={20} height={20} />
+              </a>
             </div>
           </div>
         </section>

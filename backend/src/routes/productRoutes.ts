@@ -3,11 +3,12 @@ const AuthMiddleware = require("../middlewares/AuthMiddleware");
 import { services } from "../config/containerConfig";
 import { createCrudController } from "../controllers/CrudController";
 const ProductSearchController = require("../controllers/ProductSearchController");
+const ProductConfigurationController = require("../controllers/ProductConfigurationController");
 import ProductSearchService = require("../services/ProductSearchService");
 import ImageService = require("../services/ImageService");
 import { normalizeProductMultipart, productImageUpload } from "../middlewares/ProductUploadMiddleware";
 import { validate } from "../middlewares/ZodValidationMiddleware";
-import { productCreateSchema, productUpdateSchema } from "../validations/schemas";
+import { productConfigurationSchema, productCreateSchema, productUpdateSchema } from "../validations/schemas";
 
 const router = express.Router();
 const prepareProductData = async (req) => {
@@ -20,10 +21,14 @@ const controller = createCrudController(services.product, "Products", {
 	prepareUpdate: prepareProductData,
 });
 const searchController = new ProductSearchController(new ProductSearchService());
+const configurationController = new ProductConfigurationController(services.productConfiguration);
 const protect = AuthMiddleware.verifyToken.bind(AuthMiddleware);
 const adminOnly = AuthMiddleware.requireRole("ADMIN");
 
 router.get("/search", searchController.search.bind(searchController));
+router.get("/configurations", configurationController.list);
+router.get("/:id/configuration", configurationController.get);
+router.put("/:id/configuration", protect, adminOnly, validate(productConfigurationSchema), configurationController.update);
 router.get("/", controller.findAll);
 router.get("/:id", controller.findById);
 router.post(

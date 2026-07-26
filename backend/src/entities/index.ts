@@ -9,6 +9,7 @@ export { Store } from "./Store";
 export { User } from "./User";
 export { Order } from "./Order";
 export { Favorite } from "./Favorite";
+export { Coupon } from "./Coupon";
 export { ProductSize } from "./ProductSize";
 export { ProductEdge } from "./ProductEdge";
 export { ProductAdditional } from "./ProductAdditional";
@@ -22,8 +23,9 @@ import { Edge } from "./Edge";
 import { Product } from "./Product";
 import { Size } from "./Size";
 import { Store } from "./Store";
+import { Coupon } from "./Coupon";
 import { ProductSize } from "./ProductSize";
 import { ProductEdge } from "./ProductEdge";
 import { ProductAdditional } from "./ProductAdditional";
 
-export const ormEntities = [Admin, User, Order, Favorite, Category, Product, Additional, Edge, Size, Store, ProductSize, ProductEdge, ProductAdditional];
+export const ormEntities = [Admin, User, Order, Favorite, Category, Product, Additional, Edge, Size, Store, Coupon, ProductSize, ProductEdge, ProductAdditional];

@@ -1,14 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("product_additionals")
-@Unique(["product_id", "additional_id"])
 export class ProductAdditional {
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column()
+	@PrimaryColumn()
 	product_id: number;
 
-	@Column()
+	@PrimaryColumn()
 	additional_id: number;
+
+	@Column({ type: "integer", nullable: true })
+	price_override: number | null;
+
+	@Column({ default: true })
+	available: boolean;
 }

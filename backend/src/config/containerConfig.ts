@@ -5,13 +5,17 @@ const AdditionalService = require("../services/AdditionalService");
 const EdgeService = require("../services/EdgeService");
 const SizeService = require("../services/SizeService");
 const AuthService = require("../services/AuthService");
+const CouponService = require("../services/CouponService");
+const ProductConfigurationService = require("../services/ProductConfigurationService");
 import { InMemoryRepository } from "../repositories/InMemoryRepository";
 import { InMemoryAdminRepository } from "../repositories/InMemoryAdminRepository";
 import { InMemoryStoreRepository } from "../repositories/InMemoryStoreRepository";
 import { TypeOrmAdminRepository } from "../repositories/TypeOrmAdminRepository";
 import { TypeOrmRepository } from "../repositories/TypeOrmRepository";
+import { TypeOrmProductConfigurationRepository } from "../repositories/TypeOrmProductConfigurationRepository";
+import { InMemoryProductConfigurationRepository } from "../repositories/InMemoryProductConfigurationRepository";
 import { TypeOrmStoreRepository } from "../repositories/TypeOrmStoreRepository";
-import { Additional, Category, Edge, Product, Size, Order, Favorite } from "../entities";
+import { Additional, Category, Edge, Product, Size, Order, Favorite, Coupon } from "../entities";
 import type { AdditionalResDTO, CategoryResDTO, EdgeResDTO, ProductResDTO, SizeResDTO } from "../dtos/res";
 import { InMemoryUserRepository } from "../repositories/InMemoryUserRepository";
 import { TypeOrmUserRepository } from "../repositories/TypeOrmUserRepository";
@@ -31,6 +35,8 @@ export const repositories = useDatabase
 			store: new TypeOrmStoreRepository(),
 			order: new TypeOrmRepository<any>(Order as any),
 			favorite: new TypeOrmRepository<any>(Favorite as any),
+			coupon: new TypeOrmRepository<any>(Coupon as any),
+			productConfiguration: new TypeOrmProductConfigurationRepository(),
 		}
 	: {
 			admin: new InMemoryAdminRepository(),
@@ -43,6 +49,8 @@ export const repositories = useDatabase
 			store: new InMemoryStoreRepository(),
 			order: new InMemoryRepository<any>(),
 			favorite: new InMemoryRepository<any>(),
+			coupon: new InMemoryRepository<any>(),
+			productConfiguration: new InMemoryProductConfigurationRepository(),
 		};
 
 export const services = {
@@ -55,4 +63,6 @@ export const services = {
 	store: new StoreService(repositories.store),
 	order: repositories.order,
 	favorite: repositories.favorite,
+	coupon: new CouponService(repositories.coupon),
+	productConfiguration: new ProductConfigurationService(repositories.productConfiguration, repositories.product),
 };

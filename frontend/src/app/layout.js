@@ -3,28 +3,22 @@ import localFont from "next/font/local";
 import { Figtree, Syne } from "next/font/google";
 import { Suspense } from "react";
 import bannerImage from "../../assets/images/banner-2.webp";
-import { CartProvider } from "@/contexts/CartContext";
 import { ToastProvider } from "@/components/ui/Toast";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { ProductModalController } from "@/components/catalog/ProductModalController";
-import { getCatalogRepository } from "@/repositories/catalog";
 import { SITE_URL } from "@/constants/site";
-import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
-
-export const dynamic = "force-dynamic";
 
 const figtree = Figtree({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-body",
   display: "swap",
+  preload: false,
 });
 
 const syne = Syne({
   subsets: ["latin"],
   variable: "--font-product-name",
   display: "swap",
+  preload: false,
 });
 
 const soehneBreit = localFont({
@@ -34,6 +28,7 @@ const soehneBreit = localFont({
   ],
   variable: "--font-display",
   display: "swap",
+  preload: false,
 });
 
 export const metadata = {
@@ -50,30 +45,10 @@ export const metadata = {
   },
 };
 
-export default async function RootLayout({ children }) {
-  const repository = getCatalogRepository();
-  const [store, suggestions, categories] = await Promise.all([
-    repository.getStore(),
-    repository.getProducts(),
-    repository.getCategories(),
-  ]);
-  const headerStore = {
-    name: store.name,
-    logo: store.logo,
-    description: store.description,
-    address: store.address,
-  };
-  const searchSuggestions = suggestions
-    .filter((product) => product.available)
-    .map(({ id, name, slug }) => ({ id, name, slug }));
+export default function RootLayout({ children }) {
   return <html lang="pt-BR" data-scroll-behavior="smooth" suppressHydrationWarning>
-    <body className={`${figtree.variable} ${soehneBreit.variable} ${syne.variable}`}>
-      <ToastProvider><CustomerAuthProvider><CartProvider storeId={store.id}>
-        <Header store={headerStore} suggestions={searchSuggestions} categories={categories} />
-        <Suspense fallback={null}><ProductModalController products={suggestions} /></Suspense>
-        <main id="conteudo">{children}</main>
-        <Footer store={store} />
-      </CartProvider></CustomerAuthProvider></ToastProvider>
+    <body className={`${figtree.variable} ${soehneBreit.variable} ${syne.variable}`} suppressHydrationWarning>
+      <ToastProvider><Suspense fallback={null}>{children}</Suspense></ToastProvider>
     </body>
   </html>;
 }

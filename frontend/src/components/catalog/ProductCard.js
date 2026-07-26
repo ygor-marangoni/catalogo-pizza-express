@@ -8,7 +8,7 @@ import { Price } from "@/components/ui/Price";
 import { getStartingPrice } from "@/features/catalog/catalog-domain";
 import styles from "./catalog.module.css";
 
-export function ProductCard({ product }) {
+export function ProductCard({ product, priority = false }) {
   const price = getStartingPrice(product);
   const pathname = usePathname();
   const router = useRouter();
@@ -24,13 +24,14 @@ export function ProductCard({ product }) {
       <div className={styles.productCopy}>
         <h3>{product.name}</h3>
         <p>{product.shortDescription}</p>
-        <div className={styles.productMeta}><Price className={styles.productPrice} value={price} prefix={product.variants?.length ? "a partir de" : undefined} /></div>
+        <div className={styles.productMeta}><Price className={styles.productPrice} value={price} compareAt={product.compareAtPriceInCents} prefix={product.variants?.length ? "a partir de" : undefined} /></div>
       </div>
       <div className={styles.productImage}>
         <div className={styles.badges}>
+          {product.compareAtPriceInCents > price && <Badge tone="success">Oferta</Badge>}
           {!product.available && <Badge tone="danger">Indisponível</Badge>}
         </div>
-        {product.images[0] ? <Image src={product.images[0]} alt={`Apresentação de ${product.name}`} fill sizes="(max-width: 780px) 96px, 172px" /> : <span aria-hidden="true">{product.name.slice(0, 1)}</span>}
+        <Image src={product.images[0]} alt={`Apresentação de ${product.name}`} fill loading={priority ? "eager" : undefined} sizes="(max-width: 780px) 96px, 172px" />
       </div>
     </Card>
   ;

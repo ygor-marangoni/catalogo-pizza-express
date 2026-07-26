@@ -5,6 +5,7 @@ export interface UpdateStoreReqDTO {
 	email?: string | null;
 	address?: string | null;
 	opening_hours?: string | null;
+	estimated_time?: string | null;
 	delivery_fee?: number;
 	min_order_value?: number;
 }

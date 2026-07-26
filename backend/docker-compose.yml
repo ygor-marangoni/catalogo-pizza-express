@@ -13,12 +13,12 @@ services:
             DB_PORT: 5432
             DB_USER: postgres
             NODE_ENV: production
-            PORT: 3001
+            PORT: 3000
             USE_DATABASE: "true"
             ELASTICSEARCH_URL: http://elasticsearch:9200
             ELASTICSEARCH_PRODUCTS_INDEX: pizza-products
         ports:
-            - "3001:3001"
+            - "3001:3000"
         depends_on:
             postgres:
                 condition: service_healthy

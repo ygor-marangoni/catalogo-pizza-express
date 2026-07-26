@@ -23,6 +23,9 @@ export class Store {
 	@Column({ type: "text", nullable: true })
 	opening_hours: string | null;
 
+	@Column({ type: "varchar", length: 40, nullable: true, default: "60–70 min" })
+	estimated_time: string | null;
+
 	@Column({ default: true })
 	is_open: boolean;
 

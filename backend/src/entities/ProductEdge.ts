@@ -1,14 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("product_edges")
-@Unique(["product_id", "edge_id"])
 export class ProductEdge {
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@Column()
+	@PrimaryColumn()
 	product_id: number;
 
-	@Column()
+	@PrimaryColumn()
 	edge_id: number;
+
+	@Column({ type: "integer", nullable: true })
+	price_override: number | null;
+
+	@Column({ default: true })
+	available: boolean;
 }
