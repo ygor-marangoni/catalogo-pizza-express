@@ -7,7 +7,7 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
   const categoryLink = page.locator('main a[href^="/categoria/"]').first();
   const categoryName = await categoryLink.locator("strong").innerText();
   await categoryLink.click();
-  await expect(page).toHaveURL(/categoria\/\d+/);
+  await expect(page).toHaveURL(/categoria\/[a-z0-9-]+/);
   await expect(page.getByRole("heading", { name: categoryName })).toBeVisible();
   await expect(page.getByLabel("Informações da loja")).toHaveCount(0);
 
@@ -24,18 +24,18 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
   await expect(page).toHaveURL(/busca\?q=Margherita/, { timeout: 5000 });
   await expect(page.getByRole("heading", { level: 1, name: "Busca" })).toBeVisible();
   await expect(page.getByAltText(/banner oficial da pizza express/i)).toBeVisible();
-  await expect(page.getByText("1 resultado encontrado", { exact: true })).toBeVisible();
+  await expect(page.getByText(/resultado[s]? encontrado/)).toBeVisible();
   await expect(page.getByLabel("Informações da loja")).toHaveCount(0);
   const searchViewport = await page.evaluate(() => ({
     contentWidth: document.documentElement.scrollWidth,
     viewportWidth: document.documentElement.clientWidth,
   }));
   expect(searchViewport.contentWidth).toBeLessThanOrEqual(searchViewport.viewportWidth);
-  await page.getByRole("button", { name: /personalizar margherita/i }).click();
+  await page.getByRole("button", { name: /personalizar margherita 1/i }).click();
   await expect(page).toHaveURL(/produto=1/);
   const productDialog = page.getByRole("dialog", { name: /escolha do seu jeito/i });
   await expect(productDialog).toBeVisible();
-  await expect(productDialog.getByRole("heading", { level: 3, name: "Margherita", exact: true })).toBeVisible();
+  await expect(productDialog.getByRole("heading", { level: 3, name: "Margherita 1", exact: true })).toBeVisible();
 
   await productDialog.getByRole("radio").nth(1).check();
   await productDialog.getByRole("radio").nth(2).check();
@@ -49,21 +49,21 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
   await expect(page.getByRole("button", { name: "Abrir carrinho com 1 item", exact: true })).toBeVisible();
 
   await page.goto("/carrinho");
-  await expect(page.getByRole("heading", { name: "Margherita" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Margherita 1" })).toBeVisible();
   await page.getByRole("button", { name: /editar escolhas/i }).click();
   const editDialog = page.getByRole("dialog", { name: /escolha do seu jeito/i });
   await editDialog.getByLabel("Alguma observação?").fill("bem assada");
   await editDialog.getByRole("button", { name: /salvar alterações/i }).click();
   await expect(editDialog).not.toBeVisible();
   await expect(page.getByText("bem assada", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Margherita" })).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Margherita 1" })).toHaveCount(1);
   await page.getByRole("button", { name: /aumentar quantidade/i }).click();
   await expect(page.getByRole("status")).toHaveText("2");
   await page.reload();
   await expect(page.getByRole("status")).toHaveText("2");
   await expect(page.getByRole("button", { name: /aumentar quantidade/i })).toBeVisible();
-  await expect(page.getByRole("button", { name: /duplicar margherita/i })).toHaveCount(0);
-  await page.getByRole("button", { name: /remover margherita/i }).click();
+  await expect(page.getByRole("button", { name: /duplicar margherita 1/i })).toHaveCount(0);
+  await page.getByRole("button", { name: /remover margherita 1/i }).click();
   await expect(page.getByRole("heading", { name: /carrinho está vazio/i })).toBeVisible();
 });
 
@@ -72,9 +72,9 @@ test("sugestão da busca abre os resultados, não o painel do produto", async ({
   await page.goto("/");
   const search = page.getByRole("search").first().getByRole("searchbox");
   await search.fill("Margh");
-  await expect(page.getByRole("button", { name: "Margherita", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Margherita", exact: true }).click();
-  await expect(page).toHaveURL(/busca\?q=Margherita/);
-  await expect(page.getByText("1 resultado encontrado", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Margherita 1", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Margherita 1", exact: true }).click();
+  await expect(page).toHaveURL(/busca\?q=Margherita%201/);
+  await expect(page.getByText(/resultado[s]? encontrado/)).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

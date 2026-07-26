@@ -50,9 +50,9 @@ export default async function HomePage() {
             <li><CircleCheckBig size={20} aria-hidden="true" /><span>Participe do registro e compartilhe a publicação.</span></li>
             <li><CircleCheckBig size={20} aria-hidden="true" /><span>Todos os aniversariantes da família podem participar.</span></li>
           </ul>
-          <a className={styles.promotionAction} href={`https://wa.me/${store.contact.whatsapp}?text=Ol%C3%A1%2C%20quero%20fazer%20meu%20pedido%20na%20Pizza%20Express.`} target="_blank" rel="noreferrer">
+          {store.contact?.whatsapp ? <a className={styles.promotionAction} href={`https://wa.me/${store.contact.whatsapp}?text=Ol%C3%A1%2C%20quero%20fazer%20meu%20pedido%20na%20Pizza%20Express.`} target="_blank" rel="noreferrer">
             <Image src={whatsappIcon} alt="" width={21} height={21} aria-hidden="true" /> Fazer pedido no WhatsApp
-          </a>
+          </a> : null}
         </div>
         <BirthdayTestimonials />
       </div>

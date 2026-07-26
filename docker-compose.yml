@@ -1,0 +1,102 @@
+name: pizza-express
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pizza-express-postgres
+    environment:
+      POSTGRES_DB: db_pizza_express_dev
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d db_pizza_express_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+    container_name: pizza-express-elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cluster/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  backend-init:
+    build:
+      context: ./backend
+      target: production
+    container_name: pizza-express-backend-init
+    environment: &backend-environment
+      NODE_ENV: production
+      PORT: 3000
+      USE_DATABASE: "true"
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: db_pizza_express_dev
+      JWT_SECRET: pizza-express-secret-key
+      JWT_EXPIRATION: 24h
+      COOKIE_SECURE: "false"
+      CORS_ORIGIN: http://localhost:3000
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_PRODUCTS_INDEX: pizza-products
+    depends_on:
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    command: ["sh", "-c", "npm run migrate && npm run seed"]
+    restart: "no"
+
+  backend:
+    build:
+      context: ./backend
+      target: production
+    container_name: pizza-express-backend
+    environment:
+      <<: *backend-environment
+    ports:
+      - "3001:3000"
+    depends_on:
+      backend-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+    container_name: pizza-express-frontend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      API_INTERNAL_URL: http://backend:3000/api/v1
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  elasticsearch_data:

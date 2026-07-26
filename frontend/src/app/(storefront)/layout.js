@@ -21,13 +21,10 @@ export default async function StorefrontLayout({ children }) {
     .filter((product) => product.available)
     .map(({ id, name, slug }) => ({ id, name, slug }));
   const productIndex = suggestions.map(({ id, slug }) => ({ id, slug }));
-  const localProducts = (process.env.CATALOG_SOURCE || "local") === "local" ? suggestions : null;
-
   return <StorefrontShell
     store={store}
     headerStore={headerStore}
     productIndex={productIndex}
-    localProducts={localProducts}
     searchSuggestions={searchSuggestions}
     categories={categories}
   >

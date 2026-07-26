@@ -8,7 +8,7 @@
 - Swagger: `http://localhost:3001/api-docs`
 - Health: `http://localhost:3001/health`
 
-Use `NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1` e `CATALOG_SOURCE=api`. Para fixtures, use explicitamente `CATALOG_SOURCE=local`; não há fallback silencioso.
+Use `NEXT_PUBLIC_API_URL=http://localhost:3001/api/v1`. O catálogo público usa exclusivamente os dados retornados pela API; fixtures permanecem isoladas nos testes.
 
 O cliente central interpreta `{ success, data, error }`, paginação e falhas de rede. O access token administrativo fica apenas em memória; o refresh permanece em cookie `httpOnly`. Há somente um refresh e um retry após 401. Produtos usam `multipart/form-data`.
 

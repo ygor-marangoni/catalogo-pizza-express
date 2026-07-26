@@ -711,6 +711,38 @@ const swaggerDocument = swaggerJsdoc({
 	definition: options.definition,
 	apis: [],
 });
+
+// These CRUD routes are registered programmatically, so they cannot be
+// discovered by swagger-jsdoc. Keep them in the published contract as well.
+const crudResources = [
+	["additionals", "Adicionais"],
+	["edges", "Bordas"],
+	["sizes", "Tamanhos"],
+];
+for (const [resource, tag] of crudResources) {
+	swaggerDocument.paths[`/api/v1/${resource}`] = {
+		get: { tags: [tag], summary: `Lista ${resource}`, responses: { 200: { description: "Lista retornada" } } },
+		post: { tags: [tag], summary: `Cria ${resource}`, security: [{ bearerAuth: [] }], responses: { 201: { description: "Recurso criado" }, 401: { $ref: "#/components/responses/Unauthorized" } } },
+	};
+	swaggerDocument.paths[`/api/v1/${resource}/{id}`] = {
+		parameters: [{ $ref: "#/components/parameters/Id" }],
+		get: { tags: [tag], summary: `Busca ${resource} por ID`, responses: { 200: { description: "Recurso encontrado" }, 404: { $ref: "#/components/responses/NotFound" } } },
+		put: { tags: [tag], summary: `Atualiza ${resource}`, security: [{ bearerAuth: [] }], responses: { 200: { description: "Recurso atualizado" }, 401: { $ref: "#/components/responses/Unauthorized" }, 404: { $ref: "#/components/responses/NotFound" } } },
+		delete: { tags: [tag], summary: `Remove ${resource}`, security: [{ bearerAuth: [] }], responses: { 200: { description: "Recurso removido" }, 401: { $ref: "#/components/responses/Unauthorized" }, 404: { $ref: "#/components/responses/NotFound" } } },
+	};
+}
+swaggerDocument.paths["/api/v1/coupons"] = {
+	get: { tags: ["Cupons"], summary: "Lista cupons para administradores", security: [{ bearerAuth: [] }], responses: { 200: { description: "Cupons listados" } } },
+	post: { tags: ["Cupons"], summary: "Cria um cupom", security: [{ bearerAuth: [] }], responses: { 201: { description: "Cupom criado" } } },
+};
+swaggerDocument.paths["/api/v1/coupons/public"] = { get: { tags: ["Cupons"], summary: "Lista cupons públicos", responses: { 200: { description: "Cupons públicos" } } } };
+swaggerDocument.paths["/api/v1/coupons/validate"] = { post: { tags: ["Cupons"], summary: "Valida um cupom", responses: { 200: { description: "Resultado da validação" } } } };
+swaggerDocument.paths["/api/v1/coupons/{id}"] = {
+	parameters: [{ $ref: "#/components/parameters/Id" }],
+	put: { tags: ["Cupons"], summary: "Atualiza um cupom", security: [{ bearerAuth: [] }], responses: { 200: { description: "Cupom atualizado" } } },
+	delete: { tags: ["Cupons"], summary: "Remove um cupom", security: [{ bearerAuth: [] }], responses: { 200: { description: "Cupom removido" } } },
+};
+swaggerDocument.tags.push({ name: "Usuários", description: "Perfil, favoritos e pedidos do cliente" }, { name: "Cupons", description: "Cupons promocionais" });
 delete swaggerDocument.paths?.["/api/v1/auth/admin/login"];
 delete swaggerDocument.paths?.["/api/v1/auth/admin/refresh"];
 module.exports = swaggerDocument;
