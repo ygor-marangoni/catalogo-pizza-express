@@ -8,7 +8,7 @@ import { Price } from "@/components/ui/Price";
 import { getStartingPrice } from "@/features/catalog/catalog-domain";
 import styles from "./catalog.module.css";
 
-export function ProductCard({ product }) {
+export function ProductCard({ product, priority = false }) {
   const price = getStartingPrice(product);
   const pathname = usePathname();
   const router = useRouter();
@@ -31,7 +31,7 @@ export function ProductCard({ product }) {
           {product.compareAtPriceInCents > price && <Badge tone="success">Oferta</Badge>}
           {!product.available && <Badge tone="danger">Indisponível</Badge>}
         </div>
-        <Image src={product.images[0]} alt={`Apresentação de ${product.name}`} fill sizes="(max-width: 780px) 96px, 172px" />
+        <Image src={product.images[0]} alt={`Apresentação de ${product.name}`} fill loading={priority ? "eager" : undefined} sizes="(max-width: 780px) 96px, 172px" />
       </div>
     </Card>
   ;

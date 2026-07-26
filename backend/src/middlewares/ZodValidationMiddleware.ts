@@ -7,7 +7,10 @@ export function validate(schema: z.ZodType, source: "body" | "params" | "query" 
 		if (!result.success) {
 			const issue = result.error.issues[0];
 			const field = issue.path.join(".") || "dados";
-			const message = issue.message.includes("Ã") || issue.message.includes("Expected")
+			const hasCustomMessage = issue.message.startsWith("O ") || issue.message.startsWith("Informe ");
+			const message = hasCustomMessage
+				? issue.message
+				: issue.message.includes("Ã") || issue.message.includes("Expected")
 				? `O campo ${field} possui um valor inválido`
 				: issue.code === "invalid_type"
 					? `O campo ${field} é obrigatório ou possui um tipo inválido`

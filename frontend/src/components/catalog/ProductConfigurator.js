@@ -22,7 +22,7 @@ function getInitialAddonSelections(item) {
 }
 
 export function ProductConfigurator({ product, editingItem = null, inModal = false, onComplete }) {
-  const [variantId, setVariantId] = useState(editingItem?.variant?.id || null);
+  const [variantId, setVariantId] = useState(editingItem?.variant?.id || product.defaultVariantId || null);
   const [addonSelections, setAddonSelections] = useState(() => getInitialAddonSelections(editingItem));
   const [quantity, setQuantity] = useState(editingItem?.quantity || 1);
   const [note, setNote] = useState(editingItem?.note || "");

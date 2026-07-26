@@ -22,6 +22,7 @@ export function StoreHero({ store, headingLevel = 1, titleId = "hero-title", tit
       {!categoryHero && <TodayStoreInfo
         businessHours={store.businessHours}
         timeZone={store.timeZone}
+        storeIsOpen={store.isOpen}
         deliveryEnabled={store.deliveryEnabled}
         pickupEnabled={store.pickupEnabled}
         estimatedTime={store.estimatedTime}

@@ -17,7 +17,7 @@ class ImageService {
 	private readonly breaker = new CircuitBreaker(3, 60000);
 	private readonly bulkhead = new Semaphore(3);
 
-	async upload(data: string | Buffer, mimetype = "image/jpeg"): Promise<string> {
+	async upload(data: string | Buffer, mimetype = "image/jpeg", folder = "products"): Promise<string> {
 		if (Buffer.isBuffer(data)) data = `data:${mimetype};base64,${data.toString("base64")}`;
 		if (!data || (!data.startsWith("data:image/") && !data.startsWith("http://") && !data.startsWith("https://")))
 			throw new Error(ErrorCode.INVALID_IMAGE);
@@ -29,7 +29,7 @@ class ImageService {
 					() =>
 						withTimeout(
 							cloudinary.uploader.upload(data, {
-								folder: "pizza-express/products",
+								folder: `pizza-express/${folder}`,
 							}),
 							15000,
 						),

@@ -57,18 +57,17 @@
 .body {
   display: grid;
   grid-template-columns: minmax(330px, 410px) minmax(0, 1fr);
+  height: calc(100dvh - 2rem - 68px);
   max-height: calc(100dvh - 2rem - 68px);
-  overflow-y: auto;
+  overflow: hidden;
   overscroll-behavior: contain;
   background: #fff;
 }
 
 .visual {
-  position: sticky;
-  top: 0;
-  align-self: start;
+  align-self: stretch;
   min-width: 0;
-  min-height: 100%;
+  height: 100%;
   padding: 1.35rem;
   border-right: 1px solid #ececec;
   background: #fff;
@@ -142,9 +141,13 @@
 .content {
   display: flex;
   min-width: 0;
-  min-height: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0 1.5rem 1.5rem;
   background: #fff;
+  scrollbar-gutter: stable;
 }
 
 @keyframes fadeIn {
@@ -217,7 +220,9 @@
 
   .content {
     display: block;
+    height: auto;
     min-height: 0;
+    overflow: visible;
     padding: 0 0.9rem 0.9rem;
   }
 }

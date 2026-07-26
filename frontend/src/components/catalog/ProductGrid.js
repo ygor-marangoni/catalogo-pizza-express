@@ -4,5 +4,5 @@ import styles from "./catalog.module.css";
 
 export function ProductGrid({ products, emptyTitle, emptyDescription }) {
   if (!products.length) return <EmptyState title={emptyTitle || "Nenhum produto encontrado"} description={emptyDescription || "Tente alterar os filtros ou explorar outra categoria."} />;
-  return <div className={styles.grid}>{products.map((product) => <ProductCard product={product} key={product.id} />)}</div>;
+  return <div className={styles.grid}>{products.map((product, index) => <ProductCard product={product} priority={index === 0} key={product.id} />)}</div>;
 }

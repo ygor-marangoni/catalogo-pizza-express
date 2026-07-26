@@ -18,7 +18,7 @@ services:
             ELASTICSEARCH_URL: http://elasticsearch:9200
             ELASTICSEARCH_PRODUCTS_INDEX: pizza-products
         ports:
-            - "3000:3000"
+            - "3001:3000"
         depends_on:
             postgres:
                 condition: service_healthy

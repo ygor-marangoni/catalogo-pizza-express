@@ -20,6 +20,9 @@ function subscribeToDayChange(callback) {
 }
 
 function getTodayHours(businessHours, timeZone) {
+  if (!Array.isArray(businessHours) || businessHours.length === 0) {
+    return "closed|Horário indisponível";
+  }
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone,
     weekday: "short",
@@ -28,16 +31,18 @@ function getTodayHours(businessHours, timeZone) {
     hourCycle: "h23",
   }).formatToParts(new Date());
   const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-  const schedule = businessHours.find((item) => item.day === WEEKDAY_KEYS[values.weekday]);
+  const schedule = businessHours.find((item) => item?.day === WEEKDAY_KEYS[values.weekday]);
   if (!schedule) return "closed|Fechado hoje";
 
   const toMinutes = (value) => {
+    if (!/^\d{2}:\d{2}$/.test(value || "")) return null;
     const [hour, minute] = value.split(":").map(Number);
     return (hour * 60) + minute;
   };
   const now = (Number(values.hour) * 60) + Number(values.minute);
   const opensAt = toMinutes(schedule.open);
   const closesAt = toMinutes(schedule.close);
+  if (opensAt === null || closesAt === null) return "closed|Horário indisponível";
   const status = now >= opensAt && now < closesAt
     ? (closesAt - now <= 30 ? "closing" : "open")
     : "closed";
@@ -45,13 +50,18 @@ function getTodayHours(businessHours, timeZone) {
   return `${status}|Hoje: ${schedule.open} - ${schedule.close}`;
 }
 
-export function TodayStoreInfo({ businessHours, timeZone, deliveryEnabled, pickupEnabled, estimatedTime }) {
+export function TodayStoreInfo({ businessHours, timeZone, storeIsOpen, deliveryEnabled, pickupEnabled, estimatedTime }) {
   const todaySnapshot = useSyncExternalStore(
     subscribeToDayChange,
     () => getTodayHours(businessHours, timeZone),
     () => "pending|Horário de hoje",
   );
-  const [status, todayHours] = todaySnapshot.split("|");
+  const [scheduleStatus, todayHours] = todaySnapshot.split("|");
+  const status = storeIsOpen === true
+    ? "open"
+    : storeIsOpen === false
+      ? "closed"
+      : scheduleStatus;
   const statusLabel = {
     open: "Aberto agora",
     closing: "Fecha em até 30 minutos",

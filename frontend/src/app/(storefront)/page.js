@@ -11,13 +11,16 @@ import styles from "./storefront.module.css";
 
 export default async function HomePage() {
   const repository = getCatalogRepository();
-  const [store, categories, popular, additions, combos] = await Promise.all([
+  const [store, categories, popular, allProducts] = await Promise.all([
     repository.getStore(),
     repository.getCategories(),
     repository.getPopularProducts(),
-    repository.getProducts({ categoryId: "cat-adicionais" }),
-    repository.getProducts({ categoryId: "cat-promocoes" }),
+    repository.getProducts(),
   ]);
+  const additionsCategory = categories.find((category) => category.slug.includes("adicion"));
+  const combosCategory = categories.find((category) => category.slug.includes("promoc"));
+  const additions = allProducts.filter((product) => product.categoryId === additionsCategory?.id);
+  const combos = allProducts.filter((product) => product.categoryId === combosCategory?.id);
 
   return <>
     <StoreHero store={store} />

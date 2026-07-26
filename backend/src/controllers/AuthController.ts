@@ -7,6 +7,16 @@ class AuthController {
 		this.authService = authService;
 	}
 
+	private cookieOptions() {
+		return {
+			httpOnly: true,
+			sameSite: "lax" as const,
+			secure: process.env.COOKIE_SECURE === "true",
+			maxAge: 604800000,
+			path: "/api/v1/auth",
+		};
+	}
+
 	async login(req, res, next) {
 		try {
 			const { email, password } = req.body;
@@ -24,12 +34,7 @@ class AuthController {
 			const auth = require("../middlewares/AuthMiddleware");
 			const token = auth.generateToken(authenticated.account.id, authenticated.role);
 			const refreshToken = auth.generateRefreshToken(authenticated.account.id, authenticated.role);
-			res.cookie("refresh_token", refreshToken, {
-				httpOnly: true,
-				sameSite: "lax",
-				secure: process.env.NODE_ENV === "production",
-				maxAge: 604800000,
-			});
+			res.cookie("refresh_token", refreshToken, this.cookieOptions());
 			res.json({
 				success: true,
 				data: {
@@ -109,12 +114,7 @@ class AuthController {
 			const role = decoded.role || "ADMIN";
 			const token = auth.generateToken(decoded.id, role);
 			const refreshToken = auth.generateRefreshToken(decoded.id, role);
-			res.cookie("refresh_token", refreshToken, {
-				httpOnly: true,
-				sameSite: "lax",
-				secure: process.env.NODE_ENV === "production",
-				maxAge: 604800000,
-			});
+			res.cookie("refresh_token", refreshToken, this.cookieOptions());
 			res.json({ success: true, data: { token, role }, error: null });
 		} catch {
 			res.status(401).json({
@@ -126,6 +126,29 @@ class AuthController {
 					field: null,
 				},
 			});
+		}
+	}
+
+	async logout(_req, res) {
+		res.clearCookie("refresh_token", {
+			httpOnly: true,
+			sameSite: "lax",
+			secure: process.env.COOKIE_SECURE === "true",
+			path: "/api/v1/auth",
+		});
+		res.json({ success: true, data: null, error: null });
+	}
+
+	async me(req, res, next) {
+		try {
+			const admin = await this.authService.getAdminById(Number(req.user.id));
+			res.json({
+				success: true,
+				data: { id: admin.id, name: admin.name, email: admin.email, role: "ADMIN" },
+				error: null,
+			});
+		} catch (error) {
+			next(error);
 		}
 	}
 }

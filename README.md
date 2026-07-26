@@ -1,5 +1,7 @@
 # Catálogo Pizza Express
 
+> O backend Express/TypeScript é a fonte de verdade. Ambiente local: frontend `http://localhost:3000`, backend `http://localhost:3001`, Swagger `http://localhost:3001/api-docs`. Veja `frontend/docs/API_INTEGRATION.md`.
+
 <div align="center">
 
 <img src="https://img.shields.io/badge/Next.js-16-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js 16">

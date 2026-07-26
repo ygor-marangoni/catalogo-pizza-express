@@ -46,6 +46,13 @@ test("cobre os endpoints públicos, de autenticação, catálogo e loja", { conc
 		const adminLogin = await loginAdmin(baseUrl);
 		assert.equal(adminLogin.response.status, 200);
 		assert.equal(adminLogin.role, "ADMIN");
+		const me = await request(baseUrl, "/api/v1/auth/me", jsonOptions("GET", undefined, adminLogin.token));
+		assert.equal(me.response.status, 200);
+		assert.deepEqual(Object.keys(me.body.data).sort(), ["email", "id", "name", "role"]);
+		assert.equal(me.body.data.role, "ADMIN");
+		const logout = await request(baseUrl, "/api/v1/auth/logout", { method: "POST" });
+		assert.equal(logout.response.status, 200);
+		assert.match(logout.response.headers.get("set-cookie"), /refresh_token=;/);
 
 		const notFound = await request(baseUrl, "/rota-inexistente");
 		assert.equal(notFound.response.status, 404);

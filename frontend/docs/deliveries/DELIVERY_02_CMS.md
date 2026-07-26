@@ -1,5 +1,9 @@
 # Entrega 2 — CMS
 
-Planejada conceitualmente e bloqueada. Futuro escopo: autenticação administrativa, Firestore, Admin SDK, emuladores, Cloudinary, CRUD de catálogo e aparência. Não inclui pedidos, gestão, pagamento, fiscal ou MarketUP.
+Status: **Aguardando aprovação**.
 
-Decisão visual planejada, ainda não implementada: quando um produto for cadastrado sem imagem no CMS, o catálogo deverá utilizar `assets/images/produto-exemplo.webp` como fallback controlado. A regra real de upload e fallback pertence exclusivamente à Entrega 2.
+Inclui autenticação administrativa JWT com refresh em cookie `httpOnly`, integração do storefront com a API Express/PostgreSQL e painel para produtos, categorias, tamanhos, bordas, adicionais e loja.
+
+Não inclui pedidos, clientes, favoritos, pagamentos, fiscal, relatórios, MarketUP ou itens da Entrega 3.
+
+Limitações: slugs são derivados no adaptador; branding permanece local; opções são globais, sem vínculo individual por produto; imagem ausente usa `assets/images/produto-exemplo.webp`.

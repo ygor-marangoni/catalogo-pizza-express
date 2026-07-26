@@ -14,7 +14,7 @@ const options = {
 			{
 				url: "http://localhost:{port}",
 				description: "Servidor local",
-				variables: { port: { default: "3000" } },
+				variables: { port: { default: "3001" } },
 			},
 		],
 		tags: [
@@ -23,6 +23,9 @@ const options = {
 			{ name: "Produtos", description: "Gerenciamento de produtos" },
 			{ name: "Categorias", description: "Gerenciamento de categorias" },
 			{ name: "Loja", description: "Informações e status da loja" },
+			{ name: "Tamanhos", description: "Tamanhos globais do catálogo" },
+			{ name: "Bordas", description: "Bordas globais do catálogo" },
+			{ name: "Adicionais", description: "Adicionais globais do catálogo" },
 		],
 		components: {
 			securitySchemes: {
@@ -239,6 +242,28 @@ const options = {
 						200: { description: "Usuário autenticado" },
 						401: { $ref: "#/components/responses/Unauthorized" },
 					},
+				},
+			},
+			"/api/v1/auth/refresh": {
+				post: {
+					tags: ["Autenticação"],
+					summary: "Renova o access token pelo cookie httpOnly",
+					responses: { 200: { description: "Token renovado" }, 401: { $ref: "#/components/responses/Unauthorized" } },
+				},
+			},
+			"/api/v1/auth/logout": {
+				post: {
+					tags: ["Autenticação"],
+					summary: "Encerra a sessão e limpa o refresh token",
+					responses: { 200: { description: "Sessão encerrada" } },
+				},
+			},
+			"/api/v1/auth/me": {
+				get: {
+					tags: ["Autenticação"],
+					summary: "Consulta o administrador autenticado",
+					security: [{ bearerAuth: [] }],
+					responses: { 200: { description: "Administrador atual" }, 401: { $ref: "#/components/responses/Unauthorized" }, 403: { description: "Conta não administrativa" } },
 				},
 			},
 			"/api/v1/users/me": {
@@ -495,6 +520,65 @@ const options = {
 					security: [{ bearerAuth: [] }],
 					responses: {
 						200: { description: "Produto removido" },
+						401: { $ref: "#/components/responses/Unauthorized" },
+						404: { $ref: "#/components/responses/NotFound" },
+					},
+				},
+			},
+			"/api/v1/products/configurations": {
+				get: {
+					tags: ["Produtos"],
+					summary: "Lista as configurações comerciais dos produtos",
+					description: "Retorna tamanhos, bordas e adicionais vinculados a cada produto, incluindo preços efetivos.",
+					responses: { 200: { description: "Configurações listadas" } },
+				},
+			},
+			"/api/v1/products/{id}/configuration": {
+				parameters: [{ $ref: "#/components/parameters/Id" }],
+				get: {
+					tags: ["Produtos"],
+					summary: "Busca a configuração comercial de um produto",
+					responses: {
+						200: { description: "Configuração encontrada" },
+						404: { $ref: "#/components/responses/NotFound" },
+					},
+				},
+				put: {
+					tags: ["Produtos"],
+					summary: "Substitui tamanhos, bordas e adicionais vinculados ao produto",
+					description: "O preço do tamanho é final. Bordas e adicionais usam o preço global quando price_override é null.",
+					security: [{ bearerAuth: [] }],
+					requestBody: {
+						required: true,
+						content: {
+							"application/json": {
+								schema: {
+									type: "object",
+									required: ["sizes", "edges", "additionals"],
+									properties: {
+										sizes: {
+											type: "array",
+											items: {
+												type: "object",
+												required: ["size_id", "price", "is_default", "available"],
+												properties: {
+													size_id: { type: "integer" },
+													price: { type: "integer", minimum: 0, description: "Preço final em centavos" },
+													is_default: { type: "boolean" },
+													available: { type: "boolean" },
+												},
+											},
+										},
+										edges: { type: "array", items: { type: "object" } },
+										additionals: { type: "array", items: { type: "object" } },
+									},
+								},
+							},
+						},
+					},
+					responses: {
+						200: { description: "Configuração atualizada" },
+						400: { $ref: "#/components/responses/BadRequest" },
 						401: { $ref: "#/components/responses/Unauthorized" },
 						404: { $ref: "#/components/responses/NotFound" },
 					},

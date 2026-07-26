@@ -8,6 +8,7 @@ export interface StoreResDTO {
 	email: string | null;
 	address: string | null;
 	opening_hours: string | null;
+	estimated_time: string | null;
 	is_open: boolean;
 	delivery_fee: number;
 	min_order_value: number;

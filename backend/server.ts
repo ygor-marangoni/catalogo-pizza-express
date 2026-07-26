@@ -1,4 +1,5 @@
 const express = require("express");
+const compression = require("compression");
 const rateLimit = require("express-rate-limit");
 require("dotenv").config();
 const path = require("path");
@@ -13,6 +14,7 @@ const edgeRoutes = require("./src/routes/edgeRoutes");
 const sizeRoutes = require("./src/routes/sizeRoutes");
 const userRoutes = require("./src/routes/userRoutes");
 const adminOrderRoutes = require("./src/routes/adminOrderRoutes");
+const couponRoutes = require("./src/routes/couponRoutes");
 const ErrorHandler = require("./src/middlewares/ErrorHandler");
 const swaggerSpec = require("./src/config/openApiConfig");
 const { concurrencyLimit } = require("./src/middlewares/ConcurrencyMiddleware");
@@ -30,6 +32,7 @@ const loginLimiter = rateLimit({
 // Limita concorrência e tentativas de autenticação antes das rotas.
 
 app.disable("x-powered-by");
+app.use(compression());
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -44,11 +47,12 @@ const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:3000";
 app.use((req, res, next) => {
 	const requestOrigin = req.headers.origin;
 
-	if (corsOrigin === "*" || !requestOrigin || requestOrigin === corsOrigin) {
+	if (!requestOrigin || requestOrigin === corsOrigin) {
 		res.header("Access-Control-Allow-Origin", corsOrigin);
 	}
 
 	res.header("Vary", "Origin");
+	res.header("Access-Control-Allow-Credentials", "true");
 	res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
 	res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
 
@@ -97,6 +101,7 @@ app.use(`${apiPrefix}/store`, storeRoutes);
 app.use(`${apiPrefix}/additionals`, additionalRoutes);
 app.use(`${apiPrefix}/edges`, edgeRoutes);
 app.use(`${apiPrefix}/sizes`, sizeRoutes);
+app.use(`${apiPrefix}/coupons`, couponRoutes);
 
 app.use((req, res) => {
 	res.status(404).json({

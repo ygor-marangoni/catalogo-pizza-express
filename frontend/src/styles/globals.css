@@ -27,6 +27,29 @@
 }
 
 * { box-sizing: border-box; }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #b8b0ad transparent;
+}
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  background: #b8b0ad;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #918985;
+}
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
 html { width: 100%; min-height: 100%; margin: 0; padding: 0; overflow-x: clip; scroll-behavior: smooth; scroll-padding-top: calc(var(--header-height) + 1rem); }
 body {
   width: 100%;

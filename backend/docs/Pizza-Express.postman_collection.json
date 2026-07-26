@@ -6,7 +6,7 @@
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"variable": [
-		{ "key": "baseUrl", "value": "http://localhost:3000/api/v1", "type": "string" },
+		{ "key": "baseUrl", "value": "http://localhost:3001/api/v1", "type": "string" },
 		{ "key": "adminToken", "value": "", "type": "string" },
 		{ "key": "customerToken", "value": "", "type": "string" },
 		{ "key": "categoryId", "value": "1", "type": "string" },
@@ -21,8 +21,8 @@
 		{
 			"name": "Sistema",
 			"item": [
-				{ "name": "Informações da API", "request": { "method": "GET", "header": [], "url": "http://localhost:3000/" } },
-				{ "name": "Verificar saúde da API", "request": { "method": "GET", "header": [], "url": "http://localhost:3000/health" } }
+				{ "name": "Informações da API", "request": { "method": "GET", "header": [], "url": "http://localhost:3001/" } },
+				{ "name": "Verificar saúde da API", "request": { "method": "GET", "header": [], "url": "http://localhost:3001/health" } }
 			]
 		},
 		{
@@ -37,7 +37,9 @@
 					"name": "Cadastrar CUSTOMER",
 					"request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Novo Cliente\",\n  \"email\": \"novo.cliente@example.com\",\n  \"password\": \"Cliente@123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/auth/user/register" }
 				},
-				{ "name": "Renovar sessão", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/refresh" } }
+				{ "name": "Renovar sessão", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/refresh" } },
+				{ "name": "Consultar administrador atual", "request": { "method": "GET", "header": [], "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{adminToken}}", "type": "string" }] }, "url": "{{baseUrl}}/auth/me" } },
+				{ "name": "Encerrar sessão", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/auth/logout" } }
 			]
 		},
 		{

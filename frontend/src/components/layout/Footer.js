@@ -29,7 +29,7 @@ export function Footer({ store }) {
               <span>Rei das pizzas</span>
             </div>
           </div>
-          <p className={styles.footerClaim}>{store.description}</p>
+          <p className={styles.footerClaim}>A melhor pizza do Brasil.</p>
           <p className={styles.footerDescription}>Sabor, praticidade e aquele momento especial em volta da mesa.</p>
         </section>
 
