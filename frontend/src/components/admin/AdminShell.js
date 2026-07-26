@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Pizza, Tags, Ruler, CircleDot, PlusCircle, Store, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, Pizza, Tags, Ruler, CircleDot, PlusCircle, Store, LogOut, ExternalLink, Users, ClipboardList } from "lucide-react";
 import logo from "../../../assets/images/logo.webp";
 import { useAdminAuth } from "@/features/admin-auth/AdminAuthProvider";
 import styles from "@/app/admin.module.css";
@@ -14,6 +14,8 @@ const links = [
   ["/admin/tamanhos", "Tamanhos", Ruler],
   ["/admin/bordas", "Bordas", CircleDot],
   ["/admin/adicionais", "Adicionais", PlusCircle],
+  ["/admin/clientes", "Clientes", Users],
+  ["/admin/pedidos", "Pedidos", ClipboardList],
   ["/admin/loja", "Configurações", Store],
 ];
 

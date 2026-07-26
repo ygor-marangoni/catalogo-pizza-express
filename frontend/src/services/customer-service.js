@@ -6,6 +6,6 @@ export const customerService = {
   removeFavorite: (id) => del(`/users/me/favorites/${id}`),
   getOrders: () => get("/users/me/orders"),
   getOrder: (id) => get(`/users/me/orders/${id}`),
-  createOrder: (items) => post("/users/me/orders", { items }),
+  createOrder: (payload) => post("/users/me/orders", payload),
 };
 

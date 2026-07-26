@@ -3,10 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, PencilLine, Trash2, X } from "lucide-react";
 import shoppingBagIcon from "../../../assets/icons/shopping-bag.webp";
 import { useCart } from "@/contexts/CartContext";
+import { useCustomerAuth } from "@/contexts/CustomerAuthContext";
 import { calculateItemTotal } from "@/features/cart/cart-domain";
 import { Button } from "@/components/ui/Button";
 import { Price } from "@/components/ui/Price";
@@ -19,7 +20,30 @@ export function CartContents({ page = false, onNavigate, onCheckoutChange }) {
   const [checkout, setCheckout] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const { account, loading: authLoading } = useCustomerAuth();
   const { cart, hydrated, subtotalInCents, storeInfo, updateQuantity, removeItem, clearCart, startEditing } = useCart();
+  const resumedCheckout = Boolean(account && searchParams.get("finalizar") === "1");
+
+  function closeCheckout() {
+    setCheckout(false);
+    onCheckoutChange?.(false);
+    if (!resumedCheckout) return;
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("finalizar");
+    router.replace(`${pathname}${params.size ? `?${params}` : ""}`, { scroll: false });
+  }
+
+  function continueToCheckout() {
+    if (authLoading) return;
+    if (!account) {
+      router.push(`/login?next=${encodeURIComponent("/carrinho?finalizar=1")}`);
+      onNavigate?.();
+      return;
+    }
+    setCheckout(true);
+    onCheckoutChange?.(true);
+  }
 
   function editItem(item) {
     const params = new URLSearchParams(window.location.search);
@@ -52,7 +76,7 @@ export function CartContents({ page = false, onNavigate, onCheckoutChange }) {
     </section>
   </div>;
 
-  if (checkout) return <CheckoutForm items={cart.items} subtotalInCents={subtotalInCents} store={storeInfo} page={page} onBack={() => { setCheckout(false); onCheckoutChange?.(false); }} onComplete={onNavigate} />;
+  if (checkout || resumedCheckout) return <CheckoutForm items={cart.items} subtotalInCents={subtotalInCents} store={storeInfo} page={page} onBack={closeCheckout} onComplete={onNavigate} />;
 
   const items = <>
     <div className={styles.items}>{cart.items.map((item) => {
@@ -76,7 +100,9 @@ export function CartContents({ page = false, onNavigate, onCheckoutChange }) {
   const summary = <div className={styles.summary}>
     <div className={styles.summaryRow}><strong>Subtotal</strong><Price className={styles.neutralPrice} value={subtotalInCents} /></div>
     <p className={styles.future}>Revise seu pedido antes de continuar.</p>
-    <Button block onClick={() => { setCheckout(true); onCheckoutChange?.(true); }}>Continuar para finalização</Button>
+    <Button block onClick={continueToCheckout} disabled={authLoading}>
+      {authLoading ? "Verificando sua conta…" : account ? "Continuar para finalização" : "Entrar para continuar"}
+    </Button>
   </div>;
 
   if (page) return <div className={styles.pageLayout}><section className={styles.pageItems} aria-label="Itens do carrinho">{items}</section><aside className={styles.pageSummary} aria-label="Resumo do carrinho">{summary}</aside></div>;

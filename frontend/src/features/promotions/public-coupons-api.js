@@ -1,9 +1,10 @@
-import { apiRequest } from "@/lib/api/api-client";
-import { unwrapItems } from "@/lib/api/api-response";
+import { get, post } from "@/services/api-client";
 
 export async function getPublicCoupons() {
-  return unwrapItems(await apiRequest("/coupons/public", {
-    skipAuth: true,
-    skipRefresh: true,
-  }));
+  const data = await get("/coupons/public");
+  return data?.items || data || [];
+}
+
+export function validateCustomerCoupon(code, subtotal) {
+  return post("/coupons/validate", { code, subtotal });
 }

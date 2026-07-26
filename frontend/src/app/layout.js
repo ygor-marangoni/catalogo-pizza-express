@@ -4,6 +4,7 @@ import { Figtree, Syne } from "next/font/google";
 import { Suspense } from "react";
 import bannerImage from "../../assets/images/banner-2.webp";
 import { ToastProvider } from "@/components/ui/Toast";
+import { CustomerAuthProvider } from "@/contexts/CustomerAuthContext";
 import { SITE_URL } from "@/constants/site";
 
 const figtree = Figtree({
@@ -48,7 +49,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return <html lang="pt-BR" data-scroll-behavior="smooth" suppressHydrationWarning>
     <body className={`${figtree.variable} ${soehneBreit.variable} ${syne.variable}`} suppressHydrationWarning>
-      <ToastProvider><Suspense fallback={null}>{children}</Suspense></ToastProvider>
+      <ToastProvider>
+        <CustomerAuthProvider><Suspense fallback={null}>{children}</Suspense></CustomerAuthProvider>
+      </ToastProvider>
     </body>
   </html>;
 }

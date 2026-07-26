@@ -6,6 +6,17 @@ export class InMemoryUserRepository implements UserRepository {
 	private readonly users = new Map<number, UserResDTO>();
 	private nextId = 1;
 
+	async findAll(search = ""): Promise<UserResDTO[]> {
+		const term = search.trim().toLowerCase();
+		return [...this.users.values()]
+			.filter(
+				(user) =>
+					!user.deleted_at &&
+					(!term || user.name.toLowerCase().includes(term) || user.email.toLowerCase().includes(term)),
+			)
+			.sort((a, b) => b.id - a.id);
+	}
+
 	async findByEmail(email: string): Promise<UserResDTO | null> {
 		return (
 			[...this.users.values()].find(
@@ -40,5 +51,12 @@ export class InMemoryUserRepository implements UserRepository {
 		Object.assign(user, data, passwordHash ? { password_hash: passwordHash } : {}, { updated_at: new Date() });
 		if (data.email) user.email = data.email.toLowerCase();
 		return user;
+	}
+
+	async delete(id: number): Promise<void> {
+		const user = await this.findById(id);
+		if (!user) throw new Error(ErrorCode.USER_NOT_FOUND);
+		user.deleted_at = new Date();
+		user.updated_at = new Date();
 	}
 }

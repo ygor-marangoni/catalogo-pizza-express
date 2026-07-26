@@ -106,6 +106,14 @@ class AuthService {
 		const passwordHash = data.password ? await this.hashPassword(data.password) : undefined;
 		return this.userRepository.update(id, data, passwordHash);
 	}
+
+	async listUsers(search = ""): Promise<UserResDTO[]> {
+		return this.userRepository.findAll(search);
+	}
+
+	async deleteUser(id: number): Promise<void> {
+		await this.userRepository.delete(id);
+	}
 }
 
 module.exports = AuthService;

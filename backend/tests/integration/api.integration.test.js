@@ -39,6 +39,14 @@ test("cobre os endpoints públicos, de autenticação, catálogo e loja", { conc
 		const customerLogin = await login(baseUrl, customerRegistration.credentials);
 		assert.equal(customerLogin.response.status, 200);
 		assert.equal(customerLogin.role, "CUSTOMER");
+		const guestCoupons = await request(baseUrl, "/api/v1/coupons/public");
+		assert.equal(guestCoupons.response.status, 401);
+		const customerCoupons = await request(
+			baseUrl,
+			"/api/v1/coupons/public",
+			jsonOptions("GET", undefined, customerLogin.token),
+		);
+		assert.equal(customerCoupons.response.status, 200);
 
 		const customerRefresh = await request(baseUrl, "/api/v1/auth/refresh", { method: "POST" });
 		assert.equal(customerRefresh.response.status, 401);
@@ -50,6 +58,8 @@ test("cobre os endpoints públicos, de autenticação, catálogo e loja", { conc
 		assert.equal(me.response.status, 200);
 		assert.deepEqual(Object.keys(me.body.data).sort(), ["email", "id", "name", "role"]);
 		assert.equal(me.body.data.role, "ADMIN");
+		const adminCoupons = await request(baseUrl, "/api/v1/coupons/public", jsonOptions("GET", undefined, adminLogin.token));
+		assert.equal(adminCoupons.response.status, 403);
 		const logout = await request(baseUrl, "/api/v1/auth/logout", { method: "POST" });
 		assert.equal(logout.response.status, 200);
 		assert.match(logout.response.headers.get("set-cookie"), /refresh_token=;/);
