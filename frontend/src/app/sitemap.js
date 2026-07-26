@@ -1,6 +1,8 @@
 import { getCatalogRepository } from "@/repositories/catalog";
 import { SITE_URL } from "@/constants/site";
 
+export const dynamic = "force-dynamic";
+
 export default async function sitemap() {
   const repository = getCatalogRepository();
   const categories = await repository.getCategories();

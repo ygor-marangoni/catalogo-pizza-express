@@ -33,12 +33,12 @@ export function StoreHero({ store, headingLevel = 1, titleId = "hero-title", tit
       </> : <Heading id={titleId} className={styles.heroTitle}>
         <span className={styles.heroLine}>
           <span>A MELHOR</span>
-          <Image className={styles.heroTitleAsset} src={store.heroPizzaBadge} alt="" aria-hidden="true" />
+          <Image className={styles.heroTitleAsset} src={store.heroPizzaBadge} alt="" aria-hidden="true" width={96} height={96} />
           <span>PIZZA</span>
         </span>
         <span className={styles.heroLine}>
           <span>DO</span>
-          <Image className={styles.heroTitleAsset} src={store.heroBrazilFlag} alt="" aria-hidden="true" />
+          <Image className={styles.heroTitleAsset} src={store.heroBrazilFlag} alt="" aria-hidden="true" width={48} height={32} />
           <span>BRASIL</span>
         </span>
       </Heading>}
