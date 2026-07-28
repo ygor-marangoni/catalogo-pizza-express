@@ -7,7 +7,7 @@ test("modal preserva scroll e acompanha voltar, avançar e recarregar", async ({
   const scrollBefore = await page.evaluate(() => window.scrollY);
 
   await trigger.click();
-  await expect(page).toHaveURL(/produto=29/);
+  await expect(page).toHaveURL(/produto=coca-cola-lata/);
   await expect(page.getByRole("dialog", { name: /escolha do seu jeito/i })).toBeVisible();
   expect(Math.abs((await page.evaluate(() => window.scrollY)) - scrollBefore)).toBeLessThanOrEqual(2);
 

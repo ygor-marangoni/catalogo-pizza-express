@@ -89,6 +89,9 @@ export function Header({ store, suggestions, categories }) {
     }, 0);
     return () => window.clearTimeout(timer);
   }, [account, infoModal, pathname, router, searchParams, showCouponInfo]);
+  useEffect(() => {
+    if (account && searchParams.get("finalizar") === "1") openCart();
+  }, [account, openCart, searchParams]);
   return <>
     <header className={styles.header}>
       <Container className={styles.headerInner}>

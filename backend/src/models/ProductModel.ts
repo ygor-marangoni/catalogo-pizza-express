@@ -10,6 +10,7 @@ class ProductModel implements ProductResDTO {
 		public image_url: string | null,
 		public available: boolean,
 		public highlighted: boolean,
+		public is_combo: boolean,
 		public created_at: NullableDate,
 		public updated_at: NullableDate,
 		public deleted_at: NullableDate,

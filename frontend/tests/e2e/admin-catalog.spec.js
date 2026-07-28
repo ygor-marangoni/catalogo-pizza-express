@@ -29,7 +29,7 @@ test("administrador gerencia catálogo, loja e encerra a sessão", async ({ page
   await page.getByLabel("Preço base").fill("49,90");
   await page.getByRole("checkbox", { name: /Individual/ }).check();
   await page.getByRole("checkbox", { name: /Catupiry/ }).first().check();
-  await page.getByRole("checkbox", { name: /Bacon/ }).first().check();
+  await page.getByRole("checkbox", { name: /Bacon Extra/ }).first().check();
   await page.getByLabel("Destaque").check();
   await page.getByRole("button", { name: "Salvar produto" }).click();
   await expect(page).toHaveURL(/\/admin\/produtos$/);
@@ -47,7 +47,7 @@ test("administrador gerencia catálogo, loja e encerra a sessão", async ({ page
   await expect(page.getByRole("heading", { name: "Escolha o tamanho" })).toBeVisible();
   await expect(page.getByText("Individual", { exact: true })).toBeVisible();
   await expect(page.getByText("Catupiry", { exact: true })).toBeVisible();
-  await expect(page.getByText("Bacon", { exact: true })).toBeVisible();
+  await expect(page.getByText("Bacon Extra", { exact: true })).toBeVisible();
 
   await page.goto("/admin/produtos");
   const row = page.getByRole("row").filter({ hasText: productName });
@@ -60,12 +60,12 @@ test("administrador gerencia catálogo, loja e encerra a sessão", async ({ page
   await page.getByRole("button", { name: originalAction === "Abrir loja" ? "Fechar loja" : "Abrir loja" }).click();
 
   await page.goto("/admin/produtos");
-  page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: `Excluir ${productName}` }).click();
+  await page.getByRole("button", { name: "Excluir", exact: true }).click();
   await page.goto("/admin/categorias");
   const categoryRow = page.getByRole("row").filter({ hasText: categoryName });
-  page.once("dialog", (dialog) => dialog.accept());
   await categoryRow.getByRole("button", { name: `Excluir ${categoryName}` }).click();
+  await page.getByRole("button", { name: "Excluir", exact: true }).click();
 
   await page.getByRole("button", { name: "Sair" }).click();
   await expect(page).toHaveURL(/\/admin\/login$/);

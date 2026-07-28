@@ -10,7 +10,7 @@ const mapProduct = (item) => {
     edges.length ? { id: "edges", name: "Escolha a borda", min: 0, max: 1, required: false, options: edges.map((edge) => ({ id: String(edge.id), sourceId: edge.id, name: edge.name, priceInCents: edge.additional_price || 0 })) } : null,
     additionals.length ? { id: "additionals", name: "Adicionais", min: 0, max: additionals.length, required: false, options: additionals.map((additional) => ({ id: String(additional.id), sourceId: additional.id, name: additional.name, priceInCents: additional.price || 0 })) } : null,
   ].filter(Boolean);
-  return { ...item, categoryId: item.category_id, basePriceInCents: item.base_price, shortDescription: item.description || "", slug: String(item.id), images: item.image_url ? [item.image_url] : [], available: item.available !== false, featured: item.highlighted === true, variants, addonGroups };
+  return { ...item, categoryId: item.category_id, basePriceInCents: item.base_price, shortDescription: item.description || "", slug: String(item.id), images: item.image_url ? [item.image_url] : [], available: item.available !== false, featured: item.highlighted === true, isCombo: item.is_combo === true, variants, addonGroups };
 };
 const mapCategory = (item) => ({ ...item, slug: String(item.id), image: item.icon_url || null });
 

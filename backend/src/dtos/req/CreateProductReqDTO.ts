@@ -6,6 +6,7 @@ export interface CreateProductReqDTO {
 	image_url?: string | null;
 	available?: boolean;
 	highlighted?: boolean;
+	is_combo?: boolean;
 	size_ids?: number[];
 	edge_ids?: number[];
 	additional_ids?: number[];

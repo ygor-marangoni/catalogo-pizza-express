@@ -92,7 +92,7 @@ export function mapProducts(records, categories, options = {}) {
       shortDescription: product.description || "", description: product.description || "",
       categoryId: String(product.category_id), tags: [], images: [product.image_url || fallbackProduct],
       basePriceInCents: product.base_price,
-      available: product.available, featured: product.highlighted,
+      available: product.available, featured: product.highlighted, isCombo: product.is_combo === true,
       addonOnly: slugify(category?.name).includes("adicion"), ...configuration,
     };
   });

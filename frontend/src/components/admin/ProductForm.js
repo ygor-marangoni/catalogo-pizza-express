@@ -14,11 +14,13 @@ import { reaisToCents, centsToInput, formatCurrency } from "@/lib/currency";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { AdminSelect } from "./AdminSelect";
 import { AdminLoader } from "./AdminLoader";
+import { useToast } from "@/components/ui/Toast";
 import fallbackProduct from "../../../assets/images/produto-exemplo.webp";
 import styles from "@/app/admin.module.css";
 
 export function ProductForm({ id }) {
   const router = useRouter();
+  const { notify } = useToast();
   const [product, setProduct] = useState(null);
   const [categories, setCategories] = useState([]);
   const [categoryId, setCategoryId] = useState("");
@@ -215,11 +217,13 @@ export function ProductForm({ id }) {
       base_price: reaisToCents(basePrice),
       available: String(form.get("available") === "on"),
       highlighted: String(form.get("highlighted") === "on"),
+	      is_combo: String(form.get("is_combo") === "on"),
       image: image?.size ? image : undefined,
     };
     try {
       const savedProduct = id ? await productsApi.update(id, values) : await productsApi.create(values);
       await saveConfiguration(id || savedProduct.id, configurationPayload());
+      notify(id ? "Produto atualizado com sucesso." : "Produto salvo com sucesso.");
       router.push("/admin/produtos");
       router.refresh();
     } catch (saveError) { setError(saveError?.message || "Não foi possível salvar a configuração do produto."); }
@@ -336,6 +340,7 @@ export function ProductForm({ id }) {
         <div className={styles.checkboxGroup}>
           <label className={styles.checkbox}><input name="available" type="checkbox" defaultChecked={product?.available ?? true} /><span><strong>Disponível</strong></span></label>
           <label className={styles.checkbox}><input name="highlighted" type="checkbox" defaultChecked={product?.highlighted ?? false} /><span><strong>Destaque</strong></span></label>
+          <label className={styles.checkbox}><input name="is_combo" type="checkbox" defaultChecked={product?.is_combo ?? false} /><span><strong>Combo</strong></span></label>
         </div>
       </section>
 

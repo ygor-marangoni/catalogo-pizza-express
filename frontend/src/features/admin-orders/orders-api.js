@@ -7,4 +7,5 @@ export const ordersApi = {
     method: "PATCH",
     body: { status },
   }),
+  closeDay: () => apiRequest("/admin/orders/close-day", { method: "POST" }),
 };

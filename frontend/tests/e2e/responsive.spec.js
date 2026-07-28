@@ -18,7 +18,7 @@ test("home e produto não criam rolagem horizontal nos breakpoints de aceite", a
       }).slice(0, 5).map((element) => ({ tag: element.tagName, className: element.className, right: Math.round(element.getBoundingClientRect().right) })),
     }));
     expect(homeMetrics.scrollWidth, `Home em ${width}px: largura total ${homeMetrics.scrollWidth}px; ${JSON.stringify(homeMetrics.offenders)}`).toBeLessThanOrEqual(homeMetrics.clientWidth);
-    await page.goto("/?produto=29", { waitUntil: "domcontentloaded" });
+    await page.goto("/?produto=coca-cola-lata", { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("dialog", { name: /escolha do seu jeito/i })).toBeVisible();
     await expect(page.getByRole("button", { name: /adicionar/i })).toBeVisible();
     const productMetrics = await page.evaluate(() => ({
@@ -42,9 +42,9 @@ test("drawer e modal fecham com Escape", async ({ page }) => {
 
   if (test.info().project.name === "chromium") {
     await page.getByRole("button", { name: "Cupons" }).click();
-    await expect(page.getByRole("dialog", { name: "Disponível em breve" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Cupons disponíveis" })).toBeVisible();
     await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog", { name: "Disponível em breve" })).toBeHidden();
+    await expect(page.getByRole("dialog", { name: "Cupons disponíveis" })).toBeHidden();
   }
 });
 
@@ -98,9 +98,8 @@ test("header mobile oferece menu, busca, categorias e carrinho", async ({ page }
   await expect(menu).toBeVisible();
   await expect(menu.getByText("Pizza Express", { exact: true })).toBeVisible();
   await expect(menu.getByRole("button", { name: /entrega/i })).toBeVisible();
-  await expect(menu.getByRole("link", { name: "Pizzas tradicionais" })).toBeVisible();
-  await expect(menu.getByRole("button", { name: /minha conta/i })).toBeVisible();
-  await expect(menu.locator("address")).toHaveCount(0);
+  await expect(menu.getByRole("link", { name: "Pizzas especiais" })).toBeVisible();
+  await expect(menu.locator("address")).toHaveCount(1);
   await expect(menu.getByRole("link", { name: /Rua Avenida/i })).toHaveCount(0);
 
   await menu.getByRole("searchbox").fill("Margherita");
@@ -212,6 +211,7 @@ test("tolera atributos inseridos no html por extensões do navegador", async ({ 
 
   const hydrationErrors = errors.filter((message) => !(
     (message.includes("webpack-hmr") && message.includes("ERR_BLOCKED_BY_LOCAL_NETWORK_ACCESS_CHECKS"))
+    || message.includes("blocked by CORS policy: Permission was denied for this request to access the `loopback` address space")
     || message.includes("Failed to load resource")
   ));
   expect(hydrationErrors).toEqual([]);

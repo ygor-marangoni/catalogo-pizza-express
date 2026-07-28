@@ -47,30 +47,32 @@ async function run() {
 		for (const customer of mockData.customers) {
 			const customerHash = await bcrypt.hash(customer.password, 10);
 			await queryRunner.query(
-				"INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING",
+				"INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) ON CONFLICT (email) DO UPDATE SET name = EXCLUDED.name",
 				[customer.name, customer.email, customerHash],
 			);
 		}
 		await queryRunner.query(
-			"INSERT INTO stores (id, name, description, opening_hours, delivery_fee, min_order_value) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description, opening_hours = EXCLUDED.opening_hours, delivery_fee = EXCLUDED.delivery_fee, min_order_value = EXCLUDED.min_order_value",
+			"INSERT INTO stores (id, name, description, opening_hours, phone, delivery_fee, min_order_value) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, description = EXCLUDED.description, opening_hours = EXCLUDED.opening_hours, phone = EXCLUDED.phone, delivery_fee = EXCLUDED.delivery_fee, min_order_value = EXCLUDED.min_order_value",
 			[
 				mockData.store.id,
 				mockData.store.name,
 				mockData.store.description,
 				mockData.store.opening_hours,
+				mockData.store.phone || "(16) 99200-6155",
 				mockData.store.delivery_fee,
 				mockData.store.min_order_value,
 			],
 		);
 		const categoryIds = new Map();
 		for (const category of mockData.categories) {
-			const existing = await queryRunner.query("SELECT id FROM categories WHERE name = $1 LIMIT 1", [
+			const existing = await queryRunner.query("SELECT id, deleted_at FROM categories WHERE name = $1 LIMIT 1", [
 				category.name,
 			]);
-			if (existing[0]) {
-				await queryRunner.query("UPDATE categories SET description = $1, deleted_at = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = $2", [category.description, existing[0].id]);
+			if (existing[0] && !existing[0].deleted_at) {
+				await queryRunner.query("UPDATE categories SET description = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2", [category.description, existing[0].id]);
 				categoryIds.set(category.name, existing[0].id);
 			}
+			else if (existing[0]) categoryIds.set(category.name, existing[0].id);
 			else {
 				const [created] = await queryRunner.query(
 					"INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING id",
@@ -159,11 +161,13 @@ async function run() {
 				);
 				if (productIndex === 0) {
 					const existingOrder = await queryRunner.query("SELECT id FROM orders WHERE user_id = $1 LIMIT 1", [customer.id]);
+					const fulfillment = customerIndex % 2 === 0 ? "delivery" : "pickup";
 					if (!existingOrder[0])
 						await queryRunner.query(
-							"INSERT INTO orders (user_id, items, total, status) VALUES ($1, $2, $3, $4)",
-							[customer.id, JSON.stringify([{ product_id: product.id, quantity: 1, unit_price: product.base_price }]), product.base_price + mockData.store.delivery_fee, customerIndex % 3 === 0 ? "DELIVERED" : "PENDING"],
+							"INSERT INTO orders (user_id, items, total, status, fulfillment) VALUES ($1, $2, $3, $4, $5)",
+							[customer.id, JSON.stringify([{ product_id: product.id, quantity: 1, unit_price: product.base_price }]), product.base_price + (fulfillment === "delivery" ? mockData.store.delivery_fee : 0), customerIndex % 3 === 0 ? "DELIVERED" : "PENDING", fulfillment],
 						);
+					else await queryRunner.query("UPDATE orders SET fulfillment = COALESCE(fulfillment, $2) WHERE id = $1", [existingOrder[0].id, fulfillment]);
 				}
 			}
 		}

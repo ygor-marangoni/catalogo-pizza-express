@@ -17,8 +17,7 @@ export default async function HomePage() {
     repository.getPopularProducts(),
     repository.getProducts(),
   ]);
-  const combosCategory = categories.find((category) => category.slug.includes("promoc"));
-  const combos = allProducts.filter((product) => product.categoryId === combosCategory?.id);
+  const combos = allProducts.filter((product) => product.isCombo);
 
   return <>
     <StoreHero store={store} />

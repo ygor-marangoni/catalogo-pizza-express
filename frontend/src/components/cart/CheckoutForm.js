@@ -50,7 +50,6 @@ export function CheckoutForm({ items, subtotalInCents, store, page, onBack, onCo
     setError("");
     const form = new FormData(event.currentTarget);
     const customer = {
-      name: String(form.get("name") || "").trim(),
       phone: String(form.get("phone") || "").trim(),
       fulfillment,
       address: String(form.get("address") || "").trim(),
@@ -95,7 +94,11 @@ export function CheckoutForm({ items, subtotalInCents, store, page, onBack, onCo
       onComplete?.();
     } catch (submitError) {
       popup?.close();
-      setError(submitError.message);
+      setError(submitError.code === "PRODUCT_UNAVAILABLE"
+        ? "Um dos produtos do seu carrinho ficou indisponível. Remova-o ou escolha outro produto antes de finalizar."
+        : submitError.code === "VALIDATION_ERROR"
+        ? "Não foi possível registrar o pedido. Revise telefone, entrega, endereço e forma de pagamento."
+        : submitError.message || "Não foi possível enviar seu pedido agora. Tente novamente em instantes.");
     } finally { setSubmitting(false); }
   }
 

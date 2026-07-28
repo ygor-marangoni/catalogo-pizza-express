@@ -26,4 +26,7 @@ export class Product extends BaseEntity {
 
 	@Column({ default: false })
 	highlighted: boolean;
+
+	@Column({ default: false })
+	is_combo: boolean;
 }

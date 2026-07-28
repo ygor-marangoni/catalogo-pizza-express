@@ -25,7 +25,8 @@ export class TypeOrmRepository<T extends { id: number; deleted_at?: Date | null 
 				),
 			),
 		} as any;
-		return this.repository.find({ where, order: { id: "DESC" } } as any);
+		const isCategory = (this.entity as any).name === "Category";
+		return this.repository.find({ where, order: isCategory ? { display_order: "ASC", id: "ASC" } : { id: "DESC" } } as any);
 	}
 
 	async findById(id: number): Promise<T | null> {

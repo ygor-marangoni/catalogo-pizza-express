@@ -16,9 +16,9 @@ export function normalizeProductMultipart(req, _res, next): void {
 		req.body.image_url = req.body.image;
 		delete req.body.image;
 	}
-	for (const field of ["category_id", "base_price"])
+	for (const field of ["category_id", "base_price", "display_order"])
 		if (req.body[field] !== undefined) req.body[field] = Number(req.body[field]);
-	for (const field of ["available", "highlighted"]) {
+	for (const field of ["available", "highlighted", "is_combo"]) {
 		if (req.body[field] === "true") req.body[field] = true;
 		if (req.body[field] === "false") req.body[field] = false;
 	}

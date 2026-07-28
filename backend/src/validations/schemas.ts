@@ -55,6 +55,7 @@ export const categoryCreateSchema = z
 		name: z.string().trim().min(1).max(120),
 		description: z.string().nullable().optional(),
 		icon_url: z.string().url().nullable().optional(),
+		display_order: nonNegativeInteger.optional(),
 	})
 	.strict();
 export const categoryUpdateSchema = categoryCreateSchema.partial().refine((data) => Object.keys(data).length > 0, {
@@ -69,6 +70,7 @@ export const productCreateSchema = z
 		image_url: z.string().url().nullable().optional(),
 		available: z.boolean().optional(),
 		highlighted: z.boolean().optional(),
+		is_combo: z.boolean().optional(),
 	})
 	.strict();
 export const productUpdateSchema = productCreateSchema.partial().refine((data) => Object.keys(data).length > 0, {

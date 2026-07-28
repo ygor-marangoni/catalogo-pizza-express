@@ -1,6 +1,8 @@
-// O access token permanece apenas em memória; este módulo documenta a fronteira de armazenamento.
+const KEY = "pizza-express.admin-access-token";
+const available = () => typeof window !== "undefined" && Boolean(window.sessionStorage);
+
 export const adminAuthStorage = Object.freeze({
-  get: () => null,
-  set: () => undefined,
-  clear: () => undefined,
+  get: () => available() ? window.sessionStorage.getItem(KEY) : null,
+  set: (token) => { if (available()) window.sessionStorage.setItem(KEY, token); },
+  clear: () => { if (available()) window.sessionStorage.removeItem(KEY); },
 });

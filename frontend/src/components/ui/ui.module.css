@@ -75,15 +75,17 @@
 .tooltipText { visibility: hidden; opacity: 0; position: absolute; z-index: 70; bottom: calc(100% + 0.5rem); right: 0; width: max-content; max-width: min(220px, calc(100vw - 1.25rem)); padding: 0.45rem 0.65rem; border-radius: var(--radius-sm); background: var(--color-text); color: white; font-size: 0.78rem; transition: opacity var(--transition-fast); }
 .tooltip:hover .tooltipText, .tooltip:focus-within .tooltipText { visibility: visible; opacity: 1; }
 .toastRegion { position: fixed; z-index: 300; top: 1rem; right: 1rem; display: grid; gap: 0.5rem; width: min(calc(100% - 2rem), 380px); pointer-events: none; }
-.toast { display: flex; min-height: 56px; align-items: center; gap: 0.75rem; padding: 0.7rem 0.85rem; border: 1px solid #e2e7e4; border-radius: 0.9rem; background: #fff; color: var(--color-text); animation: toastEnter 260ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.toast { display: flex; min-height: 56px; align-items: center; gap: 0.75rem; padding: 0.7rem 0.85rem; border: 1px solid #e2e7e4; border-radius: 0.9rem; background: #fff; color: var(--color-text); animation: toastEnter 260ms cubic-bezier(0.22, 1, 0.36, 1) both; pointer-events: auto; }
 .toastIcon { display: grid; flex: 0 0 auto; width: 34px; height: 34px; place-items: center; border-radius: 50%; background: #e8f5ed; color: var(--color-success); }
 .toastMessage { font-size: 0.88rem; font-weight: 500; line-height: 1.4; }
+.toastClose { display: grid; flex: 0 0 auto; width: 30px; height: 30px; margin-left: auto; place-items: center; border: 0; border-radius: 0.45rem; background: transparent; color: #6f6765; cursor: pointer; }.toastClose:hover { background: #f2efed; color: var(--color-text); }
 @keyframes toastEnter { from { opacity: 0; transform: translateX(18px); } }
 @keyframes toastEnterMobile { from { opacity: 0; transform: translateY(-24px); } }
 .skeleton { border-radius: var(--radius-md); background: linear-gradient(90deg, #eee7de 25%, #f8f4ee 50%, #eee7de 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
 @keyframes shimmer { to { background-position: -200% 0; } }
-.state { display: grid; justify-items: center; gap: 0.75rem; padding: 3rem 1rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+.state { display: grid; justify-items: center; gap: 0.75rem; padding: 3rem 1rem; text-align: center; border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); font-family: var(--font-body), Figtree, Arial, sans-serif; }
 .state h2, .state p { margin: 0; }
+.state h2 { font-family: var(--font-body), Figtree, Arial, sans-serif; font-weight: 700; }
 .state p { color: var(--color-text-muted); max-width: 50ch; }
 .quantity { display: inline-grid; flex: 0 0 auto; grid-template-columns: 36px minmax(36px, auto) 36px; height: 38px; align-items: stretch; border: 1px solid var(--color-border); border-radius: var(--radius-pill); overflow: hidden; background: var(--color-surface); }
 .quantity button { display: grid; width: 36px; height: 100%; min-height: 0; padding: 0; place-items: center; border: 0; background: transparent; line-height: 0; cursor: pointer; transition: background var(--transition-fast), color var(--transition-fast); }

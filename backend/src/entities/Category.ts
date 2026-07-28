@@ -14,4 +14,7 @@ export class Category extends BaseEntity {
 
 	@Column({ type: "text", nullable: true })
 	icon_url: string | null;
+
+	@Column({ default: 0 })
+	display_order: number;
 }

@@ -54,8 +54,8 @@ const products = [
 
 module.exports = {
 	admin: { name: "Administrador", email: "admin@pizzaexpress.com", password: "Admin@123" },
-	customers: Array.from({ length: 12 }, (_, index) => ({
-		name: index === 0 ? "Cliente Demo" : `Cliente Seed ${String(index + 1).padStart(2, "0")}`,
+	customers: ["Rafael Oliveira", "Mariana Costa", "Lucas Almeida", "Beatriz Santos", "Gabriel Ferreira", "Camila Rocha", "Joao Martins", "Larissa Souza", "Pedro Henrique", "Juliana Lima", "Thiago Ribeiro", "Fernanda Alves"].map((name, index) => ({
+		name,
 		email: index === 0 ? "cliente@pizzaexpress.com" : `cliente${index + 1}@pizzaexpress.com`,
 		password: "Cliente@123",
 	})),

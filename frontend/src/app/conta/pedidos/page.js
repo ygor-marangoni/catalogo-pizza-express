@@ -61,7 +61,7 @@ export default function OrdersPage() {
   }
 
   return <main className={styles.page}>
-    <div className={`${styles.toolbar} ${styles.ordersToolbar}`}>
+    <div className={`${styles.toolbar} ${styles.favoriteToolbar} ${styles.ordersToolbar}`}>
       <div>
         <Link className={styles.backLink} href="/conta"><ArrowLeft size={16} />Minha conta</Link>
         <p className={styles.eyebrow}>Seu histórico</p>
@@ -90,7 +90,7 @@ export default function OrdersPage() {
         <strong>Pedido #{order.id}</strong>
         <span className={styles.orderDate}>{formatOrderDate(order.created_at)}</span>
         <span className={`${styles.status} ${statusClass[order.status] || ""}`}>{statusLabels[order.status] || order.status}</span>
-        <span className={styles.orderTotal}><Price value={order.total} /></span>
+        <span className={styles.orderTotal}><Price value={order.total} currentColor="var(--color-text)" /></span>
         <Link className={styles.textLink} href={`/conta/pedidos/${order.id}`}><Eye size={15} />Ver detalhes</Link>
       </article>)}
     </section>}

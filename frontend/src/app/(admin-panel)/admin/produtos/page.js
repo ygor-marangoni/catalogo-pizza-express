@@ -9,6 +9,7 @@ import { formatCurrency } from "@/lib/currency";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminSelect } from "@/components/admin/AdminSelect";
 import { AdminPagination } from "@/components/admin/AdminPagination";
+import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
 import fallbackProduct from "../../../../../assets/images/produto-exemplo.webp";
 import styles from "@/app/admin.module.css";
@@ -24,6 +25,7 @@ export default function ProductsPage() {
   const [featured, setFeatured] = useState("");
   const [page, setPage] = useState(1);
   const [message, setMessage] = useState("");
+  const [productToRemove, setProductToRemove] = useState(null);
   const { notify } = useToast();
 
   async function load() {
@@ -56,9 +58,11 @@ export default function ProductsPage() {
     catch (error) { setMessage(error.message); }
   }
   async function remove(product) {
-    if (!confirm(`Excluir “${product.name}”?`)) return;
-    try { await productsApi.remove(product.id); setMessage(""); notify("Produto excluído com sucesso."); await load(); }
+    const target = product?.id ? product : productToRemove;
+    if (!target) return;
+    try { await productsApi.remove(target.id); setMessage(""); notify("Produto excluído com sucesso."); await load(); }
     catch (error) { setMessage(error.message); }
+    finally { setProductToRemove(null); }
   }
 
   return <>
@@ -78,15 +82,16 @@ export default function ProductsPage() {
         {filtered.length === 0 ? <p className={styles.empty}>Nenhum produto encontrado.</p> :
           <div className={`${styles.tableWrap} ${styles.stickyTable}`}><table className={styles.table}><thead><tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Disponível</th><th>Destaque</th><th>Ações</th></tr></thead>
             <tbody>{visibleProducts.map((product) => <tr key={product.id}>
-              <td data-label="Produto"><div className={styles.productCell}><span className={styles.productImage} style={{ backgroundImage: `url("${product.image_url || fallbackProduct.src}")` }} /><span><strong>{product.name}</strong><small>#{product.id}</small></span></div></td>
+              <td data-label="Produto"><div className={styles.productCell}><span className={styles.productImage} style={{ backgroundImage: `url("${product.image_url || fallbackProduct.src}")` }} /><span><strong>{product.name}</strong><small>#{product.id}{product.is_combo ? " · Combo" : ""}</small></span></div></td>
               <td data-label="Categoria">{categories.find((item) => item.id === product.category_id)?.name || "—"}</td>
               <td data-label="Preço"><strong>{formatCurrency(product.base_price)}</strong></td>
               <td data-label="Disponível"><button className={`${styles.badge} ${!product.available ? styles.badgeOff : ""}`} onClick={() => patch(product, { available: String(!product.available) })}>{product.available ? "Sim" : "Não"}</button></td>
               <td data-label="Destaque"><button className={`${styles.badge} ${product.highlighted ? styles.badgeDark : styles.badgeOff}`} onClick={() => patch(product, { highlighted: String(!product.highlighted) })}>{product.highlighted ? "Sim" : "Não"}</button></td>
-              <td data-label="Ações"><div className={styles.actions}><Link className={styles.iconButton} href={`/admin/produtos/${product.id}`} aria-label={`Editar ${product.name}`}><Pencil size={17} /></Link><button className={`${styles.iconButton} ${styles.danger}`} onClick={() => remove(product)} aria-label={`Excluir ${product.name}`}><Trash2 size={17} /></button></div></td>
+              <td data-label="Ações"><div className={styles.actions}><Link className={styles.iconButton} href={`/admin/produtos/${product.id}`} aria-label={`Editar ${product.name}`}><Pencil size={17} /></Link><button className={`${styles.iconButton} ${styles.danger}`} onClick={() => setProductToRemove(product)} aria-label={`Excluir ${product.name}`}><Trash2 size={17} /></button></div></td>
             </tr>)}</tbody></table></div>}
         <AdminPagination page={currentPage} pageSize={PAGE_SIZE} total={filtered.length} onPageChange={setPage} />
       </div>
     </section>
+    <AdminConfirmDialog open={Boolean(productToRemove)} title="Excluir produto?" description={productToRemove ? `O produto “${productToRemove.name}” será removido do cardápio.` : ""} onCancel={() => setProductToRemove(null)} onConfirm={remove} />
   </>;
 }

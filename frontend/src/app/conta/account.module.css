@@ -959,7 +959,7 @@
 }
 
 .orderSummary span {
-  margin-top: 0.15rem;
+  margin-top: 0.02rem;
   color: #746762;
   font-size: 0.78rem;
 }
@@ -984,6 +984,12 @@
   border-color: #e3dad6;
   background: #fff;
 }
+.orderRow .orderTotal,.orderRow .orderTotal .priceCurrent{color:var(--color-text)}
+.orderRow .textLink{color:#746762;gap:4px}
+.orderRow .textLink svg{color:#746762}
+.orderRow .textLink:hover,.orderRow .textLink:hover svg{color:var(--color-text)}
+@media(min-width:761px){.orderRow .status,.orderRow .orderTotal,.orderRow .textLink{margin-left:.45rem}}
+@media(min-width:761px){.orderDetailPage>.orderDetailHeader{justify-content:center;text-align:center}.orderDetailPage>.orderDetailHeader>div{display:grid;justify-items:center}.orderDetailPage>.orderDetailHeader .backLink{position:absolute;left:0;top:0}}
 
 .orderRow strong {
   font-size: 0.92rem;
@@ -1442,6 +1448,12 @@
   .orderFooter {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .orderDetailHeader {
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.85rem;
   }
 
   .formActions {

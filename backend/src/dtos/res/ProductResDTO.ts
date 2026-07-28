@@ -9,6 +9,7 @@ export interface ProductResDTO {
 	image_url: string | null;
 	available: boolean;
 	highlighted: boolean;
+	is_combo: boolean;
 	created_at: NullableDate;
 	updated_at: NullableDate;
 	deleted_at: NullableDate;

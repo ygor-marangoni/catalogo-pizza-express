@@ -47,7 +47,7 @@ export default function FavoritesPage() {
     <div className={`${styles.toolbar} ${styles.favoriteToolbar}`}>
       <div>
         <Link className={styles.backLink} href="/conta"><ArrowLeft size={16} />Minha conta</Link>
-        <p className={styles.eyebrow}>Seu histórico</p>
+        <p className={styles.eyebrow}>As Favoritas</p>
         <h1>Pizzas que você já pediu</h1>
       </div>
       <div className={styles.favoriteHeaderMeta} aria-label={`${items.length} pizzas pedidas`}><Heart size={17} /><strong>{items.length}</strong><span>pizzas pedidas</span></div>
@@ -70,7 +70,7 @@ export default function FavoritesPage() {
           <div className={styles.favoriteBody}>
             <h2>{product.name}</h2>
             <p>{product.shortDescription || product.description || "Uma escolha especial da Pizza Express."}</p>
-            <Price className={styles.favoritePrice} value={product.basePriceInCents} />
+            <Price className={styles.favoritePrice} value={product.basePriceInCents} currentColor="#746762" />
             <div className={styles.favoriteActions}><Link className={styles.primary} href={`/?produto=${product.slug}`}><ShoppingBag size={15} />Pedir novamente</Link></div>
           </div>
         </article>;

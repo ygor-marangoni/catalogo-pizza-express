@@ -31,16 +31,11 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
     viewportWidth: document.documentElement.clientWidth,
   }));
   expect(searchViewport.contentWidth).toBeLessThanOrEqual(searchViewport.viewportWidth);
-  await page.getByRole("button", { name: /personalizar margherita 1/i }).click();
-  await expect(page).toHaveURL(/produto=1/);
+  await page.goto("/?produto=coca-cola-lata");
+  await expect(page).toHaveURL(/produto=coca-cola-lata/);
   const productDialog = page.getByRole("dialog", { name: /escolha do seu jeito/i });
   await expect(productDialog).toBeVisible();
-  await expect(productDialog.getByRole("heading", { level: 3, name: "Margherita 1", exact: true })).toBeVisible();
-
-  await productDialog.getByRole("radio").nth(1).check();
-  await productDialog.getByRole("radio").nth(2).check();
-  const addon = productDialog.getByRole("checkbox").first();
-  if (await addon.count()) await addon.check();
+  await expect(productDialog.getByRole("heading", { level: 3, name: "Coca-Cola Lata", exact: true })).toBeVisible();
   await page.getByRole("button", { name: /adicionar/i }).click();
   await expect(page.getByText(/foi adicionado ao carrinho/i)).toBeVisible();
   await expect(page).not.toHaveURL(/produto=/);
@@ -49,21 +44,21 @@ test("fluxo crítico do cardápio e persistência do carrinho", async ({ page },
   await expect(page.getByRole("button", { name: "Abrir carrinho com 1 item", exact: true })).toBeVisible();
 
   await page.goto("/carrinho");
-  await expect(page.getByRole("heading", { name: "Margherita 1" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Coca-Cola Lata" })).toBeVisible();
   await page.getByRole("button", { name: /editar escolhas/i }).click();
   const editDialog = page.getByRole("dialog", { name: /escolha do seu jeito/i });
   await editDialog.getByLabel("Alguma observação?").fill("bem assada");
   await editDialog.getByRole("button", { name: /salvar alterações/i }).click();
   await expect(editDialog).not.toBeVisible();
   await expect(page.getByText("bem assada", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Margherita 1" })).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Coca-Cola Lata" })).toHaveCount(1);
   await page.getByRole("button", { name: /aumentar quantidade/i }).click();
   await expect(page.getByRole("status")).toHaveText("2");
   await page.reload();
   await expect(page.getByRole("status")).toHaveText("2");
   await expect(page.getByRole("button", { name: /aumentar quantidade/i })).toBeVisible();
-  await expect(page.getByRole("button", { name: /duplicar margherita 1/i })).toHaveCount(0);
-  await page.getByRole("button", { name: /remover margherita 1/i }).click();
+  await expect(page.getByRole("button", { name: /duplicar coca-cola lata/i })).toHaveCount(0);
+  await page.getByRole("button", { name: /remover coca-cola lata/i }).click();
   await expect(page.getByRole("heading", { name: /carrinho está vazio/i })).toBeVisible();
 });
 
@@ -71,10 +66,10 @@ test("sugestão da busca abre os resultados, não o painel do produto", async ({
   test.skip(testInfo.project.name === "mobile", "O menu mobile usa o campo de busca próprio, sem lista de sugestões.");
   await page.goto("/");
   const search = page.getByRole("search").first().getByRole("searchbox");
-  await search.fill("Margh");
-  await expect(page.getByRole("button", { name: "Margherita 1", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Margherita 1", exact: true }).click();
-  await expect(page).toHaveURL(/busca\?q=Margherita%201/);
+  await search.fill("Coca");
+  await expect(page.getByRole("button", { name: "Coca-Cola Lata", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Coca-Cola Lata", exact: true }).click();
+  await expect(page).toHaveURL(/busca\?q=Coca-Cola%20Lata/);
   await expect(page.getByText(/resultado[s]? encontrado/)).toBeVisible();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });

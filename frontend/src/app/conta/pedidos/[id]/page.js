@@ -97,14 +97,14 @@ export default function OrderDetailPage() {
               <span className={styles.orderItemName}>{item.name || item.product_name || `Pizza #${item.product_id}`}</span>
               {details && <span className={styles.orderItemDetails}>{details}</span>}
             </div>
-            <Price className={styles.orderItemPrice} value={item.subtotal || item.unit_price * item.quantity} />
+            <Price className={styles.orderItemPrice} value={item.subtotal || item.unit_price * item.quantity} currentColor="#746762" />
           </li>;
         })}
       </ul>
 
       <footer className={styles.orderFooter}>
         <span>Total do pedido</span>
-        <strong><Price value={order.total} /></strong>
+        <strong><Price value={order.total} currentColor="#746762" /></strong>
       </footer>
     </section>
   </main>;

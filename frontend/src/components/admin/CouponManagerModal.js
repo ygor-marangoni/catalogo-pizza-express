@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, TicketPercent, Trash2, X } from "lucide-react";
 import { couponsApi } from "@/features/admin-catalog/coupons-api";
+import { AdminConfirmDialog } from "./AdminConfirmDialog";
 import { centsToInput, formatCurrency, reaisToCents } from "@/lib/currency";
 import styles from "@/app/admin.module.css";
 
@@ -11,6 +12,7 @@ export function CouponManagerModal({ open, onClose }) {
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [couponToRemove, setCouponToRemove] = useState(null);
 
   async function load() {
     try { setCoupons(await couponsApi.list()); }
@@ -94,10 +96,11 @@ export function CouponManagerModal({ open, onClose }) {
     finally { setSaving(false); }
   }
 
-  async function remove(coupon) {
-    if (!confirm(`Excluir o cupom “${coupon.code}”?`)) return;
+  async function remove(coupon = couponToRemove) {
+    if (!coupon) return;
     try { await couponsApi.remove(coupon.id); setMessage("Cupom excluído."); await load(); }
     catch (error) { setMessage(error.message); }
+    finally { setCouponToRemove(null); }
   }
 
   return <div className={styles.adminModalBackdrop} onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
@@ -129,7 +132,7 @@ export function CouponManagerModal({ open, onClose }) {
             <span className={styles.couponIcon}><TicketPercent size={19} /></span>
             <div><strong>{coupon.code}</strong><small>{coupon.discount_type === "PERCENTAGE" ? `${coupon.discount_value}% de desconto` : `${formatCurrency(coupon.discount_value)} de desconto`}</small></div>
             <span className={coupon.active ? styles.couponActive : styles.couponInactive}>{coupon.active ? "Ativo" : "Inativo"}</span>
-            <div className={styles.actions}><button className={styles.iconButton} type="button" onClick={() => setEditing(coupon)} aria-label={`Editar ${coupon.code}`}><Pencil size={16} /></button><button className={`${styles.iconButton} ${styles.danger}`} type="button" onClick={() => remove(coupon)} aria-label={`Excluir ${coupon.code}`}><Trash2 size={16} /></button></div>
+            <div className={styles.actions}><button className={styles.iconButton} type="button" onClick={() => setEditing(coupon)} aria-label={`Editar ${coupon.code}`}><Pencil size={16} /></button><button className={`${styles.iconButton} ${styles.danger}`} type="button" onClick={() => setCouponToRemove(coupon)} aria-label={`Excluir ${coupon.code}`}><Trash2 size={16} /></button></div>
           </article>)}
         </div>
       </div>
@@ -138,5 +141,6 @@ export function CouponManagerModal({ open, onClose }) {
         role="status"
       >{message}</p>}
     </section>
+    <AdminConfirmDialog open={Boolean(couponToRemove)} title="Excluir cupom?" description={couponToRemove ? `O cupom “${couponToRemove.code}” deixará de poder ser utilizado.` : ""} onCancel={() => setCouponToRemove(null)} onConfirm={remove} />
   </div>;
 }

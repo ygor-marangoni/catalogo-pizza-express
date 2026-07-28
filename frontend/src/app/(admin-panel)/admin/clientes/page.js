@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Mail, Pencil, Search, Trash2, UserPlus, Users } from "lucide-react";
 import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
 import { AdminPagination } from "@/components/admin/AdminPagination";
+import { AdminConfirmDialog } from "@/components/admin/AdminConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
 import { customersApi } from "@/features/admin-customers/customers-api";
 import styles from "@/app/admin.module.css";
@@ -24,6 +25,7 @@ export default function CustomersPage() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [customerToRemove, setCustomerToRemove] = useState(null);
   const { notify } = useToast();
 
   async function load() {
@@ -76,14 +78,16 @@ export default function CustomersPage() {
     }
   }
 
-  async function remove(customer) {
-    if (!confirm(`Excluir a conta de “${customer.name}”? O histórico de pedidos será preservado.`)) return;
+  async function remove(customer = customerToRemove) {
+    if (!customer) return;
     try {
       await customersApi.remove(customer.id);
       await load();
       notify("Conta do cliente excluída com sucesso.");
     } catch (error) {
       setMessage(error.message);
+    } finally {
+      setCustomerToRemove(null);
     }
   }
 
@@ -122,7 +126,7 @@ export default function CustomersPage() {
               <td data-label="Atualização">{formatDate(customer.updated_at)}</td>
               <td data-label="Ações"><div className={styles.actions}>
                 <button className={styles.iconButton} type="button" onClick={() => showEditor(customer)} aria-label={`Editar ${customer.name}`}><Pencil size={17} /></button>
-                <button className={`${styles.iconButton} ${styles.danger}`} type="button" onClick={() => remove(customer)} aria-label={`Excluir ${customer.name}`}><Trash2 size={17} /></button>
+                <button className={`${styles.iconButton} ${styles.danger}`} type="button" onClick={() => setCustomerToRemove(customer)} aria-label={`Excluir ${customer.name}`}><Trash2 size={17} /></button>
               </div></td>
             </tr>)}</tbody>
           </table></div>}
@@ -147,5 +151,6 @@ export default function CustomersPage() {
         </footer>
       </form>
     </dialog>
+    <AdminConfirmDialog open={Boolean(customerToRemove)} title="Excluir conta?" description={customerToRemove ? `A conta de “${customerToRemove.name}” será excluída. O histórico de pedidos será preservado.` : ""} onCancel={() => setCustomerToRemove(null)} onConfirm={remove} />
   </>;
 }

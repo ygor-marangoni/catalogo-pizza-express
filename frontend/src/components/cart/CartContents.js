@@ -37,7 +37,7 @@ export function CartContents({ page = false, onNavigate, onCheckoutChange }) {
   function continueToCheckout() {
     if (authLoading) return;
     if (!account) {
-      router.push(`/login?next=${encodeURIComponent("/carrinho?finalizar=1")}`);
+      router.push(`/login?next=${encodeURIComponent(`${pathname}?finalizar=1`)}`);
       onNavigate?.();
       return;
     }

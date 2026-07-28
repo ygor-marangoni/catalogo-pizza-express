@@ -92,12 +92,12 @@ test(
 					await request(
 						baseUrl,
 						`/api/v1/admin/orders/${order.body.data.id}/status`,
-						adminOptions("PATCH", { status: "APPROVED" }),
+						adminOptions("PATCH", { status: "PREPARING" }),
 					)
 				).response.status,
 				200,
 			);
-			for (const status of ["PREPARING", "OUT_FOR_DELIVERY", "COMPLETED"]) {
+			for (const status of ["OUT_FOR_DELIVERY", "COMPLETED"]) {
 				assert.equal(
 					(
 						await request(
