@@ -76,7 +76,17 @@ export function CartContents({ page = false, onNavigate, onCheckoutChange }) {
     </section>
   </div>;
 
-  if (checkout || resumedCheckout) return <CheckoutForm items={cart.items} subtotalInCents={subtotalInCents} store={storeInfo} page={page} onBack={closeCheckout} onComplete={onNavigate} />;
+  if (checkout || resumedCheckout) return <CheckoutForm
+    items={cart.items}
+    subtotalInCents={subtotalInCents}
+    store={storeInfo}
+    page={page}
+    onBack={closeCheckout}
+    onComplete={() => {
+      clearCart();
+      onNavigate?.();
+    }}
+  />;
 
   const items = <>
     <div className={styles.items}>{cart.items.map((item) => {
