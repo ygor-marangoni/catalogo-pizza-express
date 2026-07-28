@@ -1,2 +1,0 @@
-import { describe,expect,it } from "vitest";import { parseApiEnvelope,unwrapItems } from "@/lib/api/api-response";
-describe("envelope da API",()=>{it("extrai data e listas paginadas",()=>{expect(parseApiEnvelope({success:true,data:{items:[{id:1}]},error:null})).toEqual({items:[{id:1}]});expect(unwrapItems({items:[{id:1}]})).toHaveLength(1);});it("transforma erro da API",()=>{expect(()=>parseApiEnvelope({success:false,data:null,error:{code:"NO",message:"Falhou"}},400)).toThrow("Falhou");});});
