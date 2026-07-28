@@ -44,8 +44,17 @@ export function ProductForm({ id }) {
       if (!active) return;
       setCategories(loadedCategories);
       setCatalogOptions({ sizes, edges, additionals });
+      const sizesById = new Map(sizes.map((size) => [Number(size.id), size]));
+      const hasLegacyEmptyPrices = Number(loadedProduct?.base_price) > 0
+        && (loadedConfiguration.sizes || []).length > 0
+        && loadedConfiguration.sizes.every((item) => Number(item.price) === 0);
       setConfiguration({
-        sizes: (loadedConfiguration.sizes || []).map((item) => ({ ...item, priceInput: centsToInput(item.price) })),
+        sizes: (loadedConfiguration.sizes || []).map((item) => ({
+          ...item,
+          priceInput: centsToInput(hasLegacyEmptyPrices
+            ? Number(loadedProduct.base_price) + Number(sizesById.get(Number(item.size_id))?.additional_price || 0)
+            : item.price),
+        })),
         edges: (loadedConfiguration.edges || []).map((item) => ({ ...item, overrideInput: item.price_override === null ? "" : centsToInput(item.price_override) })),
         additionals: (loadedConfiguration.additionals || []).map((item) => ({ ...item, overrideInput: item.price_override === null ? "" : centsToInput(item.price_override) })),
       });

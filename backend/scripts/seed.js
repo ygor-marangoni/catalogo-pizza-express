@@ -126,17 +126,20 @@ async function run() {
 			else
 				await queryRunner.query("INSERT INTO additionals (name, description, price) VALUES ($1, $2, $3)", [additional.name, additional.description, additional.price]);
 		}
-		const sizeRows = await queryRunner.query("SELECT id FROM sizes WHERE deleted_at IS NULL ORDER BY id");
+		const sizeRows = await queryRunner.query("SELECT id, additional_price FROM sizes WHERE deleted_at IS NULL ORDER BY additional_price, id");
 		const edgeRows = await queryRunner.query("SELECT id, name FROM edges WHERE deleted_at IS NULL ORDER BY id");
 		const additionalRows = await queryRunner.query("SELECT id FROM additionals WHERE deleted_at IS NULL ORDER BY id");
-		const seedProductRows = await queryRunner.query("SELECT id, name, category_id FROM products WHERE name = ANY($1) AND deleted_at IS NULL", [mockData.products.map((product) => product.name)]);
+		const seedProductRows = await queryRunner.query("SELECT id, name, category_id, base_price FROM products WHERE name = ANY($1) AND deleted_at IS NULL", [mockData.products.map((product) => product.name)]);
 		const pizzaCategoryIds = new Set([...categoryIds.entries()].filter(([name]) => name.toLocaleLowerCase().includes("pizza")).map(([, id]) => id));
 		for (const product of seedProductRows) {
 			await queryRunner.query("DELETE FROM product_sizes WHERE product_id = $1", [product.id]);
 			await queryRunner.query("DELETE FROM product_edges WHERE product_id = $1", [product.id]);
 			await queryRunner.query("DELETE FROM product_additionals WHERE product_id = $1", [product.id]);
 			if (!pizzaCategoryIds.has(product.category_id)) continue;
-			for (const size of sizeRows) await queryRunner.query("INSERT INTO product_sizes (product_id, size_id) VALUES ($1, $2) ON CONFLICT DO NOTHING", [product.id, size.id]);
+			for (const size of sizeRows) await queryRunner.query(
+				"INSERT INTO product_sizes (product_id, size_id, price, is_default, available) VALUES ($1, $2, $3, $4, TRUE) ON CONFLICT DO NOTHING",
+				[product.id, size.id, Number(product.base_price) + Number(size.additional_price), size.id === sizeRows[0]?.id],
+			);
 			const productSeed = mockData.products.find((item) => item.name === product.name);
 			const isSweet = productSeed?.category_name === "Pizzas doces";
 			for (const edge of edgeRows.filter((item) => isSweet ? item.name === "Chocolate" : item.name !== "Chocolate")) await queryRunner.query("INSERT INTO product_edges (product_id, edge_id) VALUES ($1, $2) ON CONFLICT DO NOTHING", [product.id, edge.id]);
