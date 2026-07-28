@@ -54,6 +54,11 @@ export function CustomerAuthProvider({ children }) {
     role,
     loading,
     async adoptSession(session) {
+      if (session.role === "ADMIN") {
+        setRole("ADMIN");
+        setAccount(null);
+        return session;
+      }
       if (session.role !== "CUSTOMER") throw new Error("Esta conta não é de cliente.");
       const profile = await authService.me();
       setRole("CUSTOMER");

@@ -33,6 +33,7 @@ export default function LoginPage() {
     try {
       const session = await authService.login(form);
       if (session.role === "ADMIN") {
+        await adoptSession(session);
         router.replace(getSafeNextPath(searchParams.get("next"), "/admin"));
         return;
       }

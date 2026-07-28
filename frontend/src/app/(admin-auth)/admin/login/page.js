@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { AdminAuthProvider, useAdminAuth } from "@/features/admin-auth/AdminAuthProvider";
+import { useCustomerAuth } from "@/contexts/CustomerAuthContext";
 import logo from "../../../../../assets/images/logo.webp";
 import styles from "@/app/admin.module.css";
 
@@ -12,6 +13,7 @@ export const dynamic = "force-dynamic";
 
 function LoginForm() {
   const { login } = useAdminAuth();
+  const { adoptSession } = useCustomerAuth();
   const router = useRouter();
   const [show, setShow] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -24,7 +26,8 @@ function LoginForm() {
     setError("");
     const data = new FormData(event.currentTarget);
     try {
-      await login(data.get("email"), data.get("password"));
+      const admin = await login(data.get("email"), data.get("password"));
+      await adoptSession(admin);
       router.replace("/admin");
     } catch (loginError) {
       setError(loginError.status === 429 ? "Muitas tentativas. Aguarde e tente novamente."
